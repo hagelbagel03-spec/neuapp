@@ -495,9 +495,9 @@ const LoginScreen = ({ appConfig }) => {
   return (
     <SafeAreaView style={{
       flex: 1,
-      backgroundColor: ModernTheme.darkStart,
+      backgroundColor: colors.background, // Use theme colors instead of ModernTheme
     }}>
-      <StatusBar barStyle="light-content" backgroundColor={ModernTheme.darkStart} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.background} />
       
       {/* Gradient Background */}
       <View style={{
@@ -506,7 +506,7 @@ const LoginScreen = ({ appConfig }) => {
         left: 0,
         right: 0,
         bottom: 0,
-        backgroundColor: ModernTheme.darkStart,
+        backgroundColor: colors.background,
       }} />
       
       <KeyboardAvoidingView 
@@ -534,14 +534,14 @@ const LoginScreen = ({ appConfig }) => {
               <Ionicons 
                 name="shield-checkmark" 
                 size={isSmallDevice ? 40 : 50} 
-                color={ModernTheme.primaryStart} 
+                color={colors.primary} 
               />
             </GlassCard>
             
             <Text style={{
               fontSize: isSmallDevice ? 32 : 42,
               fontWeight: '900',
-              color: ModernTheme.textLight,
+              color: colors.text,
               textAlign: 'center',
               marginBottom: 8,
             }}>
@@ -550,7 +550,7 @@ const LoginScreen = ({ appConfig }) => {
             
             <Text style={{
               fontSize: isSmallDevice ? 14 : 16,
-              color: ModernTheme.textMuted,
+              color: colors.textMuted,
               textAlign: 'center',
               fontWeight: '500',
             }}>
@@ -564,7 +564,7 @@ const LoginScreen = ({ appConfig }) => {
               <Text style={{
                 fontSize: 14,
                 fontWeight: '600',
-                color: ModernTheme.textLight,
+                color: colors.text,
                 marginBottom: 8,
               }}>
                 E-Mail Adresse
@@ -579,12 +579,12 @@ const LoginScreen = ({ appConfig }) => {
                   style={{
                     padding: isSmallDevice ? 14 : 16,
                     fontSize: 16,
-                    color: ModernTheme.textLight,
+                    color: colors.text,
                   }}
                   value={email}
                   onChangeText={setEmail}
                   placeholder="ihre.email@stadtwache.de"
-                  placeholderTextColor={ModernTheme.textMuted}
+                  placeholderTextColor={colors.textMuted}
                   keyboardType="email-address"
                   autoCapitalize="none"
                 />
@@ -595,7 +595,7 @@ const LoginScreen = ({ appConfig }) => {
               <Text style={{
                 fontSize: 14,
                 fontWeight: '600',
-                color: ModernTheme.textLight,
+                color: colors.text,
                 marginBottom: 8,
               }}>
                 Passwort
@@ -610,12 +610,12 @@ const LoginScreen = ({ appConfig }) => {
                   style={{
                     padding: isSmallDevice ? 14 : 16,
                     fontSize: 16,
-                    color: ModernTheme.textLight,
+                    color: colors.text,
                   }}
                   value={password}
                   onChangeText={setPassword}
                   placeholder="Ihr sicheres Passwort"
-                  placeholderTextColor={ModernTheme.textMuted}
+                  placeholderTextColor={colors.textMuted}
                   secureTextEntry
                 />
               </View>
@@ -634,19 +634,19 @@ const LoginScreen = ({ appConfig }) => {
           {/* Info Card */}
           <GlassCard gradient="accent">
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Ionicons name="information-circle" size={24} color={ModernTheme.accentStart} style={{ marginRight: 12 }} />
+              <Ionicons name="information-circle" size={24} color={colors.accent} style={{ marginRight: 12 }} />
               <View style={{ flex: 1 }}>
                 <Text style={{
                   fontSize: 14,
                   fontWeight: '600',
-                  color: ModernTheme.textLight,
+                  color: colors.text,
                   marginBottom: 4,
                 }}>
                   Sicherheits-Hinweis
                 </Text>
                 <Text style={{
                   fontSize: 12,
-                  color: ModernTheme.textMuted,
+                  color: colors.textMuted,
                   lineHeight: 16,
                 }}>
                   Ihre Daten werden verschlüsselt übertragen
@@ -660,14 +660,14 @@ const LoginScreen = ({ appConfig }) => {
             <Text style={{
               fontSize: 18,
               fontWeight: '700',
-              color: ModernTheme.textLight,
+              color: colors.text,
               marginBottom: 4,
             }}>
               STADTWACHE ZENTRALE
             </Text>
             <Text style={{
               fontSize: 14,
-              color: ModernTheme.successStart,
+              color: colors.success,
               fontWeight: '600',
             }}>
               🟢 Sichere Verbindung aktiv
