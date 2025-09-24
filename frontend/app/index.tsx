@@ -31,12 +31,14 @@ import ShiftManagementComponent from './components/ShiftManagementComponent';
 
 const { width, height } = Dimensions.get('window');
 
-// API Configuration - Use environment variable
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://212.227.57.238:8001";
+// API Configuration - MOBILE RESPONSIVE SYSTEM
+const API_URL = "";
 
-// MOBILE RESPONSIVE - NUR DIE WICHTIGSTEN FIXES
-const isSmallScreen = width < 400;
-const isMediumScreen = width >= 400 && width < 600;
+// 📱 MOBILE RESPONSIVE - Adaptive für alle Handy-Größen
+const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const isSmallDevice = screenWidth < 380; // Redmi A5 und ähnliche
+const isMediumDevice = screenWidth >= 380 && screenWidth < 420;
+const isLargeDevice = screenWidth >= 420;
 
 // Theme Context für Dark/Light Mode
 const ThemeContext = createContext();
