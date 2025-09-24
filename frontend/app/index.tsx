@@ -31,42 +31,12 @@ import ShiftManagementComponent from './components/ShiftManagementComponent';
 
 const { width, height } = Dimensions.get('window');
 
-// API Configuration - CYBER SYSTEM ACCESS
-const API_URL = "";
+// API Configuration - Use environment variable
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://212.227.57.238:8001";
 
-// 🚀 ULTRA-MODERN RESPONSIVE - CYBER INTERFACE
+// MOBILE RESPONSIVE - NUR DIE WICHTIGSTEN FIXES
 const isSmallScreen = width < 400;
 const isMediumScreen = width >= 400 && width < 600;
-
-// 🎨 CYBER-FUTURISTIC THEME - ULTRA MODERN COLORS
-const CyberTheme = {
-  // Neon Colors - Ultra Bright
-  neonCyan: '#00FFFF',
-  neonMagenta: '#FF00FF', 
-  neonGreen: '#00FF41',
-  neonOrange: '#FF4500',
-  neonPurple: '#8A2BE2',
-  
-  // Dark Base - Pure Black
-  blackPure: '#000000',
-  blackSoft: '#0A0A0A',
-  blackCard: '#111111',
-  blackSurface: '#1A1A1A',
-  
-  // Glass & Blur Effects
-  glassLight: 'rgba(255, 255, 255, 0.03)',
-  glassDark: 'rgba(0, 0, 0, 0.7)',
-  
-  // Text Colors
-  textWhite: '#FFFFFF',
-  textGray: '#CCCCCC', 
-  textDark: '#666666',
-  
-  // Status
-  success: '#00FF41',
-  danger: '#FF3333',
-  warning: '#FFD700',
-};
 
 // Theme Context für Dark/Light Mode
 const ThemeContext = createContext();
@@ -80,11 +50,10 @@ const useTheme = () => {
 };
 
 const ThemeProvider = ({ children, appConfig }) => {
-  const [isDarkMode, setIsDarkMode] = useState(true); // 🔥 ALWAYS CYBER DARK MODE
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    // Force cyber dark theme
-    setIsDarkMode(true);
+    loadTheme();
   }, []);
 
   const loadTheme = async () => {
@@ -109,22 +78,22 @@ const ThemeProvider = ({ children, appConfig }) => {
   };
 
   const getColors = (isDarkMode) => ({
-    // 🎨 CYBER-FUTURISTIC FARBEN - Ultra Modern Design
-    primary: CyberTheme.neonCyan,
-    primaryLight: CyberTheme.neonCyan, 
-    secondary: CyberTheme.neonMagenta,
-    accent: CyberTheme.neonGreen,
-    success: CyberTheme.neonGreen,
-    warning: CyberTheme.neonOrange,
-    error: CyberTheme.danger,
-    background: CyberTheme.blackPure,
-    surface: CyberTheme.blackCard,
-    card: CyberTheme.blackSurface,
-    text: CyberTheme.textWhite,
-    textSecondary: CyberTheme.textGray,
-    textMuted: CyberTheme.textDark,
-    border: CyberTheme.neonCyan,
-    overlay: 'rgba(0, 255, 255, 0.2)',
+    // 🎨 DYNAMISCHE FARBEN aus Admin-Konfiguration
+    primary: appConfig?.primary_color || '#1E40AF',
+    primaryLight: appConfig?.primary_color || '#3B82F6', 
+    secondary: appConfig?.success_color || '#059669',
+    accent: appConfig?.warning_color || '#F59E0B',
+    success: appConfig?.success_color || '#10B981',
+    warning: appConfig?.warning_color || '#F59E0B',
+    error: appConfig?.error_color || '#EF4444',
+    background: isDarkMode ? '#0F172A' : '#F8FAFC',
+    surface: isDarkMode ? '#1E293B' : '#FFFFFF',
+    card: isDarkMode ? '#334155' : '#FFFFFF',
+    text: isDarkMode ? '#F8FAFC' : '#1E293B',
+    textSecondary: isDarkMode ? '#CBD5E1' : '#475569',
+    textMuted: isDarkMode ? '#94A3B8' : '#64748B',
+    border: isDarkMode ? '#475569' : '#E2E8F0',
+    overlay: 'rgba(0, 0, 0, 0.5)',
   });
 
   const theme = {
@@ -375,7 +344,7 @@ const LoginScreen = ({ appConfig }) => {
   const dynamicStyles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: CyberTheme.blackPure, // CYBER: Pure Black Background
+      backgroundColor: colors.primary,
     },
     content: {
       flex: 1,
@@ -390,243 +359,74 @@ const LoginScreen = ({ appConfig }) => {
       marginBottom: 32,
     },
     logoCircle: {
-      width: 140,
-      height: 140,
-      borderRadius: 70,
-      backgroundColor: 'rgba(0, 255, 255, 0.08)', // CYBER: Neon Cyan Glow
+      width: 120,
+      height: 120,
+      borderRadius: 60,
+      backgroundColor: 'rgba(255, 255, 255, 0.15)',
       justifyContent: 'center',
       alignItems: 'center',
-      borderWidth: 2,
-      borderColor: CyberTheme.neonCyan, // CYBER: Neon Border
-      shadowColor: CyberTheme.neonCyan,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.8,
-      shadowRadius: 25,
-      elevation: 25,
+      borderWidth: 3,
+      borderColor: 'rgba(255, 255, 255, 0.3)',
     },
     title: {
-      fontSize: 52,
-      fontWeight: '900',
-      color: CyberTheme.neonCyan, // CYBER: Neon Title
-      textAlign: 'center',
+      fontSize: 42,
+      fontWeight: '800',
+      color: '#FFFFFF',
       marginBottom: 12,
-      textShadowColor: CyberTheme.neonCyan,
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: 15,
-      letterSpacing: 3,
-      textTransform: 'uppercase',
+      textAlign: 'center',
+      letterSpacing: -1,
     },
     subtitle: {
-      fontSize: 16,
-      color: CyberTheme.textGray, // CYBER: Gray subtitle
+      fontSize: 18,
+      color: 'rgba(255, 255, 255, 0.9)',
       textAlign: 'center',
-      fontWeight: '600',
-      letterSpacing: 2,
-      textTransform: 'uppercase',
+      fontWeight: '500',
     },
     form: {
-      marginBottom: 64,
+      marginBottom: 48,
     },
     inputGroup: {
       marginBottom: 28,
     },
     inputLabel: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: CyberTheme.neonCyan, // CYBER: Neon Labels
+      fontSize: 16,
+      fontWeight: '600',
+      color: 'rgba(255, 255, 255, 0.95)',
       marginBottom: 12,
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
     },
     input: {
-      backgroundColor: 'rgba(255, 255, 255, 0.03)', // CYBER: Glass Effect
+      backgroundColor: 'rgba(255, 255, 255, 0.12)',
       borderWidth: 2,
-      borderColor: CyberTheme.neonCyan, // CYBER: Neon Border
-      borderRadius: 12,
-      paddingHorizontal: 20,
+      borderColor: 'rgba(255, 255, 255, 0.25)',
+      borderRadius: 16,
+      paddingHorizontal: 24,
       paddingVertical: 18,
       fontSize: 16,
-      color: CyberTheme.textWhite, // CYBER: White Text
-      fontWeight: '600',
-      shadowColor: CyberTheme.neonCyan,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.4,
-      shadowRadius: 8,
-      elevation: 8,
-    },
-    loginButton: {
-      backgroundColor: 'rgba(0, 255, 255, 0.1)', // CYBER: Neon Glow Button
-      borderWidth: 2,
-      borderColor: CyberTheme.neonCyan,
-      borderRadius: 12,
-      paddingVertical: 18,
-      alignItems: 'center',
-      justifyContent: 'center',
-      shadowColor: CyberTheme.neonCyan,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.5,
-      shadowRadius: 15,
-      elevation: 15,
-      marginTop: 24,
-    },
-    loginButtonText: {
-      color: CyberTheme.neonCyan, // CYBER: Neon Button Text
-      fontSize: 16,
-      fontWeight: '700',
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
-    },
-    footer: {
-      alignItems: 'center',
-    },
-    footerText: {
-      fontSize: 22,
-      fontWeight: '800',
-      color: CyberTheme.neonCyan, // CYBER: Neon Footer
-      marginBottom: 8,
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
-    },
-    statusText: {
-      fontSize: 14,
-      color: CyberTheme.neonGreen, // CYBER: Success Green
-      fontWeight: '700',
-      letterSpacing: 1,
-    },
-  });
-
-  return (
-    <SafeAreaView style={dynamicStyles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={CyberTheme.blackPure} />
-      
-      <KeyboardAvoidingView 
-        style={dynamicStyles.content}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <View style={dynamicStyles.header}>
-          <View style={dynamicStyles.logoContainer}>
-            <View style={dynamicStyles.logoCircle}>
-              <Ionicons name="shield-checkmark" size={68} color={CyberTheme.neonCyan} />
-            </View>
-          </View>
-          
-          <Text style={dynamicStyles.title}>STADTWACHE</Text>
-          <Text style={dynamicStyles.subtitle}>SICHERHEITSZENTRALE • CYBER SYSTEM V3.0</Text>
-        </View>
-
-        <View style={dynamicStyles.form}>
-          <View style={dynamicStyles.inputContainer}>
-            <Text style={dynamicStyles.inputLabel}>OPERATOR-ID</Text>
-            <TextInput
-              style={dynamicStyles.input}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="benutzer@stadtwache.sys"
-              placeholderTextColor={CyberTheme.textDark}
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
-            />
-          </View>
-
-          <View style={dynamicStyles.inputContainer}>
-            <Text style={dynamicStyles.inputLabel}>SICHERHEITSCODE</Text>
-            <TextInput
-              style={dynamicStyles.input}
-              value={password}
-              onChangeText={setPassword}
-              placeholder="••••••••••••••••"
-              placeholderTextColor={CyberTheme.textDark}
-              secureTextEntry
-            />
-          </View>
-
-          <TouchableOpacity 
-            style={[dynamicStyles.loginButton, (!email?.trim() || !password?.trim() || loading) && dynamicStyles.loginButtonDisabled]}
-            onPress={handleLogin}
-            disabled={!email?.trim() || !password?.trim() || loading}
-          >
-            {loading ? (
-              <ActivityIndicator color={CyberTheme.neonCyan} size="small" />
-            ) : (
-              <Ionicons name="log-in-outline" size={20} color={CyberTheme.neonCyan} />
-            )}
-            <Text style={dynamicStyles.loginButtonText}>
-              {loading ? "AUTHENTIFIZIERUNG..." : "SYSTEM-ZUGANG"}
-            </Text>
-          </TouchableOpacity>
-          
-          {loading && (
-            <View style={{ alignItems: 'center', marginTop: 24 }}>
-              <ActivityIndicator color={CyberTheme.neonCyan} size="large" />
-              <Text style={{ color: CyberTheme.textGray, marginTop: 12, fontSize: 14 }}>
-                VERBINDUNG ZUR ZENTRALE...
-              </Text>
-            </View>
-          )}
-        </View>
-
-        <View style={dynamicStyles.footer}>
-          <Text style={dynamicStyles.footerText}>STADTWACHE ZENTRALE</Text>
-          <Text style={dynamicStyles.statusText}>🟢 SICHERE VERBINDUNG AKTIV</Text>
-        </View>
-      </KeyboardAvoidingView>
-    </SafeAreaView>
-  );
-    inputContainer: {
-      marginBottom: 28,
-    },
-    inputLabel: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: CyberTheme.neonCyan, // CYBER: Neon Labels
-      marginBottom: 12,
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
-    },
-    input: {
-      backgroundColor: 'rgba(255, 255, 255, 0.03)', // CYBER: Glass Effect
-      borderWidth: 2,
-      borderColor: CyberTheme.neonCyan, // CYBER: Neon Border
-      borderRadius: 12,
-      paddingHorizontal: 20,
-      paddingVertical: 18,
-      fontSize: 16,
-      color: CyberTheme.textWhite, // CYBER: White Text
-      fontWeight: '600',
-      shadowColor: CyberTheme.neonCyan,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.4,
-      shadowRadius: 8,
-      elevation: 8,
+      color: '#FFFFFF',
+      fontWeight: '500',
     },
     loginButton: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: 'rgba(0, 255, 255, 0.1)', // CYBER: Neon Glow Button
-      borderWidth: 2,
-      borderColor: CyberTheme.neonCyan,
-      borderRadius: 12,
-      paddingVertical: 18,
+      backgroundColor: '#FFFFFF',
+      paddingVertical: 20,
       paddingHorizontal: 32,
+      borderRadius: 16,
       marginTop: 24,
-      shadowColor: CyberTheme.neonCyan,
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.5,
-      shadowRadius: 15,
-      elevation: 15,
+      shadowColor: '#000000',
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.25,
+      shadowRadius: 12,
+      elevation: 12,
     },
     loginButtonDisabled: {
-      backgroundColor: 'rgba(0, 255, 255, 0.05)',
-      borderColor: 'rgba(0, 255, 255, 0.3)',
+      backgroundColor: 'rgba(255, 255, 255, 0.7)',
     },
     loginButtonText: {
-      color: CyberTheme.neonCyan, // CYBER: Neon Button Text
-      fontSize: 16,
+      color: colors.primary,
+      fontSize: 18,
       fontWeight: '700',
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
       marginLeft: 12,
     },
     registerLink: {
@@ -688,18 +488,18 @@ const LoginScreen = ({ appConfig }) => {
               <Ionicons name="shield-checkmark" size={56} color="#FFFFFF" />
             </View>
           </View>
-          <Text style={dynamicStyles.title}>STADTWACHE</Text>
-          <Text style={dynamicStyles.subtitle}>SICHERHEITSZENTRALE • CYBER SYSTEM V3.0</Text>
+          <Text style={dynamicStyles.title}>{appConfig.app_name}</Text>
+          <Text style={dynamicStyles.subtitle}>{appConfig.organization_name}</Text>
         </View>
 
         <View style={dynamicStyles.form}>
           <View style={dynamicStyles.inputGroup}>
-            <Text style={dynamicStyles.inputLabel}>OPERATOR-ID</Text>
+            <Text style={dynamicStyles.inputLabel}>E-Mail Adresse</Text>
             <TextInput
               style={dynamicStyles.input}
               value={email}
               onChangeText={setEmail}
-              placeholder="benutzer@stadtwache.sys"
+              placeholder="benutzer@stadtwache.de"
               placeholderTextColor="rgba(255, 255, 255, 0.6)"
               keyboardType="email-address"
               autoCapitalize="none"
@@ -708,12 +508,12 @@ const LoginScreen = ({ appConfig }) => {
           </View>
 
           <View style={dynamicStyles.inputGroup}>
-            <Text style={dynamicStyles.inputLabel}>SICHERHEITSCODE</Text>
+            <Text style={dynamicStyles.inputLabel}>Passwort</Text>
             <TextInput
               style={dynamicStyles.input}
               value={password}
               onChangeText={setPassword}
-              placeholder="••••••••••••••••"
+              placeholder="Passwort eingeben"
               placeholderTextColor="rgba(255, 255, 255, 0.6)"
               secureTextEntry
             />
@@ -732,15 +532,15 @@ const LoginScreen = ({ appConfig }) => {
             ) : (
               <Ionicons name="log-in" size={24} color={colors.primary} />
             )}
-            <Text style={dynamicStyles.loginButtonText}>SYSTEM-ZUGANG</Text>
+            <Text style={dynamicStyles.loginButtonText}>Anmelden</Text>
           </TouchableOpacity>
 
 
         </View>
 
         <View style={dynamicStyles.footer}>
-          <Text style={dynamicStyles.footerText}>STADTWACHE ZENTRALE</Text>
-          <Text style={dynamicStyles.statusText}>🟢 SICHERE VERBINDUNG AKTIV</Text>
+          <Text style={dynamicStyles.footerText}>Stadtwache Schwelm</Text>
+          <Text style={dynamicStyles.statusText}>🟢 Sichere Verbindung</Text>
         </View>
 
 
