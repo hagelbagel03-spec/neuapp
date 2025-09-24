@@ -17531,7 +17531,7 @@ Beispielinhalt:
                 }}
                 onPress={() => {
                   setShowSettingsModal(false);
-                  setActiveTab('admin'); // RICHTIG VERLINKT: Wechselt zum Admin-Tab
+                  setShowAdminDashboardModal(true); // RICHTIG VERLINKT: Öffnet das Admin-Dashboard-Modal
                 }}
               >
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
