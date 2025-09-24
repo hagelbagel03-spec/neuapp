@@ -9348,7 +9348,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       maxWidth: 70,
     },
 
-    // 🚀 ULTRA-FUTURISTIC BUTTONS - SO BEÄNGSTIGEND MODERN
+    // 🚀 ULTRA-FUTURISTIC BUTTONS - DUNKLES GRÜN THEME
     primaryButton: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -9357,10 +9357,10 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       paddingHorizontal: 32,
       borderRadius: 12,
       borderWidth: 2,
-      borderColor: '#00FFFF',
-      backgroundColor: 'rgba(0, 255, 255, 0.1)',
+      borderColor: '#006400', // DUNKLES GRÜN
+      backgroundColor: 'rgba(0, 100, 0, 0.1)',
       minHeight: 56,
-      shadowColor: '#00FFFF',
+      shadowColor: '#006400',
       shadowOffset: { width: 0, height: 0 },
       shadowOpacity: 0.6,
       shadowRadius: 15,
@@ -9372,7 +9372,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       fontWeight: '700',
       textTransform: 'uppercase',
       letterSpacing: 1.5,
-      textShadowColor: '#00FFFF',
+      textShadowColor: '#006400',
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: 8,
     },
