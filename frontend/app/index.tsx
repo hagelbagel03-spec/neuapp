@@ -504,7 +504,7 @@ const LoginScreen = ({ appConfig }) => {
 
   return (
     <SafeAreaView style={dynamicStyles.container}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.primary} />
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
       <KeyboardAvoidingView 
         style={dynamicStyles.content}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
