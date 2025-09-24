@@ -630,14 +630,39 @@ const LoginScreen = ({ appConfig }) => {
               </View>
             </View>
 
-            <ModernButton
-              title={loading ? "Anmeldung läuft..." : "Anmelden"}
-              icon={loading ? undefined : "log-in"}
+            <TouchableOpacity
+              style={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: (!email?.trim() || !password?.trim() || loading) ? 'rgba(103, 126, 234, 0.4)' : '#667eea',
+                borderRadius: 28,
+                paddingVertical: 18,
+                paddingHorizontal: 32,
+                marginBottom: 16,
+                shadowColor: '#667eea',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.3,
+                shadowRadius: 12,
+                elevation: 8,
+                opacity: (!email?.trim() || !password?.trim() || loading) ? 0.6 : 1,
+              }}
               onPress={handleLogin}
-              disabled={!email?.trim() || !password?.trim()}
-              loading={loading}
-              style={{ marginBottom: 16 }}
-            />
+              disabled={!email?.trim() || !password?.trim() || loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#ffffff" size="small" />
+              ) : (
+                <Ionicons name="log-in" size={20} color="#ffffff" style={{ marginRight: 8 }} />
+              )}
+              <Text style={{
+                color: '#ffffff',
+                fontSize: 18,
+                fontWeight: '600',
+              }}>
+                {loading ? "Anmeldung läuft..." : "Anmelden"}
+              </Text>
+            </TouchableOpacity>
           </View>
 
           {/* Info Card */}
