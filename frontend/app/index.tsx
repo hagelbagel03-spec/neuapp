@@ -31,12 +31,42 @@ import ShiftManagementComponent from './components/ShiftManagementComponent';
 
 const { width, height } = Dimensions.get('window');
 
-// API Configuration - Use environment variable
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://212.227.57.238:8001";
+// API Configuration - CYBER SYSTEM ACCESS
+const API_URL = "/api";
 
-// MOBILE RESPONSIVE - NUR DIE WICHTIGSTEN FIXES
+// 🚀 ULTRA-MODERN RESPONSIVE - CYBER INTERFACE
 const isSmallScreen = width < 400;
 const isMediumScreen = width >= 400 && width < 600;
+
+// 🎨 CYBER-FUTURISTIC THEME - ULTRA MODERN COLORS
+const CyberTheme = {
+  // Neon Colors - Ultra Bright
+  neonCyan: '#00FFFF',
+  neonMagenta: '#FF00FF', 
+  neonGreen: '#00FF41',
+  neonOrange: '#FF4500',
+  neonPurple: '#8A2BE2',
+  
+  // Dark Base - Pure Black
+  blackPure: '#000000',
+  blackSoft: '#0A0A0A',
+  blackCard: '#111111',
+  blackSurface: '#1A1A1A',
+  
+  // Glass & Blur Effects
+  glassLight: 'rgba(255, 255, 255, 0.03)',
+  glassDark: 'rgba(0, 0, 0, 0.7)',
+  
+  // Text Colors
+  textWhite: '#FFFFFF',
+  textGray: '#CCCCCC', 
+  textDark: '#666666',
+  
+  // Status
+  success: '#00FF41',
+  danger: '#FF3333',
+  warning: '#FFD700',
+};
 
 // Theme Context für Dark/Light Mode
 const ThemeContext = createContext();
