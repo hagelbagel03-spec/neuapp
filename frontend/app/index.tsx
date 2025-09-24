@@ -494,14 +494,6 @@ const LoginScreen = ({ appConfig }) => {
       letterSpacing: 1,
     },
   });
-    subtitle: {
-      fontSize: 16,
-      color: CyberTheme.textGray, // CYBER: Gray subtitle
-      textAlign: 'center',
-      fontWeight: '600',
-      letterSpacing: 2,
-      textTransform: 'uppercase',
-    },
     form: {
       marginBottom: 64,
     },
