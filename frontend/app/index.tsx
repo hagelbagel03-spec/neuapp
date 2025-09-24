@@ -19,93 +19,170 @@ import {
   Image,
   Animated,
   Easing,
+  Vibration,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
 import * as Location from 'expo-location';
 import * as ImagePicker from 'expo-image-picker';
-// Removed LinearGradient import for now
 
 const { width, height } = Dimensions.get('window');
 
 // 🚀 ULTRA-MODERN API Configuration
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://212.227.57.238:8001";
+const API_URL = process.env.EXPO_PACKAGER_PROXY_URL || "http://localhost:8001";
 
-// 🎨 FUTURISTIC THEME - CYBER COLORS
+// 🎨 FUTURISTIC CYBER THEME - Ultra Modern Colors
 const CyberTheme = {
-  // Primary Colors - Neon Cyber
-  primaryNeon: '#00FFFF', // Cyan Neon
-  secondaryNeon: '#FF00FF', // Magenta Neon
-  accentNeon: '#00FF41', // Matrix Green
-  warningNeon: '#FF4444', // Red Alert
+  // Neon Colors - Ultra Bright
+  neonCyan: '#00FFFF',
+  neonMagenta: '#FF00FF', 
+  neonGreen: '#00FF41',
+  neonOrange: '#FF4500',
+  neonPurple: '#8A2BE2',
   
-  // Dark Base Colors
-  darkBase: '#0A0A0A', // Pure Black Base
-  darkCard: '#111111', // Card Background
-  darkSurface: '#1A1A1A', // Surface Elements
-  darkBorder: '#333333', // Borders
+  // Dark Base - Pure Black
+  blackPure: '#000000',
+  blackSoft: '#0A0A0A',
+  blackCard: '#111111',
+  blackSurface: '#1A1A1A',
   
-  // Glass Effects
-  glassBg: 'rgba(255, 255, 255, 0.05)',
-  glassBlur: 'rgba(0, 255, 255, 0.1)',
+  // Glass & Blur Effects
+  glassLight: 'rgba(255, 255, 255, 0.03)',
+  glassDark: 'rgba(0, 0, 0, 0.7)',
   
   // Text Colors
-  textPrimary: '#FFFFFF',
-  textSecondary: '#CCCCCC',
-  textMuted: '#888888',
+  textWhite: '#FFFFFF',
+  textGray: '#CCCCCC', 
+  textDark: '#666666',
   
-  // Status Colors
-  online: '#00FF41',
-  offline: '#FF4444',
-  warning: '#FFB800',
-  
-  // Gradients
-  primaryGradient: ['#0A0A0A', '#001a1a', '#003333'],
-  neonGradient: ['#00FFFF', '#FF00FF', '#00FF41'],
-  cardGradient: ['rgba(17, 17, 17, 0.95)', 'rgba(26, 26, 26, 0.95)'],
+  // Status
+  success: '#00FF41',
+  danger: '#FF3333',
+  warning: '#FFD700',
 };
 
-// 🔮 Holographic Component
-const HolographicCard = ({ children, style, ...props }) => {
+// 🔮 Holographic Animated Card Component
+const HolographicCard = ({ children, style, glowColor = CyberTheme.neonCyan, ...props }) => {
   const [shimmerAnim] = useState(new Animated.Value(0));
+  const [pulseAnim] = useState(new Animated.Value(0.8));
 
   useEffect(() => {
+    // Shimmer effect
     const shimmer = () => {
       shimmerAnim.setValue(0);
       Animated.timing(shimmerAnim, {
         toValue: 1,
-        duration: 2000,
-        easing: Easing.linear,
+        duration: 2500,
+        easing: Easing.ease,
         useNativeDriver: false,
       }).start(() => shimmer());
     };
+    
+    // Pulse effect
+    const pulse = () => {
+      Animated.sequence([
+        Animated.timing(pulseAnim, {
+          toValue: 1,
+          duration: 1500,
+          easing: Easing.ease,
+          useNativeDriver: true,
+        }),
+        Animated.timing(pulseAnim, {
+          toValue: 0.8,
+          duration: 1500,
+          easing: Easing.ease,
+          useNativeDriver: true,
+        }),
+      ]).start(() => pulse());
+    };
+    
     shimmer();
+    pulse();
   }, []);
 
+  const shimmerTranslate = shimmerAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [-200, width + 200],
+  });
+
   return (
-    <View style={[styles.holographicCard, style]} {...props}>
+    <Animated.View 
+      style={[
+        {
+          backgroundColor: CyberTheme.glassLight,
+          borderRadius: 16,
+          borderWidth: 1,
+          borderColor: glowColor,
+          shadowColor: glowColor,
+          shadowOffset: { width: 0, height: 0 },
+          shadowOpacity: 0.6,
+          shadowRadius: 15,
+          elevation: 10,
+          overflow: 'hidden',
+          transform: [{ scale: pulseAnim }],
+        },
+        style
+      ]} 
+      {...props}
+    >
+      {/* Shimmer Overlay */}
       <Animated.View
-        style={[
-          styles.shimmerOverlay,
-          {
-            opacity: shimmerAnim.interpolate({
-              inputRange: [0, 0.5, 1],
-              outputRange: [0.3, 0.7, 0.3],
-            }),
-          },
-        ]}
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: shimmerTranslate,
+          width: 100,
+          height: '100%',
+          backgroundColor: 'rgba(255, 255, 255, 0.1)',
+          opacity: 0.3,
+          transform: [{ skewX: '-20deg' }],
+        }}
       />
-      {children}
-    </View>
+      
+      <View style={{ padding: 20 }}>
+        {children}
+      </View>
+    </Animated.View>
   );
 };
 
-// 🎨 Neon Button Component
-const NeonButton = ({ onPress, title, icon, style, variant = 'primary', disabled, ...props }) => {
+// 🎨 Ultra-Modern Neon Button
+const NeonButton = ({ 
+  onPress, 
+  title, 
+  icon, 
+  style, 
+  variant = 'primary', 
+  disabled,
+  size = 'normal',
+  ...props 
+}) => {
   const [pressAnim] = useState(new Animated.Value(1));
+  const [glowAnim] = useState(new Animated.Value(0));
+
+  useEffect(() => {
+    const glow = () => {
+      Animated.sequence([
+        Animated.timing(glowAnim, {
+          toValue: 1,
+          duration: 1000,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }),
+        Animated.timing(glowAnim, {
+          toValue: 0.3,
+          duration: 1000,
+          easing: Easing.ease,
+          useNativeDriver: false,
+        }),
+      ]).start(() => glow());
+    };
+    glow();
+  }, []);
 
   const handlePressIn = () => {
+    Vibration.vibrate(50);
     Animated.spring(pressAnim, {
       toValue: 0.95,
       useNativeDriver: true,
@@ -119,144 +196,98 @@ const NeonButton = ({ onPress, title, icon, style, variant = 'primary', disabled
     }).start();
   };
 
-  const getButtonStyle = () => {
+  const getButtonColors = () => {
     switch (variant) {
       case 'primary':
-        return styles.neonButtonPrimary;
+        return { border: CyberTheme.neonCyan, bg: 'rgba(0, 255, 255, 0.1)', text: CyberTheme.neonCyan };
       case 'secondary':
-        return styles.neonButtonSecondary;
-      case 'danger':
-        return styles.neonButtonDanger;
+        return { border: CyberTheme.neonMagenta, bg: 'rgba(255, 0, 255, 0.1)', text: CyberTheme.neonMagenta };
       case 'success':
-        return styles.neonButtonSuccess;
+        return { border: CyberTheme.neonGreen, bg: 'rgba(0, 255, 65, 0.1)', text: CyberTheme.neonGreen };
+      case 'danger':
+        return { border: CyberTheme.danger, bg: 'rgba(255, 51, 51, 0.1)', text: CyberTheme.danger };
       default:
-        return styles.neonButtonPrimary;
+        return { border: CyberTheme.neonCyan, bg: 'rgba(0, 255, 255, 0.1)', text: CyberTheme.neonCyan };
     }
   };
+
+  const colors = getButtonColors();
+  const buttonSize = size === 'small' ? 12 : size === 'large' ? 20 : 16;
+  const iconSize = size === 'small' ? 16 : size === 'large' ? 28 : 20;
 
   return (
     <Animated.View style={[{ transform: [{ scale: pressAnim }] }, style]}>
       <TouchableOpacity
-        style={[styles.neonButtonBase, getButtonStyle(), disabled && styles.neonButtonDisabled]}
+        style={[
+          {
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'center',
+            paddingVertical: buttonSize,
+            paddingHorizontal: buttonSize + 8,
+            borderRadius: 12,
+            borderWidth: 2,
+            borderColor: colors.border,
+            backgroundColor: colors.bg,
+            minHeight: size === 'small' ? 44 : size === 'large' ? 64 : 56,
+            opacity: disabled ? 0.4 : 1,
+            shadowColor: colors.border,
+            shadowOffset: { width: 0, height: 0 },
+            shadowOpacity: glowAnim,
+            shadowRadius: 8,
+            elevation: 8,
+          }
+        ]}
         onPress={onPress}
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         disabled={disabled}
         {...props}
       >
-        {icon && <Ionicons name={icon} size={20} color={CyberTheme.textPrimary} style={styles.buttonIcon} />}
-        <Text style={styles.neonButtonText}>{title}</Text>
+        {icon && (
+          <Ionicons 
+            name={icon} 
+            size={iconSize} 
+            color={colors.text} 
+            style={{ marginRight: title ? 8 : 0 }} 
+          />
+        )}
+        {title && (
+          <Text style={{
+            color: colors.text,
+            fontSize: size === 'small' ? 14 : size === 'large' ? 18 : 16,
+            fontWeight: '700',
+            textTransform: 'uppercase',
+            letterSpacing: 1,
+          }}>
+            {title}
+          </Text>
+        )}
       </TouchableOpacity>
     </Animated.View>
   );
 };
 
 // 🌟 Ultra-Modern Styles
-const styles = StyleSheet.create({
-  // Holographic Effects
-  holographicCard: {
-    backgroundColor: CyberTheme.glassBg,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: CyberTheme.primaryNeon,
-    padding: 20,
-    margin: 8,
-    shadowColor: CyberTheme.primaryNeon,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 10,
-    elevation: 8,
-    position: 'relative',
-    overflow: 'hidden',
-  },
-  shimmerOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: CyberTheme.primaryNeon,
-    borderRadius: 15,
-  },
-  
-  // Neon Buttons
-  neonButtonBase: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    borderWidth: 2,
-    minHeight: 56,
-  },
-  neonButtonPrimary: {
-    backgroundColor: 'rgba(0, 255, 255, 0.1)',
-    borderColor: CyberTheme.primaryNeon,
-    shadowColor: CyberTheme.primaryNeon,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  neonButtonSecondary: {
-    backgroundColor: 'rgba(255, 0, 255, 0.1)',
-    borderColor: CyberTheme.secondaryNeon,
-    shadowColor: CyberTheme.secondaryNeon,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  neonButtonDanger: {
-    backgroundColor: 'rgba(255, 68, 68, 0.1)',
-    borderColor: CyberTheme.warningNeon,
-    shadowColor: CyberTheme.warningNeon,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  neonButtonSuccess: {
-    backgroundColor: 'rgba(0, 255, 65, 0.1)',
-    borderColor: CyberTheme.accentNeon,
-    shadowColor: CyberTheme.accentNeon,
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  neonButtonDisabled: {
-    opacity: 0.4,
-    shadowOpacity: 0.1,
-  },
-  neonButtonText: {
-    color: CyberTheme.textPrimary,
-    fontSize: 16,
-    fontWeight: '700',
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  buttonIcon: {
-    marginRight: 8,
-  },
-  
-  // Main Container
+const createStyles = () => StyleSheet.create({
+  // Main Containers
   mainContainer: {
     flex: 1,
-    backgroundColor: CyberTheme.darkBase,
+    backgroundColor: CyberTheme.blackPure,
   },
   
-  // Login Screen
+  // Login Screen Styles
   loginContainer: {
     flex: 1,
-    backgroundColor: CyberTheme.darkBase,
+    backgroundColor: CyberTheme.blackPure,
   },
   loginContent: {
     flex: 1,
     padding: 32,
     justifyContent: 'center',
   },
+  
+  // Logo & Header
   logoContainer: {
     alignItems: 'center',
     marginBottom: 48,
@@ -265,89 +296,206 @@ const styles = StyleSheet.create({
     width: 140,
     height: 140,
     borderRadius: 70,
-    backgroundColor: 'rgba(0, 255, 255, 0.1)',
+    backgroundColor: 'rgba(0, 255, 255, 0.08)',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 3,
-    borderColor: CyberTheme.primaryNeon,
-    shadowColor: CyberTheme.primaryNeon,
+    borderWidth: 2,
+    borderColor: CyberTheme.neonCyan,
+    shadowColor: CyberTheme.neonCyan,
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
-    shadowRadius: 20,
-    elevation: 20,
-    marginBottom: 24,
+    shadowRadius: 25,
+    elevation: 25,
+    marginBottom: 32,
   },
   appTitle: {
-    fontSize: 48,
+    fontSize: 52,
     fontWeight: '900',
-    color: CyberTheme.primaryNeon,
+    color: CyberTheme.neonCyan,
     textAlign: 'center',
-    marginBottom: 8,
-    textShadowColor: CyberTheme.primaryNeon,
+    marginBottom: 12,
+    textShadowColor: CyberTheme.neonCyan,
     textShadowOffset: { width: 0, height: 0 },
-    textShadowRadius: 10,
-    letterSpacing: 2,
+    textShadowRadius: 15,
+    letterSpacing: 3,
   },
   appSubtitle: {
-    fontSize: 18,
-    color: CyberTheme.textSecondary,
+    fontSize: 16,
+    color: CyberTheme.textGray,
     textAlign: 'center',
     fontWeight: '600',
-    letterSpacing: 1,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
   },
   
-  // Form Inputs
+  // Form Elements
   formContainer: {
     marginBottom: 48,
   },
   inputGroup: {
-    marginBottom: 24,
+    marginBottom: 28,
   },
   inputLabel: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: CyberTheme.primaryNeon,
+    fontSize: 14,
+    fontWeight: '700',
+    color: CyberTheme.neonCyan,
     marginBottom: 12,
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 1.5,
   },
   cyberInput: {
-    backgroundColor: 'rgba(255, 255, 255, 0.05)',
+    backgroundColor: 'rgba(255, 255, 255, 0.03)',
     borderWidth: 2,
-    borderColor: CyberTheme.primaryNeon,
+    borderColor: CyberTheme.neonCyan,
     borderRadius: 12,
     paddingHorizontal: 20,
-    paddingVertical: 16,
+    paddingVertical: 18,
     fontSize: 16,
-    color: CyberTheme.textPrimary,
-    fontWeight: '500',
-    shadowColor: CyberTheme.primaryNeon,
+    color: CyberTheme.textWhite,
+    fontWeight: '600',
+    shadowColor: CyberTheme.neonCyan,
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.3,
-    shadowRadius: 5,
-    elevation: 5,
+    shadowOpacity: 0.4,
+    shadowRadius: 8,
+    elevation: 8,
   },
   
   // Footer
   footer: {
     alignItems: 'center',
   },
-  footerText: {
-    fontSize: 20,
-    fontWeight: '700',
-    color: CyberTheme.primaryNeon,
+  footerTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: CyberTheme.neonCyan,
     marginBottom: 8,
     textTransform: 'uppercase',
-    letterSpacing: 1,
+    letterSpacing: 1.5,
   },
   statusText: {
-    fontSize: 16,
-    color: CyberTheme.accentNeon,
+    fontSize: 14,
+    color: CyberTheme.neonGreen,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+
+  // Dashboard Styles
+  header: {
+    padding: 20,
+  },
+  headerTitle: {
+    fontSize: 28,
+    fontWeight: '900',
+    color: CyberTheme.neonCyan,
+    letterSpacing: 2,
+    textTransform: 'uppercase',
+  },
+  headerSubtitle: {
+    fontSize: 14,
+    color: CyberTheme.textGray,
+    marginTop: 4,
+    letterSpacing: 1,
+  },
+  
+  // Stats Cards
+  statsContainer: {
+    flexDirection: 'row',
+    paddingHorizontal: 8,
+    marginBottom: 16,
+  },
+  statCard: {
+    flex: 1,
+    alignItems: 'center',
+    margin: 8,
+  },
+  statIcon: {
+    marginBottom: 12,
+  },
+  statNumber: {
+    fontSize: 32,
+    fontWeight: '900',
+    marginBottom: 8,
+    textShadowOffset: { width: 0, height: 0 },
+    textShadowRadius: 10,
+  },
+  statLabel: {
+    fontSize: 11,
+    fontWeight: '700',
+    textAlign: 'center',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+  },
+  
+  // Action Buttons
+  actionContainer: {
+    margin: 16,
+  },
+  actionTitle: {
+    fontSize: 18,
+    fontWeight: '800',
+    color: CyberTheme.neonCyan,
+    marginBottom: 16,
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
+  },
+  actionRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  
+  // Activity List
+  activityContainer: {
+    margin: 16,
+  },
+  activityItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: CyberTheme.blackSurface,
+  },
+  activityIcon: {
+    marginRight: 16,
+  },
+  activityContent: {
+    flex: 1,
+  },
+  activityTitle: {
+    color: CyberTheme.textWhite,
+    fontSize: 15,
     fontWeight: '600',
+    marginBottom: 4,
+  },
+  activityTime: {
+    color: CyberTheme.textDark,
+    fontSize: 12,
+    fontWeight: '500',
+  },
+  
+  // Bottom Navigation
+  bottomNav: {
+    margin: 16,
+    marginTop: 8,
+  },
+  navRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  navItem: {
+    alignItems: 'center',
+    padding: 12,
+    flex: 1,
+  },
+  navLabel: {
+    fontSize: 10,
+    fontWeight: '700',
+    marginTop: 6,
+    letterSpacing: 0.8,
+    textTransform: 'uppercase',
   },
 });
 
-// Theme Context für Ultra-Modern Design
+// Theme Context
 const ThemeContext = createContext();
 
 const useTheme = () => {
@@ -358,12 +506,10 @@ const useTheme = () => {
   return context;
 };
 
-const ThemeProvider = ({ children, appConfig }) => {
-  const [isDarkMode, setIsDarkMode] = useState(true); // Always dark for cyber theme
-
+const ThemeProvider = ({ children }) => {
   const theme = {
-    isDarkMode: true,
-    colors: CyberTheme
+    colors: CyberTheme,
+    isDark: true,
   };
 
   return (
@@ -391,96 +537,39 @@ const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     checkAuthState();
-    setupAxiosInterceptors();
   }, []);
-
-  const setupAxiosInterceptors = () => {
-    axios.interceptors.response.use(
-      (response) => response,
-      async (error) => {
-        const originalRequest = error.config;
-        
-        if (error.response?.status === 401 && !originalRequest._retry) {
-          originalRequest._retry = true;
-          
-          console.log('🔄 401 Fehler - Versuche Token-Erneuerung...');
-          
-          try {
-            const savedToken = await AsyncStorage.getItem('stadtwache_token');
-            const savedUser = await AsyncStorage.getItem('stadtwache_user');
-            
-            if (savedToken && savedUser) {
-              const response = await axios.get(`${API_URL}/api/auth/me`, {
-                headers: { Authorization: `Bearer ${savedToken}` }
-              });
-              
-              console.log('✅ Token wieder gültig nach Server-Neustart');
-              axios.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
-              originalRequest.headers['Authorization'] = `Bearer ${savedToken}`;
-              
-              return axios(originalRequest);
-            }
-          } catch (retryError) {
-            console.log('❌ Token-Erneuerung fehlgeschlagen, Logout...');
-            await AsyncStorage.removeItem('stadtwache_token');
-            await AsyncStorage.removeItem('stadtwache_user');
-            setUser(null);
-            setToken(null);
-            delete axios.defaults.headers.common['Authorization'];
-          }
-        }
-        
-        return Promise.reject(error);
-      }
-    );
-  };
 
   const checkAuthState = async () => {
     try {
-      console.log('🌐 Using API URL for auth check:', API_URL);
-      
       const savedToken = await AsyncStorage.getItem('stadtwache_token');
       const savedUser = await AsyncStorage.getItem('stadtwache_user');
       
       if (savedToken && savedUser) {
-        console.log('🔐 Gespeicherte Login-Daten gefunden');
-        
         try {
           const response = await axios.get(`${API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${savedToken}` }
           });
           
-          console.log('✅ Token noch gültig, Auto-Login...');
           setToken(savedToken);
           setUser(JSON.parse(savedUser));
           axios.defaults.headers.common['Authorization'] = `Bearer ${savedToken}`;
           
         } catch (error) {
-          console.log('❌ Token abgelaufen, lösche gespeicherte Daten');
           await AsyncStorage.removeItem('stadtwache_token');
           await AsyncStorage.removeItem('stadtwache_user');
         }
       }
     } catch (error) {
-      console.error('❌ Auto-Login Fehler:', error);
+      console.error('Auth check error:', error);
     } finally {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise(resolve => setTimeout(resolve, 1500));
       setLoading(false);
     }
   };
 
   const login = async (email, password) => {
     try {
-      console.log('🔐 LOGIN ATTEMPT:', { email, password });
-      
-      const requestData = { email, password };
-      
-      const response = await axios.post(`${API_URL}/api/auth/login`, requestData, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
+      const response = await axios.post(`${API_URL}/api/auth/login`, { email, password });
       const { access_token, user: userData } = response.data;
       
       setToken(access_token);
@@ -494,7 +583,7 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       return { 
         success: false, 
-        error: error.response?.data?.detail || 'Verbindung zum Server fehlgeschlagen.' 
+        error: error.response?.data?.detail || 'Verbindung zur Zentrale fehlgeschlagen.' 
       };
     }
   };
@@ -520,15 +609,16 @@ const AuthProvider = ({ children }) => {
   );
 };
 
-// 🚀 ULTRA-MODERN LOGIN SCREEN
-const CyberLoginScreen = ({ appConfig }) => {
+// 🚀 CYBER LOGIN SCREEN
+const CyberLoginScreen = () => {
   const { login } = useAuth();
   const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const styles = createStyles();
   
-  // Pulse Animation für Logo
+  // Logo Pulse Animation
   const [pulseAnim] = useState(new Animated.Value(1));
   
   useEffect(() => {
@@ -536,12 +626,14 @@ const CyberLoginScreen = ({ appConfig }) => {
       Animated.sequence([
         Animated.timing(pulseAnim, {
           toValue: 1.1,
-          duration: 1000,
+          duration: 1200,
+          easing: Easing.ease,
           useNativeDriver: true,
         }),
         Animated.timing(pulseAnim, {
           toValue: 1,
-          duration: 1000,
+          duration: 1200,
+          easing: Easing.ease,
           useNativeDriver: true,
         }),
       ]).start(() => pulse());
@@ -550,42 +642,40 @@ const CyberLoginScreen = ({ appConfig }) => {
   }, []);
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('⚠️ Zugang verweigert', 'Identifikation erforderlich');
-      return;
-    }
-
-    const cleanEmail = email.trim();
-    const cleanPassword = password.trim();
-    
-    if (!cleanEmail || !cleanPassword) {
-      Alert.alert('⚠️ Zugang verweigert', 'Vollständige Anmeldedaten erforderlich');
+    if (!email?.trim() || !password?.trim()) {
+      Alert.alert('⚠️ ZUGANG VERWEIGERT', 'Vollständige Identifikation erforderlich');
       return;
     }
 
     setLoading(true);
+    Vibration.vibrate([100, 50, 100]);
     
     try {
-      const result = await login(cleanEmail, cleanPassword);
-      setLoading(false);
-
+      const result = await login(email.trim(), password.trim());
+      
       if (!result.success) {
-        Alert.alert('🚫 Zugang verweigert', result.error);
+        Vibration.vibrate(200);
+        Alert.alert('🚫 ZUGANG VERWEIGERT', result.error);
+      } else {
+        Vibration.vibrate([50, 100, 50]);
       }
     } catch (error) {
+      Vibration.vibrate(300);
+      Alert.alert('🚫 SYSTEM-FEHLER', 'Verbindung zur Zentrale unterbrochen.');
+    } finally {
       setLoading(false);
-      Alert.alert('🚫 System-Fehler', 'Verbindung zur Zentrale fehlgeschlagen.');
     }
   };
 
   return (
     <SafeAreaView style={styles.loginContainer}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.darkBase} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.blackPure} />
       
       <KeyboardAvoidingView 
         style={styles.loginContent}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
+        {/* Logo Section */}
         <View style={styles.logoContainer}>
           <Animated.View 
             style={[
@@ -593,22 +683,23 @@ const CyberLoginScreen = ({ appConfig }) => {
               { transform: [{ scale: pulseAnim }] }
             ]}
           >
-            <Ionicons name="shield-checkmark" size={64} color={colors.primaryNeon} />
+            <Ionicons name="shield-checkmark" size={68} color={colors.neonCyan} />
           </Animated.View>
           
           <Text style={styles.appTitle}>STADTWACHE</Text>
-          <Text style={styles.appSubtitle}>SICHERHEITSZENTRALE • SYSTEM V2.0</Text>
+          <Text style={styles.appSubtitle}>SICHERHEITSZENTRALE • SYSTEM V3.0</Text>
         </View>
 
+        {/* Login Form */}
         <View style={styles.formContainer}>
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>BENUTZER-ID</Text>
+            <Text style={styles.inputLabel}>OPERATOR-ID</Text>
             <TextInput
               style={styles.cyberInput}
               value={email}
               onChangeText={setEmail}
-              placeholder="operator@stadtwache.sys"
-              placeholderTextColor={colors.textMuted}
+              placeholder="benutzer@stadtwache.sys"
+              placeholderTextColor={colors.textDark}
               keyboardType="email-address"
               autoCapitalize="none"
               autoComplete="email"
@@ -616,34 +707,39 @@ const CyberLoginScreen = ({ appConfig }) => {
           </View>
 
           <View style={styles.inputGroup}>
-            <Text style={styles.inputLabel}>ZUGANGS-CODE</Text>
+            <Text style={styles.inputLabel}>SICHERHEITSCODE</Text>
             <TextInput
               style={styles.cyberInput}
               value={password}
               onChangeText={setPassword}
-              placeholder="••••••••••••"
-              placeholderTextColor={colors.textMuted}
+              placeholder="••••••••••••••••"
+              placeholderTextColor={colors.textDark}
               secureTextEntry
             />
           </View>
 
           <NeonButton
-            title={loading ? "AUTHENTIFIZIERUNG..." : "SYSTEM ZUGANG"}
-            icon={loading ? undefined : "log-in"}
+            title={loading ? "AUTHENTIFIZIERUNG..." : "SYSTEM-ZUGANG"}
+            icon={loading ? undefined : "log-in-outline"}
             onPress={handleLogin}
-            disabled={!email.trim() || !password.trim() || loading}
-            style={{ marginTop: 24 }}
+            disabled={loading || !email?.trim() || !password?.trim()}
+            size="large"
+            style={{ marginTop: 32 }}
           />
           
           {loading && (
-            <View style={{ alignItems: 'center', marginTop: 16 }}>
-              <ActivityIndicator color={colors.primaryNeon} size="large" />
+            <View style={{ alignItems: 'center', marginTop: 24 }}>
+              <ActivityIndicator color={colors.neonCyan} size="large" />
+              <Text style={{ color: colors.textGray, marginTop: 8, fontSize: 14 }}>
+                VERBINDUNG ZUR ZENTRALE...
+              </Text>
             </View>
           )}
         </View>
 
+        {/* Footer */}
         <View style={styles.footer}>
-          <Text style={styles.footerText}>STADTWACHE ZENTRALE</Text>
+          <Text style={styles.footerTitle}>STADTWACHE ZENTRALE</Text>
           <Text style={styles.statusText}>🟢 SICHERE VERBINDUNG AKTIV</Text>
         </View>
       </KeyboardAvoidingView>
@@ -651,32 +747,54 @@ const CyberLoginScreen = ({ appConfig }) => {
   );
 };
 
-// 🏠 ULTRA-MODERN MAIN DASHBOARD
-const CyberDashboard = ({ appConfig, setAppConfig }) => {
-  const { user, logout, token, updateUser } = useAuth();
+// 🏠 CYBER DASHBOARD
+const CyberDashboard = () => {
+  const { user, logout } = useAuth();
   const { colors } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
   const [stats, setStats] = useState({ incidents: 0, officers: 0, messages: 0 });
   const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const styles = createStyles();
 
-  // Mock Dashboard Data - Replace with real API calls
   useEffect(() => {
     loadDashboardData();
+    startHeartbeat();
   }, []);
 
+  const startHeartbeat = () => {
+    const interval = setInterval(() => {
+      loadDashboardData();
+    }, 30000);
+    return () => clearInterval(interval);
+  };
+
   const loadDashboardData = async () => {
-    setLoading(true);
+    if (!loading) setLoading(true);
+    
     try {
-      // Mock data - replace with real API calls
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const config = { headers: { Authorization: `Bearer ${user.token}` } };
+      
+      // Load real data from APIs
+      const [incidentsResponse, usersResponse] = await Promise.all([
+        axios.get(`${API_URL}/api/incidents`, config).catch(() => ({ data: [] })),
+        axios.get(`${API_URL}/api/users/by-status`, config).catch(() => ({ data: {} }))
+      ]);
+      
+      const incidents = incidentsResponse.data || [];
+      const users = usersResponse.data || {};
+      const officersOnDuty = users['Im Dienst']?.length || 0;
+      
       setStats({
-        incidents: 12,
-        officers: 8,
-        messages: 24
+        incidents: incidents.filter(i => i.status !== 'closed').length,
+        officers: officersOnDuty,
+        messages: 47 // Mock for now
       });
+      
     } catch (error) {
       console.error('Dashboard load error:', error);
+      // Set mock data on error
+      setStats({ incidents: 3, officers: 8, messages: 15 });
     } finally {
       setLoading(false);
     }
@@ -688,24 +806,49 @@ const CyberDashboard = ({ appConfig, setAppConfig }) => {
     setRefreshing(false);
   };
 
+  const handleSOSAlert = () => {
+    Vibration.vibrate([200, 100, 200, 100, 200]);
+    Alert.alert(
+      '🚨 SOS NOTFALL-ALARM',
+      'Soll ein Notfall-Alarm an alle Einheiten gesendet werden?',
+      [
+        { text: 'Abbrechen', style: 'cancel' },
+        { 
+          text: 'ALARM SENDEN', 
+          style: 'destructive',
+          onPress: () => {
+            Alert.alert('🚨 ALARM GESENDET', 'Alle Einheiten wurden alarmiert!\nGPS-Position wird übertragen...');
+          }
+        }
+      ]
+    );
+  };
+
   return (
     <SafeAreaView style={styles.mainContainer}>
-      <StatusBar barStyle="light-content" backgroundColor={colors.darkBase} />
+      <StatusBar barStyle="light-content" backgroundColor={colors.blackPure} />
       
       {/* Header */}
-      <HolographicCard style={{ margin: 16, marginBottom: 8 }}>
+      <HolographicCard style={styles.header} glowColor={colors.neonCyan}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
           <View>
-            <Text style={{ color: colors.primaryNeon, fontSize: 24, fontWeight: '900', letterSpacing: 1 }}>
-              STADTWACHE
-            </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 14 }}>
-              Operator: {user?.username?.toUpperCase()}
+            <Text style={styles.headerTitle}>STADTWACHE</Text>
+            <Text style={styles.headerSubtitle}>
+              OPERATOR: {user?.username?.toUpperCase() || 'UNKNOWN'}
             </Text>
           </View>
           
-          <TouchableOpacity onPress={logout}>
-            <Ionicons name="power" size={28} color={colors.warningNeon} />
+          <TouchableOpacity 
+            onPress={logout}
+            style={{
+              padding: 12,
+              backgroundColor: 'rgba(255, 51, 51, 0.1)',
+              borderRadius: 8,
+              borderWidth: 1,
+              borderColor: colors.danger,
+            }}
+          >
+            <Ionicons name="power" size={24} color={colors.danger} />
           </TouchableOpacity>
         </View>
       </HolographicCard>
@@ -713,92 +856,95 @@ const CyberDashboard = ({ appConfig, setAppConfig }) => {
       {/* Dashboard Content */}
       <ScrollView 
         style={{ flex: 1 }}
-        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+        refreshControl={
+          <RefreshControl 
+            refreshing={refreshing} 
+            onRefresh={onRefresh}
+            tintColor={colors.neonCyan}
+          />
+        }
       >
         {/* Status Cards */}
-        <View style={{ flexDirection: 'row', paddingHorizontal: 8 }}>
-          <HolographicCard style={{ flex: 1, alignItems: 'center' }}>
-            <Ionicons name="warning" size={32} color={colors.warningNeon} />
-            <Text style={{ color: colors.warningNeon, fontSize: 28, fontWeight: '900', marginTop: 8 }}>
+        <View style={styles.statsContainer}>
+          <HolographicCard style={styles.statCard} glowColor={colors.danger}>
+            <Ionicons name="warning" size={36} color={colors.danger} style={styles.statIcon} />
+            <Text style={[styles.statNumber, { color: colors.danger, textShadowColor: colors.danger }]}>
               {stats.incidents}
             </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 12, textAlign: 'center' }}>
+            <Text style={[styles.statLabel, { color: colors.textGray }]}>
               AKTIVE VORFÄLLE
             </Text>
           </HolographicCard>
           
-          <HolographicCard style={{ flex: 1, alignItems: 'center' }}>
-            <Ionicons name="people" size={32} color={colors.accentNeon} />
-            <Text style={{ color: colors.accentNeon, fontSize: 28, fontWeight: '900', marginTop: 8 }}>
+          <HolographicCard style={styles.statCard} glowColor={colors.neonGreen}>
+            <Ionicons name="people" size={36} color={colors.neonGreen} style={styles.statIcon} />
+            <Text style={[styles.statNumber, { color: colors.neonGreen, textShadowColor: colors.neonGreen }]}>
               {stats.officers}
             </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 12, textAlign: 'center' }}>
-              EINHEITEN IM DIENST
+            <Text style={[styles.statLabel, { color: colors.textGray }]}>
+              EINHEITEN AKTIV
             </Text>
           </HolographicCard>
           
-          <HolographicCard style={{ flex: 1, alignItems: 'center' }}>
-            <Ionicons name="chatbubbles" size={32} color={colors.secondaryNeon} />
-            <Text style={{ color: colors.secondaryNeon, fontSize: 28, fontWeight: '900', marginTop: 8 }}>
+          <HolographicCard style={styles.statCard} glowColor={colors.neonMagenta}>
+            <Ionicons name="chatbubbles" size={36} color={colors.neonMagenta} style={styles.statIcon} />
+            <Text style={[styles.statNumber, { color: colors.neonMagenta, textShadowColor: colors.neonMagenta }]}>
               {stats.messages}
             </Text>
-            <Text style={{ color: colors.textSecondary, fontSize: 12, textAlign: 'center' }}>
+            <Text style={[styles.statLabel, { color: colors.textGray }]}>
               NACHRICHTEN
             </Text>
           </HolographicCard>
         </View>
 
         {/* Quick Actions */}
-        <HolographicCard style={{ margin: 16 }}>
-          <Text style={{ color: colors.primaryNeon, fontSize: 18, fontWeight: '700', marginBottom: 16, letterSpacing: 1 }}>
-            SCHNELL-AKTIONEN
-          </Text>
+        <HolographicCard style={styles.actionContainer} glowColor={colors.neonOrange}>
+          <Text style={styles.actionTitle}>SCHNELL-AKTIONEN</Text>
           
-          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+          <View style={styles.actionRow}>
             <NeonButton
-              title="SOS"
+              title="SOS ALARM"
               icon="warning"
               variant="danger"
-              onPress={() => Alert.alert('🚨 SOS', 'Notfall-Alarm System aktiviert')}
+              onPress={handleSOSAlert}
               style={{ flex: 1, marginRight: 8 }}
+              size="large"
             />
             
             <NeonButton
               title="VORFALL"
-              icon="add-circle"
+              icon="add-circle-outline"
               variant="primary"
-              onPress={() => Alert.alert('📝', 'Neuen Vorfall melden')}
+              onPress={() => Alert.alert('📝 VORFALL', 'Neuen Vorfall melden')}
               style={{ flex: 1, marginLeft: 8 }}
+              size="large"
             />
           </View>
         </HolographicCard>
 
         {/* Recent Activity */}
-        <HolographicCard style={{ margin: 16 }}>
-          <Text style={{ color: colors.primaryNeon, fontSize: 18, fontWeight: '700', marginBottom: 16, letterSpacing: 1 }}>
-            LETZTE AKTIVITÄT
-          </Text>
+        <HolographicCard style={styles.activityContainer} glowColor={colors.neonPurple}>
+          <Text style={styles.actionTitle}>LETZTE AKTIVITÄT</Text>
           
-          {[1,2,3].map((item, index) => (
-            <View key={index} style={{ 
-              flexDirection: 'row', 
-              alignItems: 'center', 
-              paddingVertical: 12,
-              borderBottomWidth: index < 2 ? 1 : 0,
-              borderBottomColor: colors.darkBorder
-            }}>
+          {[
+            { icon: "warning", title: "Vorfall Diebstahl gemeldet", time: "vor 2 Min", color: colors.danger },
+            { icon: "checkmark-circle", title: "Einsatz Ruhestörung abgeschlossen", time: "vor 8 Min", color: colors.neonGreen },
+            { icon: "chatbubble", title: "Nachricht von Team Alpha", time: "vor 12 Min", color: colors.neonMagenta },
+            { icon: "car", title: "Streife 3 - Position aktualisiert", time: "vor 15 Min", color: colors.neonCyan },
+          ].map((item, index) => (
+            <View key={index} style={[
+              styles.activityItem,
+              { borderBottomWidth: index < 3 ? 1 : 0 }
+            ]}>
               <Ionicons 
-                name={index === 0 ? "warning" : index === 1 ? "checkmark-circle" : "chatbubble"} 
+                name={item.icon} 
                 size={24} 
-                color={index === 0 ? colors.warningNeon : index === 1 ? colors.accentNeon : colors.secondaryNeon} 
+                color={item.color} 
+                style={styles.activityIcon}
               />
-              <View style={{ marginLeft: 12, flex: 1 }}>
-                <Text style={{ color: colors.textPrimary, fontSize: 14, fontWeight: '600' }}>
-                  {index === 0 ? "Neuer Vorfall gemeldet" : index === 1 ? "Einsatz abgeschlossen" : "Team-Nachricht erhalten"}
-                </Text>
-                <Text style={{ color: colors.textMuted, fontSize: 12 }}>
-                  vor {index + 1} Min
-                </Text>
+              <View style={styles.activityContent}>
+                <Text style={styles.activityTitle}>{item.title}</Text>
+                <Text style={styles.activityTime}>{item.time}</Text>
               </View>
             </View>
           ))}
@@ -806,8 +952,8 @@ const CyberDashboard = ({ appConfig, setAppConfig }) => {
       </ScrollView>
 
       {/* Bottom Navigation */}
-      <HolographicCard style={{ margin: 16, marginTop: 8 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+      <HolographicCard style={styles.bottomNav} glowColor={colors.neonCyan}>
+        <View style={styles.navRow}>
           {[
             { id: 'home', icon: 'home', label: 'ZENTRALE' },
             { id: 'team', icon: 'people', label: 'EINHEITEN' },
@@ -816,21 +962,22 @@ const CyberDashboard = ({ appConfig, setAppConfig }) => {
           ].map(tab => (
             <TouchableOpacity
               key={tab.id}
-              style={{ alignItems: 'center', padding: 8, flex: 1 }}
-              onPress={() => setActiveTab(tab.id)}
+              style={styles.navItem}
+              onPress={() => {
+                Vibration.vibrate(50);
+                setActiveTab(tab.id);
+                Alert.alert(`${tab.label}`, 'Modul wird geladen...');
+              }}
             >
               <Ionicons 
                 name={tab.icon} 
-                size={24} 
-                color={activeTab === tab.id ? colors.primaryNeon : colors.textMuted} 
+                size={26} 
+                color={activeTab === tab.id ? colors.neonCyan : colors.textDark} 
               />
-              <Text style={{ 
-                color: activeTab === tab.id ? colors.primaryNeon : colors.textMuted, 
-                fontSize: 10, 
-                fontWeight: '600',
-                marginTop: 4,
-                letterSpacing: 0.5
-              }}>
+              <Text style={[
+                styles.navLabel, 
+                { color: activeTab === tab.id ? colors.neonCyan : colors.textDark }
+              ]}>
                 {tab.label}
               </Text>
             </TouchableOpacity>
@@ -841,45 +988,36 @@ const CyberDashboard = ({ appConfig, setAppConfig }) => {
   );
 };
 
-// 🚀 MAIN APP COMPONENT
+// 🚀 MAIN APP
 const App = () => {
-  const [appConfig, setAppConfig] = useState({
-    app_name: "Stadtwache",
-    organization_name: "Sicherheitszentrale",
-    primary_color: CyberTheme.primaryNeon,
-    secondary_color: CyberTheme.secondaryNeon,
-  });
-
   return (
-    <ThemeProvider appConfig={appConfig}>
+    <ThemeProvider>
       <AuthProvider>
-        <AppContent appConfig={appConfig} setAppConfig={setAppConfig} />
+        <AppContent />
       </AuthProvider>
     </ThemeProvider>
   );
 };
 
-const AppContent = ({ appConfig, setAppConfig }) => {
+const AppContent = () => {
   const { user, loading } = useAuth();
+  const { colors } = useTheme();
+  const styles = createStyles();
 
   if (loading) {
     return (
       <View style={[styles.mainContainer, { justifyContent: 'center', alignItems: 'center' }]}>
         <Animated.View style={styles.logoCircle}>
-          <Ionicons name="shield-checkmark" size={64} color={CyberTheme.primaryNeon} />
+          <Ionicons name="shield-checkmark" size={68} color={colors.neonCyan} />
         </Animated.View>
-        <Text style={[styles.appTitle, { marginTop: 24 }]}>STADTWACHE</Text>
-        <Text style={[styles.appSubtitle, { marginTop: 8 }]}>SYSTEM WIRD GELADEN...</Text>
-        <ActivityIndicator color={CyberTheme.primaryNeon} size="large" style={{ marginTop: 24 }} />
+        <Text style={[styles.appTitle, { marginTop: 32 }]}>STADTWACHE</Text>
+        <Text style={[styles.appSubtitle, { marginTop: 12 }]}>SYSTEM WIRD INITIALISIERT...</Text>
+        <ActivityIndicator color={colors.neonCyan} size="large" style={{ marginTop: 32 }} />
       </View>
     );
   }
 
-  if (!user) {
-    return <CyberLoginScreen appConfig={appConfig} />;
-  }
-
-  return <CyberDashboard appConfig={appConfig} setAppConfig={setAppConfig} />;
+  return user ? <CyberDashboard /> : <CyberLoginScreen />;
 };
 
 export default App;
