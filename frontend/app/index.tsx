@@ -570,8 +570,8 @@ const LoginScreen = ({ appConfig }) => {
         </View>
 
         <View style={dynamicStyles.footer}>
-          <Text style={dynamicStyles.footerText}>Stadtwache Schwelm</Text>
-          <Text style={dynamicStyles.statusText}>🟢 Sichere Verbindung</Text>
+          <Text style={dynamicStyles.footerText}>STADTWACHE ZENTRALE</Text>
+          <Text style={dynamicStyles.statusText}>🟢 SICHERE VERBINDUNG AKTIV</Text>
         </View>
 
 
