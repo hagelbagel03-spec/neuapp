@@ -11711,34 +11711,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
         </TouchableOpacity>
         
         {/* Schichtverwaltung Tab */}
-        <TouchableOpacity 
-          style={[dynamicStyles.tabItem, activeTab === 'schichten' && dynamicStyles.tabItemActive]}
-          onPress={() => setActiveTab('schichten')}
-        >
-          <Ionicons 
-            name={activeTab === 'schichten' ? 'time' : 'time-outline'} 
-            size={24} 
-            color={activeTab === 'schichten' ? '#FFFFFF' : colors.textMuted} 
-          />
-          <Text style={[dynamicStyles.tabLabel, activeTab === 'schichten' && dynamicStyles.tabLabelActive]}>
-            Schichten
-          </Text>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[dynamicStyles.tabItem, activeTab === 'database' && dynamicStyles.tabItemActive]}
-          onPress={() => setActiveTab('database')}
-        >
-          <Ionicons 
-            name={activeTab === 'database' ? 'library' : 'library-outline'} 
-            size={24} 
-            color={activeTab === 'database' ? '#FFFFFF' : colors.textMuted} 
-          />
-          <Text style={[dynamicStyles.tabLabel, activeTab === 'database' && dynamicStyles.tabLabelActive]}>
-            Datenbank
-          </Text>
-        </TouchableOpacity>
-        
         {/* 🚀 NEUER ZAHNRAD-TAB FÜR EINSTELLUNGEN */}
         <TouchableOpacity 
           style={[dynamicStyles.tabItem, activeTab === 'settings' && dynamicStyles.tabItemActive]}
