@@ -539,12 +539,12 @@ const LoginScreen = ({ appConfig }) => {
           </View>
 
           <View style={dynamicStyles.inputGroup}>
-            <Text style={dynamicStyles.inputLabel}>Passwort</Text>
+            <Text style={dynamicStyles.inputLabel}>SICHERHEITSCODE</Text>
             <TextInput
               style={dynamicStyles.input}
               value={password}
               onChangeText={setPassword}
-              placeholder="Passwort eingeben"
+              placeholder="••••••••••••••••"
               placeholderTextColor="rgba(255, 255, 255, 0.6)"
               secureTextEntry
             />
