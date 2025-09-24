@@ -375,7 +375,7 @@ const LoginScreen = ({ appConfig }) => {
   const dynamicStyles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.primary,
+      backgroundColor: CyberTheme.blackPure, // CYBER: Pure Black Background
     },
     content: {
       flex: 1,
@@ -390,23 +390,110 @@ const LoginScreen = ({ appConfig }) => {
       marginBottom: 32,
     },
     logoCircle: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
-      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+      width: 140,
+      height: 140,
+      borderRadius: 70,
+      backgroundColor: 'rgba(0, 255, 255, 0.08)', // CYBER: Neon Cyan Glow
       justifyContent: 'center',
       alignItems: 'center',
-      borderWidth: 3,
-      borderColor: 'rgba(255, 255, 255, 0.3)',
+      borderWidth: 2,
+      borderColor: CyberTheme.neonCyan, // CYBER: Neon Border
+      shadowColor: CyberTheme.neonCyan,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.8,
+      shadowRadius: 25,
+      elevation: 25,
     },
     title: {
-      fontSize: 42,
-      fontWeight: '800',
-      color: '#FFFFFF',
-      marginBottom: 12,
+      fontSize: 52,
+      fontWeight: '900',
+      color: CyberTheme.neonCyan, // CYBER: Neon Title
       textAlign: 'center',
-      letterSpacing: -1,
+      marginBottom: 12,
+      textShadowColor: CyberTheme.neonCyan,
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: 15,
+      letterSpacing: 3,
+      textTransform: 'uppercase',
     },
+    subtitle: {
+      fontSize: 16,
+      color: CyberTheme.textGray, // CYBER: Gray subtitle
+      textAlign: 'center',
+      fontWeight: '600',
+      letterSpacing: 2,
+      textTransform: 'uppercase',
+    },
+    form: {
+      marginBottom: 64,
+    },
+    inputGroup: {
+      marginBottom: 28,
+    },
+    inputLabel: {
+      fontSize: 14,
+      fontWeight: '700',
+      color: CyberTheme.neonCyan, // CYBER: Neon Labels
+      marginBottom: 12,
+      textTransform: 'uppercase',
+      letterSpacing: 1.5,
+    },
+    input: {
+      backgroundColor: 'rgba(255, 255, 255, 0.03)', // CYBER: Glass Effect
+      borderWidth: 2,
+      borderColor: CyberTheme.neonCyan, // CYBER: Neon Border
+      borderRadius: 12,
+      paddingHorizontal: 20,
+      paddingVertical: 18,
+      fontSize: 16,
+      color: CyberTheme.textWhite, // CYBER: White Text
+      fontWeight: '600',
+      shadowColor: CyberTheme.neonCyan,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.4,
+      shadowRadius: 8,
+      elevation: 8,
+    },
+    loginButton: {
+      backgroundColor: 'rgba(0, 255, 255, 0.1)', // CYBER: Neon Glow Button
+      borderWidth: 2,
+      borderColor: CyberTheme.neonCyan,
+      borderRadius: 12,
+      paddingVertical: 18,
+      alignItems: 'center',
+      justifyContent: 'center',
+      shadowColor: CyberTheme.neonCyan,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.5,
+      shadowRadius: 15,
+      elevation: 15,
+      marginTop: 24,
+    },
+    loginButtonText: {
+      color: CyberTheme.neonCyan, // CYBER: Neon Button Text
+      fontSize: 16,
+      fontWeight: '700',
+      textTransform: 'uppercase',
+      letterSpacing: 1.5,
+    },
+    footer: {
+      alignItems: 'center',
+    },
+    footerText: {
+      fontSize: 22,
+      fontWeight: '800',
+      color: CyberTheme.neonCyan, // CYBER: Neon Footer
+      marginBottom: 8,
+      textTransform: 'uppercase',
+      letterSpacing: 1.5,
+    },
+    statusText: {
+      fontSize: 14,
+      color: CyberTheme.neonGreen, // CYBER: Success Green
+      fontWeight: '700',
+      letterSpacing: 1,
+    },
+  });
     subtitle: {
       fontSize: 18,
       color: 'rgba(255, 255, 255, 0.9)',
