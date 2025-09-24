@@ -4329,7 +4329,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       textTransform: 'uppercase',
       letterSpacing: 2,
       textShadowColor: '#FF3333',
-      textShadowOffset: { width: 0, header: 0 },
+      textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: 12,
     },
 
