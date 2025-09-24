@@ -17528,7 +17528,7 @@ Beispielinhalt:
               }}
               onPress={() => {
                 setShowSettingsModal(false);
-                setActiveTab('shifts'); // RICHTIG VERLINKT: Wechselt zu Schichten
+                setActiveTab('schichten'); // RICHTIG VERLINKT: Wechselt zu Schichten (korrigiert)
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
