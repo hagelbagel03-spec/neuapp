@@ -30,7 +30,7 @@ import * as ImagePicker from 'expo-image-picker';
 const { width, height } = Dimensions.get('window');
 
 // 🚀 ULTRA-MODERN API Configuration
-const API_URL = process.env.EXPO_PACKAGER_PROXY_URL || "http://localhost:8001";
+const API_URL = "/api";
 
 // 🎨 FUTURISTIC CYBER THEME - Ultra Modern Colors
 const CyberTheme = {
