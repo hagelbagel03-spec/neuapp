@@ -108,7 +108,15 @@ const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL;
       } : {};
       
       const response = await axios.get(`${API_URL}/api/admin/teams`, config);
-      setAvailableTeams(response.data || []);
+      const teamsData = response.data;
+      
+      // Ensure it's always an array
+      if (Array.isArray(teamsData)) {
+        setAvailableTeams(teamsData);
+      } else {
+        console.warn('Teams data is not an array:', teamsData);
+        setAvailableTeams([]);
+      }
     } catch (error) {
       console.error('Error loading teams:', error);
       setAvailableTeams([]);
