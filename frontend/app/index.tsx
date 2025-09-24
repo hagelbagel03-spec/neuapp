@@ -511,20 +511,29 @@ const LoginScreen = ({ appConfig }) => {
         >
           {/* Logo Section */}
           <View style={{ alignItems: 'center', marginBottom: isSmallDevice ? 40 : 60 }}>
-            <GlassCard style={{ 
+            <View style={{ 
               width: isSmallDevice ? 100 : 120, 
               height: isSmallDevice ? 100 : 120,
               borderRadius: isSmallDevice ? 50 : 60,
               alignItems: 'center',
               justifyContent: 'center',
               marginBottom: isSmallDevice ? 24 : 32,
+              backgroundColor: 'rgba(255, 255, 255, 0.25)',
+              borderWidth: 1,
+              borderColor: 'rgba(255, 255, 255, 0.2)',
+              padding: 20,
+              shadowColor: '#000',
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.1,
+              shadowRadius: 24,
+              elevation: 12,
             }}>
               <Ionicons 
                 name="shield-checkmark" 
                 size={isSmallDevice ? 40 : 50} 
                 color={colors.primary} 
               />
-            </GlassCard>
+            </View>
             
             <Text style={{
               fontSize: isSmallDevice ? 32 : 42,
