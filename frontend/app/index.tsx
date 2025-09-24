@@ -17487,6 +17487,110 @@ Beispielinhalt:
               </TouchableOpacity>
             )}
 
+            {/* 👥 TEAM-VERWALTUNG */}
+            <TouchableOpacity 
+              style={{
+                backgroundColor: 'rgba(0, 255, 65, 0.1)',
+                borderWidth: 2,
+                borderColor: '#00FF41',
+                borderRadius: 16,
+                padding: 20,
+                marginBottom: 20,
+                shadowColor: '#00FF41',
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.5,
+                shadowRadius: 15,
+                elevation: 15,
+              }}
+              onPress={() => {
+                setShowSettingsModal(false);
+                setActiveTab('team'); // RICHTIG VERLINKT: Wechselt zum Team-Tab
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{
+                  backgroundColor: 'rgba(0, 255, 65, 0.2)',
+                  padding: 12,
+                  borderRadius: 12,
+                  marginRight: 16,
+                }}>
+                  <Ionicons name="people" size={32} color="#00FF41" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 18,
+                    fontWeight: '800',
+                    color: '#FFFFFF',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                    marginBottom: 4,
+                  }}>
+                    👥 TEAM-VERWALTUNG
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#CCCCCC',
+                    fontWeight: '500',
+                  }}>
+                    Team-Status, Mitglieder und Einsätze
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#00FF41" />
+              </View>
+            </TouchableOpacity>
+
+            {/* ⏰ SCHICHTEN */}
+            <TouchableOpacity 
+              style={{
+                backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                borderWidth: 2,
+                borderColor: '#FFD700',
+                borderRadius: 16,
+                padding: 20,
+                marginBottom: 20,
+                shadowColor: '#FFD700',
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.5,
+                shadowRadius: 15,
+                elevation: 15,
+              }}
+              onPress={() => {
+                setShowSettingsModal(false);
+                setActiveTab('shifts'); // RICHTIG VERLINKT: Wechselt zu Schichten
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{
+                  backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                  padding: 12,
+                  borderRadius: 12,
+                  marginRight: 16,
+                }}>
+                  <Ionicons name="time" size={32} color="#FFD700" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 18,
+                    fontWeight: '800',
+                    color: '#FFFFFF',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                    marginBottom: 4,
+                  }}>
+                    ⏰ SCHICHTEN
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#CCCCCC',
+                    fontWeight: '500',
+                  }}>
+                    Schichtpläne, Urlaub und Krankmeldungen
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#FFD700" />
+              </View>
+            </TouchableOpacity>
+
             {/* 👤 PROFIL BEARBEITEN */}
             <TouchableOpacity 
               style={{
