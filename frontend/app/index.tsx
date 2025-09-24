@@ -494,9 +494,85 @@ const LoginScreen = ({ appConfig }) => {
       letterSpacing: 1,
     },
   });
-    form: {
-      marginBottom: 64,
-    },
+
+  return (
+    <SafeAreaView style={dynamicStyles.container}>
+      <StatusBar barStyle="light-content" backgroundColor={CyberTheme.blackPure} />
+      
+      <KeyboardAvoidingView 
+        style={dynamicStyles.content}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      >
+        <View style={dynamicStyles.header}>
+          <View style={dynamicStyles.logoContainer}>
+            <View style={dynamicStyles.logoCircle}>
+              <Ionicons name="shield-checkmark" size={68} color={CyberTheme.neonCyan} />
+            </View>
+          </View>
+          
+          <Text style={dynamicStyles.title}>STADTWACHE</Text>
+          <Text style={dynamicStyles.subtitle}>SICHERHEITSZENTRALE • CYBER SYSTEM V3.0</Text>
+        </View>
+
+        <View style={dynamicStyles.form}>
+          <View style={dynamicStyles.inputContainer}>
+            <Text style={dynamicStyles.inputLabel}>OPERATOR-ID</Text>
+            <TextInput
+              style={dynamicStyles.input}
+              value={email}
+              onChangeText={setEmail}
+              placeholder="benutzer@stadtwache.sys"
+              placeholderTextColor={CyberTheme.textDark}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              autoComplete="email"
+            />
+          </View>
+
+          <View style={dynamicStyles.inputContainer}>
+            <Text style={dynamicStyles.inputLabel}>SICHERHEITSCODE</Text>
+            <TextInput
+              style={dynamicStyles.input}
+              value={password}
+              onChangeText={setPassword}
+              placeholder="••••••••••••••••"
+              placeholderTextColor={CyberTheme.textDark}
+              secureTextEntry
+            />
+          </View>
+
+          <TouchableOpacity 
+            style={[dynamicStyles.loginButton, (!email?.trim() || !password?.trim() || loading) && dynamicStyles.loginButtonDisabled]}
+            onPress={handleLogin}
+            disabled={!email?.trim() || !password?.trim() || loading}
+          >
+            {loading ? (
+              <ActivityIndicator color={CyberTheme.neonCyan} size="small" />
+            ) : (
+              <Ionicons name="log-in-outline" size={20} color={CyberTheme.neonCyan} />
+            )}
+            <Text style={dynamicStyles.loginButtonText}>
+              {loading ? "AUTHENTIFIZIERUNG..." : "SYSTEM-ZUGANG"}
+            </Text>
+          </TouchableOpacity>
+          
+          {loading && (
+            <View style={{ alignItems: 'center', marginTop: 24 }}>
+              <ActivityIndicator color={CyberTheme.neonCyan} size="large" />
+              <Text style={{ color: CyberTheme.textGray, marginTop: 12, fontSize: 14 }}>
+                VERBINDUNG ZUR ZENTRALE...
+              </Text>
+            </View>
+          )}
+        </View>
+
+        <View style={dynamicStyles.footer}>
+          <Text style={dynamicStyles.footerText}>STADTWACHE ZENTRALE</Text>
+          <Text style={dynamicStyles.statusText}>🟢 SICHERE VERBINDUNG AKTIV</Text>
+        </View>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
     inputContainer: {
       marginBottom: 28,
     },
