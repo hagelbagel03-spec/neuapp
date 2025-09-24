@@ -50,10 +50,11 @@ const useTheme = () => {
 };
 
 const ThemeProvider = ({ children, appConfig }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(true); // 🔥 ALWAYS CYBER DARK MODE
 
   useEffect(() => {
-    loadTheme();
+    // Force cyber dark theme
+    setIsDarkMode(true);
   }, []);
 
   const loadTheme = async () => {
