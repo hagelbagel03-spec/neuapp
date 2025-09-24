@@ -246,22 +246,24 @@ const ModernButton = ({
   );
 };
   const getColors = (isDarkMode) => ({
-    // Using ModernTheme colors
-    primary: ModernTheme.primaryStart,
-    primaryLight: ModernTheme.primaryEnd, 
-    secondary: ModernTheme.secondaryStart,
-    accent: ModernTheme.accentStart,
-    success: ModernTheme.successStart,
-    warning: ModernTheme.warningStart,
-    error: '#e74c3c',
-    background: ModernTheme.darkStart,
-    surface: ModernTheme.darkEnd,
-    card: ModernTheme.glass,
-    text: ModernTheme.textLight,
-    textSecondary: ModernTheme.textMuted,
-    textMuted: ModernTheme.textMuted,
-    border: ModernTheme.primaryStart,
-    overlay: ModernTheme.glassDark,
+    // 🚀 ULTRA-FUTURISTIC CYBER COLORS - SO MODERN ES IST BEÄNGSTIGEND
+    primary: '#00FFFF', // NEON CYAN - BEÄNGSTIGEND HELL
+    primaryLight: '#33FFFF', 
+    secondary: '#FF00FF', // NEON MAGENTA - CYBER PINK
+    accent: '#00FF41', // MATRIX GREEN - BEÄNGSTIGEND GRÜN
+    success: '#00FF41', // MATRIX SUCCESS
+    warning: '#FFD700', // GOLD WARNING
+    error: '#FF3333', // ALARM RED - BEÄNGSTIGEND ROT
+    background: '#000000', // PURE BLACK - BEÄNGSTIGEND DUNKEL
+    surface: '#111111', // DARK SURFACE - FAST SCHWARZ
+    card: '#1A1A1A', // CARD BACKGROUND - ULTRA DUNKEL
+    text: '#FFFFFF', // PURE WHITE TEXT - HELLER KONTRAST
+    textSecondary: '#CCCCCC', // LIGHT GRAY
+    textMuted: '#888888', // MUTED GRAY
+    border: '#00FFFF', // NEON CYAN BORDERS - LEUCHTEND
+    overlay: 'rgba(0, 255, 255, 0.2)', // CYAN OVERLAY - GLOW EFFEKT
+    shadow: '#00FFFF', // NEON SHADOWS - BEÄNGSTIGEND
+    elevated: '#222222', // ELEVATED SURFACE
   });
 
   const theme = {
