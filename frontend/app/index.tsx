@@ -80,23 +80,58 @@ const ThemeProvider = ({ children, appConfig }) => {
     }
   };
 
+// 🎨 KOMPLETT NEUES THEME - GRADIENT MODERN DESIGN
+const ModernTheme = {
+  // Hauptfarben - Warme Gradienten
+  primaryStart: '#667eea',
+  primaryEnd: '#764ba2',
+  
+  secondaryStart: '#f093fb',
+  secondaryEnd: '#f5576c',
+  
+  accentStart: '#4facfe',
+  accentEnd: '#00f2fe',
+  
+  successStart: '#11998e',
+  successEnd: '#38ef7d',
+  
+  warningStart: '#fc466b',
+  warningEnd: '#3f5efb',
+  
+  // Neutrale Farben
+  darkStart: '#2c3e50',
+  darkEnd: '#3498db',
+  
+  lightStart: '#ecf0f1',
+  lightEnd: '#bdc3c7',
+  
+  // Glasmorphism
+  glass: 'rgba(255, 255, 255, 0.25)',
+  glassDark: 'rgba(0, 0, 0, 0.1)',
+  
+  // Texte
+  textLight: '#ffffff',
+  textDark: '#2c3e50',
+  textMuted: '#7f8c8d',
+};
+
   const getColors = (isDarkMode) => ({
-    // 🎨 CYBER-FUTURISTIC FARBEN - Ultra Modern Design
-    primary: '#00FFFF', // CYBER: Neon Cyan
-    primaryLight: '#00FFFF', 
-    secondary: '#FF00FF', // CYBER: Neon Magenta
-    accent: '#00FF41', // CYBER: Matrix Green
-    success: '#00FF41',
-    warning: '#FF4500',
-    error: '#FF3333',
-    background: '#000000', // CYBER: Pure Black
-    surface: '#111111', // CYBER: Dark Card
-    card: '#1A1A1A', // CYBER: Surface
-    text: '#FFFFFF', // CYBER: White Text
-    textSecondary: '#CCCCCC',
-    textMuted: '#666666',
-    border: '#00FFFF', // CYBER: Neon Border
-    overlay: 'rgba(0, 255, 255, 0.2)',
+    // Using ModernTheme colors
+    primary: ModernTheme.primaryStart,
+    primaryLight: ModernTheme.primaryEnd, 
+    secondary: ModernTheme.secondaryStart,
+    accent: ModernTheme.accentStart,
+    success: ModernTheme.successStart,
+    warning: ModernTheme.warningStart,
+    error: '#e74c3c',
+    background: ModernTheme.darkStart,
+    surface: ModernTheme.darkEnd,
+    card: ModernTheme.glass,
+    text: ModernTheme.textLight,
+    textSecondary: ModernTheme.textMuted,
+    textMuted: ModernTheme.textMuted,
+    border: ModernTheme.primaryStart,
+    overlay: ModernTheme.glassDark,
   });
 
   const theme = {
