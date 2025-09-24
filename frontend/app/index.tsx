@@ -5036,14 +5036,14 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       color: '#FFFFFF',
       textAlign: 'center',
       letterSpacing: 4,
-      textShadowColor: '#00FFFF',
+      textShadowColor: '#006400', // DUNKLES GRÜN SHADOW
       textShadowOffset: { width: 0, height: 0 },
       textShadowRadius: 20,
       marginBottom: 4,
     },
     cyberHeaderSubtitle: {
       fontSize: 12,
-      color: '#00FFFF',
+      color: '#006400', // DUNKLES GRÜN
       fontWeight: '700',
       letterSpacing: 3,
       textTransform: 'uppercase',
