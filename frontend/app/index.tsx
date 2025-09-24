@@ -11816,6 +11816,21 @@ const MainApp = ({ appConfig, setAppConfig }) => {
             Team
           </Text>
         </TouchableOpacity>
+        
+        {/* 🚀 NEUER ZAHNRAD-TAB FÜR EINSTELLUNGEN */}
+        <TouchableOpacity 
+          style={[dynamicStyles.tabItem, activeTab === 'settings' && dynamicStyles.tabItemActive]}
+          onPress={() => setShowSettingsModal(true)}
+        >
+          <Ionicons 
+            name={activeTab === 'settings' ? 'settings' : 'settings-outline'} 
+            size={24} 
+            color={activeTab === 'settings' ? '#FFFFFF' : colors.textMuted} 
+          />
+          <Text style={[dynamicStyles.tabLabel, activeTab === 'settings' && dynamicStyles.tabLabelActive]}>
+            Einstellungen
+          </Text>
+        </TouchableOpacity>
       </View>
 
       {/* Profile Modal mit Dark/Light Mode */}
