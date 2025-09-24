@@ -5089,8 +5089,8 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       shadowColor: '#FF3333',
     },
     cyberCardPrimary: {
-      borderColor: '#00FFFF',
-      shadowColor: '#00FFFF',
+      borderColor: '#006400', // DUNKLES GRÜN
+      shadowColor: '#006400',
     },
     cyberCardSuccess: {
       borderColor: '#00FF41',
