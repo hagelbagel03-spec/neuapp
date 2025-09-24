@@ -10769,6 +10769,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
 
   const renderDatabaseScreen = () => (
     <View style={dynamicStyles.content}>
+      {/* Vereinfachter Header - OHNE Text und Button */}
       <View style={dynamicStyles.header}>
         <View style={dynamicStyles.modernHeaderContainer}>
           <View style={dynamicStyles.headerIconContainer}>
@@ -10776,16 +10777,9 @@ const MainApp = ({ appConfig, setAppConfig }) => {
           </View>
           <View style={dynamicStyles.headerTextContainer}>
             <Text style={dynamicStyles.modernTitle}>Personendatenbank</Text>
-            <Text style={dynamicStyles.modernSubtitle}>
-              🔍 Gesuchte • ⚠️ Vermisste • ✅ Erledigt
-            </Text>
+            {/* GELÖSCHT: Untertitel mit Emojis */}
           </View>
-          <TouchableOpacity
-            style={[dynamicStyles.headerActionButton, { backgroundColor: colors.primary }]}
-            onPress={createNewPerson}
-          >
-            <Ionicons name="add" size={24} color="#FFFFFF" />
-          </TouchableOpacity>
+          {/* GELÖSCHT: Add-Button aus Header */}
         </View>
       </View>
 
