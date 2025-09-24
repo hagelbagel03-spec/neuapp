@@ -11659,63 +11659,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
               </Text>
             </View>
           </View>
-          
-          <View style={dynamicStyles.modernHeaderActions}>
-            {/* SOS Button */}
-            <TouchableOpacity 
-              style={[dynamicStyles.modernHeaderButton, { backgroundColor: colors.error }]}
-              onPress={() => setShowSOSModal(true)}
-            >
-              <Ionicons name="warning" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
-            
-            {/* Theme Toggle */}
-            <TouchableOpacity 
-              style={[dynamicStyles.modernHeaderButton, { backgroundColor: isDarkMode ? colors.accent : colors.surface }]}
-              onPress={toggleTheme}
-            >
-              <Ionicons name={isDarkMode ? 'sunny' : 'moon'} size={22} color={isDarkMode ? '#FFFFFF' : colors.text} />
-            </TouchableOpacity>
-            
-            {/* Admin Settings - Nur für Admins */}
-            {user?.role === 'admin' && (
-              <TouchableOpacity 
-                style={[dynamicStyles.modernHeaderButton, { backgroundColor: colors.accent }]}
-                onPress={() => setShowAdminDashboardModal(true)}
-              >
-                <Ionicons name="settings" size={22} color="#FFFFFF" />
-              </TouchableOpacity>
-            )}
-            
-            {/* Profil */}
-            <TouchableOpacity 
-              style={[dynamicStyles.modernHeaderButton, { backgroundColor: colors.secondary }]}
-              onPress={() => setShowProfileModal(true)}
-            >
-              <Ionicons name="person" size={22} color="#FFFFFF" />
-            </TouchableOpacity>
-            
-            {/* Logout */}
-            <TouchableOpacity 
-              style={[dynamicStyles.modernHeaderButton, { backgroundColor: colors.error }]}
-              onPress={() => {
-                Alert.alert(
-                  'Abmelden',
-                  'Möchten Sie sich wirklich abmelden?',
-                  [
-                    { text: 'Abbrechen', style: 'cancel' },
-                    { 
-                      text: 'Abmelden', 
-                      style: 'destructive',
-                      onPress: logout
-                    }
-                  ]
-                );
-              }}
-            >
-              <Ionicons name="log-out" size={22} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
         </View>
       </View>
       
