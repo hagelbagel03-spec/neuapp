@@ -115,7 +115,141 @@ const ModernTheme = {
   textMuted: '#7f8c8d',
 };
 
-  const getColors = (isDarkMode) => ({
+// 🎨 NEUE GLASSMORPHISM KOMPONENTE
+const GlassCard = ({ children, style, gradient = 'primary' }) => {
+  const getGradient = () => {
+    switch (gradient) {
+      case 'primary':
+        return [ModernTheme.primaryStart, ModernTheme.primaryEnd];
+      case 'secondary':
+        return [ModernTheme.secondaryStart, ModernTheme.secondaryEnd];
+      case 'accent':
+        return [ModernTheme.accentStart, ModernTheme.accentEnd];
+      default:
+        return [ModernTheme.primaryStart, ModernTheme.primaryEnd];
+    }
+  };
+
+  return (
+    <View style={[{
+      backgroundColor: ModernTheme.glass,
+      borderRadius: 24,
+      borderWidth: 1,
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      padding: isSmallDevice ? 16 : 24,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 8 },
+      shadowOpacity: 0.1,
+      shadowRadius: 24,
+      elevation: 12,
+    }, style]}>
+      {children}
+    </View>
+  );
+};
+
+// 🚀 NEUE MODERNE BUTTON KOMPONENTE
+const ModernButton = ({ 
+  onPress, 
+  title, 
+  icon, 
+  variant = 'primary', 
+  size = 'large',
+  disabled,
+  loading,
+  style 
+}) => {
+  const [pressAnim] = useState(new Animated.Value(1));
+
+  const handlePressIn = () => {
+    Animated.spring(pressAnim, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(pressAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const getButtonStyle = () => {
+    const baseHeight = size === 'small' ? 40 : size === 'medium' ? 48 : 56;
+    const basePadding = size === 'small' ? 12 : size === 'medium' ? 16 : 20;
+    
+    let gradient, textColor;
+    switch (variant) {
+      case 'primary':
+        gradient = [ModernTheme.primaryStart, ModernTheme.primaryEnd];
+        textColor = ModernTheme.textLight;
+        break;
+      case 'secondary':
+        gradient = [ModernTheme.secondaryStart, ModernTheme.secondaryEnd];
+        textColor = ModernTheme.textLight;
+        break;
+      case 'accent':
+        gradient = [ModernTheme.accentStart, ModernTheme.accentEnd];
+        textColor = ModernTheme.textLight;
+        break;
+      default:
+        gradient = [ModernTheme.primaryStart, ModernTheme.primaryEnd];
+        textColor = ModernTheme.textLight;
+    }
+
+    return {
+      height: baseHeight,
+      paddingHorizontal: basePadding,
+      borderRadius: baseHeight / 2,
+      gradient,
+      textColor,
+    };
+  };
+
+  const buttonStyle = getButtonStyle();
+
+  return (
+    <Animated.View style={[{ transform: [{ scale: pressAnim }] }, style]}>
+      <TouchableOpacity
+        style={{
+          height: buttonStyle.height,
+          paddingHorizontal: buttonStyle.paddingHorizontal,
+          borderRadius: buttonStyle.borderRadius,
+          backgroundColor: disabled ? ModernTheme.glassDark : buttonStyle.gradient[0],
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          shadowColor: buttonStyle.gradient[0],
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: disabled ? 0.1 : 0.3,
+          shadowRadius: 12,
+          elevation: disabled ? 2 : 8,
+          opacity: disabled ? 0.6 : 1,
+        }}
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        disabled={disabled || loading}
+      >
+        {loading ? (
+          <ActivityIndicator color={buttonStyle.textColor} size="small" />
+        ) : (
+          <>
+            {icon && <Ionicons name={icon} size={20} color={buttonStyle.textColor} style={{ marginRight: 8 }} />}
+            <Text style={{
+              color: buttonStyle.textColor,
+              fontSize: size === 'small' ? 14 : size === 'medium' ? 16 : 18,
+              fontWeight: '600',
+            }}>
+              {title}
+            </Text>
+          </>
+        )}
+      </TouchableOpacity>
+    </Animated.View>
+  );
+};
     // Using ModernTheme colors
     primary: ModernTheme.primaryStart,
     primaryLight: ModernTheme.primaryEnd, 
