@@ -465,285 +465,214 @@ const AuthProvider = ({ children }) => {
 // Modern Login Screen
 const LoginScreen = ({ appConfig }) => {
   const { login } = useAuth();
-  const { colors, isDarkMode } = useTheme();
+  const { colors } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
-
   const handleLogin = async () => {
-    console.log('🔍 FORM DEBUG:', { 
-      email: email, 
-      password: password,
-      emailEmpty: !email,
-      passwordEmpty: !password,
-      emailTrimmed: email?.trim(),
-      passwordTrimmed: password?.trim()
-    });
-    
-    if (!email || !password) {
-      Alert.alert('Fehler', 'Bitte E-Mail und Passwort eingeben');
-      return;
-    }
-
-    // Trim whitespace and validate
-    const cleanEmail = email.trim();
-    const cleanPassword = password.trim();
-    
-    if (!cleanEmail || !cleanPassword) {
-      Alert.alert('Fehler', 'E-Mail und Passwort dürfen nicht leer sein');
+    if (!email?.trim() || !password?.trim()) {
+      Alert.alert('⚠️ Fehlende Daten', 'Bitte füllen Sie alle Felder aus');
       return;
     }
 
     setLoading(true);
-    console.log('🚀 LOGIN CALL:', { cleanEmail, cleanPassword });
     
     try {
-      const result = await login(cleanEmail, cleanPassword);
-      setLoading(false);
-
+      const result = await login(email.trim(), password.trim());
+      
       if (!result.success) {
-        console.log('❌ LOGIN FAILED:', result.error);
-        Alert.alert('Verbindungsfehler', result.error);
+        Alert.alert('🚫 Login fehlgeschlagen', result.error);
       }
     } catch (error) {
+      Alert.alert('🚫 Verbindungsfehler', 'Keine Verbindung zum Server möglich.');
+    } finally {
       setLoading(false);
-      console.log('💥 LOGIN CRASH PREVENTED:', error);
-      Alert.alert('Verbindungsfehler', 'Login fehlgeschlagen. Bitte prüfen Sie Ihre Internetverbindung.');
     }
   };
 
-  // Schnell-Login entfernt auf Benutzerwunsch
-
-  const dynamicStyles = StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: '#000000', // CYBER: Pure Black Background
-    },
-    content: {
-      flex: 1,
-      padding: 32,
-      justifyContent: 'center',
-    },
-    header: {
-      alignItems: 'center',
-      marginBottom: 64,
-    },
-    logoContainer: {
-      marginBottom: 32,
-    },
-    logoCircle: {
-      width: 140,
-      height: 140,
-      borderRadius: 70,
-      backgroundColor: 'rgba(0, 255, 255, 0.08)', // CYBER: Neon Cyan Glow
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 2,
-      borderColor: '#00FFFF', // CYBER: Neon Cyan Border
-      shadowColor: '#00FFFF',
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.8,
-      shadowRadius: 25,
-      elevation: 25,
-    },
-    title: {
-      fontSize: 52,
-      fontWeight: '900',
-      color: '#00FFFF', // CYBER: Neon Cyan Title
-      marginBottom: 12,
-      textAlign: 'center',
-      letterSpacing: 3,
-      textTransform: 'uppercase',
-      textShadowColor: '#00FFFF',
-      textShadowOffset: { width: 0, height: 0 },
-      textShadowRadius: 15,
-    },
-    subtitle: {
-      fontSize: 16,
-      color: '#CCCCCC', // CYBER: Gray Subtitle
-      textAlign: 'center',
-      fontWeight: '600',
-      letterSpacing: 2,
-      textTransform: 'uppercase',
-    },
-    form: {
-      marginBottom: 48,
-    },
-    inputGroup: {
-      marginBottom: 28,
-    },
-    inputLabel: {
-      fontSize: 14,
-      fontWeight: '700',
-      color: '#00FFFF', // CYBER: Neon Cyan Labels
-      marginBottom: 12,
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
-    },
-    input: {
-      backgroundColor: 'rgba(255, 255, 255, 0.03)', // CYBER: Glass Effect
-      borderWidth: 2,
-      borderColor: '#00FFFF', // CYBER: Neon Cyan Border
-      borderRadius: 12,
-      paddingHorizontal: 20,
-      paddingVertical: 18,
-      fontSize: 16,
-      color: '#FFFFFF', // CYBER: White Text
-      fontWeight: '600',
-      shadowColor: '#00FFFF',
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.4,
-      shadowRadius: 8,
-      elevation: 8,
-    },
-    loginButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: 'rgba(0, 255, 255, 0.1)', // CYBER: Neon Glow Button
-      borderWidth: 2,
-      borderColor: '#00FFFF', // CYBER: Neon Cyan Border
-      borderRadius: 12,
-      paddingVertical: 18,
-      paddingHorizontal: 32,
-      marginTop: 24,
-      shadowColor: '#00FFFF',
-      shadowOffset: { width: 0, height: 0 },
-      shadowOpacity: 0.5,
-      shadowRadius: 15,
-      elevation: 15,
-    },
-    loginButtonDisabled: {
-      backgroundColor: 'rgba(0, 255, 255, 0.05)',
-      borderColor: 'rgba(0, 255, 255, 0.3)',
-    },
-    loginButtonText: {
-      color: '#00FFFF', // CYBER: Neon Cyan Button Text
-      fontSize: 16,
-      fontWeight: '700',
-      marginLeft: 12,
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
-    },
-    registerLink: {
-      alignItems: 'center',
-      marginTop: 24,
-      paddingVertical: 12,
-    },
-    registerLinkText: {
-      color: '#CCCCCC', // CYBER: Gray Text
-      fontSize: 16,
-      textDecorationLine: 'underline',
-    },
-    demoInfo: {
-      marginTop: 24,
-      padding: 20,
-      backgroundColor: 'rgba(0, 255, 255, 0.05)', // CYBER: Cyan Glow
-      borderRadius: 12,
-      borderWidth: 1,
-      borderColor: 'rgba(0, 255, 255, 0.2)',
-    },
-    demoText: {
-      color: '#00FFFF', // CYBER: Neon Cyan
-      fontSize: 16,
-      fontWeight: '600',
-      textAlign: 'center',
-      marginBottom: 6,
-    },
-    demoSubtext: {
-      color: '#CCCCCC', // CYBER: Gray
-      fontSize: 14,
-      textAlign: 'center',
-    },
-    footer: {
-      alignItems: 'center',
-    },
-    footerText: {
-      fontSize: 22,
-      fontWeight: '800',
-      color: '#00FFFF', // CYBER: Neon Cyan Footer
-      marginBottom: 8,
-      textTransform: 'uppercase',
-      letterSpacing: 1.5,
-    },
-    statusText: {
-      fontSize: 14,
-      color: '#00FF41', // CYBER: Matrix Green
-      fontWeight: '700',
-      letterSpacing: 1,
-    },
-  });
-
   return (
-    <SafeAreaView style={dynamicStyles.container}>
-      <StatusBar barStyle="light-content" backgroundColor="#000000" />
+    <SafeAreaView style={{
+      flex: 1,
+      backgroundColor: ModernTheme.darkStart,
+    }}>
+      <StatusBar barStyle="light-content" backgroundColor={ModernTheme.darkStart} />
+      
+      {/* Gradient Background */}
+      <View style={{
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        backgroundColor: ModernTheme.darkStart,
+      }} />
+      
       <KeyboardAvoidingView 
-        style={dynamicStyles.content}
+        style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        <View style={dynamicStyles.header}>
-          <View style={dynamicStyles.logoContainer}>
-            <View style={dynamicStyles.logoCircle}>
-              <Ionicons name="shield-checkmark" size={56} color="#FFFFFF" />
+        <ScrollView 
+          contentContainerStyle={{
+            flexGrow: 1,
+            padding: isSmallDevice ? 20 : 32,
+            justifyContent: 'center',
+          }}
+          showsVerticalScrollIndicator={false}
+        >
+          {/* Logo Section */}
+          <View style={{ alignItems: 'center', marginBottom: isSmallDevice ? 40 : 60 }}>
+            <GlassCard style={{ 
+              width: isSmallDevice ? 100 : 120, 
+              height: isSmallDevice ? 100 : 120,
+              borderRadius: isSmallDevice ? 50 : 60,
+              alignItems: 'center',
+              justifyContent: 'center',
+              marginBottom: isSmallDevice ? 24 : 32,
+            }}>
+              <Ionicons 
+                name="shield-checkmark" 
+                size={isSmallDevice ? 40 : 50} 
+                color={ModernTheme.primaryStart} 
+              />
+            </GlassCard>
+            
+            <Text style={{
+              fontSize: isSmallDevice ? 32 : 42,
+              fontWeight: '900',
+              color: ModernTheme.textLight,
+              textAlign: 'center',
+              marginBottom: 8,
+            }}>
+              STADTWACHE
+            </Text>
+            
+            <Text style={{
+              fontSize: isSmallDevice ? 14 : 16,
+              color: ModernTheme.textMuted,
+              textAlign: 'center',
+              fontWeight: '500',
+            }}>
+              Moderne Sicherheitszentrale
+            </Text>
+          </View>
+
+          {/* Login Form */}
+          <GlassCard style={{ marginBottom: isSmallDevice ? 24 : 32 }}>
+            <View style={{ marginBottom: 20 }}>
+              <Text style={{
+                fontSize: 14,
+                fontWeight: '600',
+                color: ModernTheme.textLight,
+                marginBottom: 8,
+              }}>
+                E-Mail Adresse
+              </Text>
+              <View style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: 'rgba(255, 255, 255, 0.2)',
+              }}>
+                <TextInput
+                  style={{
+                    padding: isSmallDevice ? 14 : 16,
+                    fontSize: 16,
+                    color: ModernTheme.textLight,
+                  }}
+                  value={email}
+                  onChangeText={setEmail}
+                  placeholder="ihre.email@stadtwache.de"
+                  placeholderTextColor={ModernTheme.textMuted}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                />
+              </View>
             </View>
-          </View>
-          <Text style={dynamicStyles.title}>{appConfig.app_name}</Text>
-          <Text style={dynamicStyles.subtitle}>{appConfig.organization_name}</Text>
-        </View>
 
-        <View style={dynamicStyles.form}>
-          <View style={dynamicStyles.inputGroup}>
-            <Text style={dynamicStyles.inputLabel}>E-Mail Adresse</Text>
-            <TextInput
-              style={dynamicStyles.input}
-              value={email}
-              onChangeText={setEmail}
-              placeholder="benutzer@stadtwache.de"
-              placeholderTextColor="rgba(255, 255, 255, 0.6)"
-              keyboardType="email-address"
-              autoCapitalize="none"
-              autoComplete="email"
+            <View style={{ marginBottom: 24 }}>
+              <Text style={{
+                fontSize: 14,
+                fontWeight: '600',
+                color: ModernTheme.textLight,
+                marginBottom: 8,
+              }}>
+                Passwort
+              </Text>
+              <View style={{
+                backgroundColor: 'rgba(255, 255, 255, 0.1)',
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: 'rgba(255, 255, 255, 0.2)',
+              }}>
+                <TextInput
+                  style={{
+                    padding: isSmallDevice ? 14 : 16,
+                    fontSize: 16,
+                    color: ModernTheme.textLight,
+                  }}
+                  value={password}
+                  onChangeText={setPassword}
+                  placeholder="Ihr sicheres Passwort"
+                  placeholderTextColor={ModernTheme.textMuted}
+                  secureTextEntry
+                />
+              </View>
+            </View>
+
+            <ModernButton
+              title={loading ? "Anmeldung läuft..." : "Anmelden"}
+              icon={loading ? undefined : "log-in"}
+              onPress={handleLogin}
+              disabled={!email?.trim() || !password?.trim()}
+              loading={loading}
+              style={{ marginBottom: 16 }}
             />
+          </GlassCard>
+
+          {/* Info Card */}
+          <GlassCard gradient="accent">
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="information-circle" size={24} color={ModernTheme.accentStart} style={{ marginRight: 12 }} />
+              <View style={{ flex: 1 }}>
+                <Text style={{
+                  fontSize: 14,
+                  fontWeight: '600',
+                  color: ModernTheme.textLight,
+                  marginBottom: 4,
+                }}>
+                  Sicherheits-Hinweis
+                </Text>
+                <Text style={{
+                  fontSize: 12,
+                  color: ModernTheme.textMuted,
+                  lineHeight: 16,
+                }}>
+                  Ihre Daten werden verschlüsselt übertragen
+                </Text>
+              </View>
+            </View>
+          </GlassCard>
+
+          {/* Footer */}
+          <View style={{ alignItems: 'center', marginTop: isSmallDevice ? 24 : 32 }}>
+            <Text style={{
+              fontSize: 18,
+              fontWeight: '700',
+              color: ModernTheme.textLight,
+              marginBottom: 4,
+            }}>
+              STADTWACHE ZENTRALE
+            </Text>
+            <Text style={{
+              fontSize: 14,
+              color: ModernTheme.successStart,
+              fontWeight: '600',
+            }}>
+              🟢 Sichere Verbindung aktiv
+            </Text>
           </View>
-
-          <View style={dynamicStyles.inputGroup}>
-            <Text style={dynamicStyles.inputLabel}>Passwort</Text>
-            <TextInput
-              style={dynamicStyles.input}
-              value={password}
-              onChangeText={setPassword}
-              placeholder="Passwort eingeben"
-              placeholderTextColor="rgba(255, 255, 255, 0.6)"
-              secureTextEntry
-            />
-          </View>
-
-          <TouchableOpacity 
-            style={[dynamicStyles.loginButton, loading && dynamicStyles.loginButtonDisabled]}
-            onPress={() => {
-              console.log('🔐 Login-Button geklickt');
-              handleLogin();
-            }}
-            disabled={!email.trim() || !password.trim() || loading}
-          >
-            {loading ? (
-              <ActivityIndicator color={colors.primary} size="small" />
-            ) : (
-              <Ionicons name="log-in" size={24} color={colors.primary} />
-            )}
-            <Text style={dynamicStyles.loginButtonText}>Anmelden</Text>
-          </TouchableOpacity>
-
-
-        </View>
-
-        <View style={dynamicStyles.footer}>
-          <Text style={dynamicStyles.footerText}>Stadtwache Schwelm</Text>
-          <Text style={dynamicStyles.statusText}>🟢 Sichere Verbindung</Text>
-        </View>
-
-
+        </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
   );
