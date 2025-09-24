@@ -563,7 +563,7 @@ const LoginScreen = ({ appConfig }) => {
             ) : (
               <Ionicons name="log-in" size={24} color={colors.primary} />
             )}
-            <Text style={dynamicStyles.loginButtonText}>Anmelden</Text>
+            <Text style={dynamicStyles.loginButtonText}>SYSTEM-ZUGANG</Text>
           </TouchableOpacity>
 
 
