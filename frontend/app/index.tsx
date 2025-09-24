@@ -17563,6 +17563,58 @@ Beispielinhalt:
               </View>
             </TouchableOpacity>
 
+            {/* 📚 DATENBANK */}
+            <TouchableOpacity 
+              style={{
+                backgroundColor: 'rgba(138, 43, 226, 0.1)',
+                borderWidth: 2,
+                borderColor: '#8A2BE2',
+                borderRadius: 16,
+                padding: 20,
+                marginBottom: 20,
+                shadowColor: '#8A2BE2',
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.5,
+                shadowRadius: 15,
+                elevation: 15,
+              }}
+              onPress={() => {
+                setShowSettingsModal(false);
+                setActiveTab('database'); // RICHTIG VERLINKT: Wechselt zur Datenbank
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{
+                  backgroundColor: 'rgba(138, 43, 226, 0.2)',
+                  padding: 12,
+                  borderRadius: 12,
+                  marginRight: 16,
+                }}>
+                  <Ionicons name="library" size={32} color="#8A2BE2" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 18,
+                    fontWeight: '800',
+                    color: '#FFFFFF',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                    marginBottom: 4,
+                  }}>
+                    📚 DATENBANK
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#CCCCCC',
+                    fontWeight: '500',
+                  }}>
+                    Personen, Vermisste und Gesuchte verwalten
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#8A2BE2" />
+              </View>
+            </TouchableOpacity>
+
             {/* 👤 PROFIL BEARBEITEN */}
             <TouchableOpacity 
               style={{
