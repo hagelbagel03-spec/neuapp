@@ -17764,6 +17764,60 @@ Beispielinhalt:
         </SafeAreaView>
       </Modal>
 
+      {/* ⏰ SCHICHTEN-MODAL - NEU ERSTELLT */}
+      <Modal
+        visible={showShiftModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowShiftModal(false)}
+      >
+        <SafeAreaView style={[dynamicStyles.container, { backgroundColor: colors.background }]}>
+          
+          {/* Header */}
+          <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 20,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.border,
+          }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="time" size={28} color="#FFD700" />
+              <Text style={{
+                fontSize: 24,
+                fontWeight: '800',
+                color: colors.text,
+                marginLeft: 12,
+                textTransform: 'uppercase',
+                letterSpacing: 1,
+              }}>
+                ⏰ Schichten
+              </Text>
+            </View>
+            
+            <TouchableOpacity 
+              onPress={() => setShowShiftModal(false)}
+              style={{
+                backgroundColor: colors.card,
+                padding: 12,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: colors.border,
+              }}
+            >
+              <Ionicons name="close" size={24} color={colors.text} />
+            </TouchableOpacity>
+          </View>
+
+          {/* Schichten Content - Verwende den bestehenden Screen */}
+          <View style={{ flex: 1 }}>
+            {renderShiftManagementScreen()}
+          </View>
+          
+        </SafeAreaView>
+      </Modal>
+
     </SafeAreaView>
   );
 };
