@@ -9543,7 +9543,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
         </View>
 
         <ScrollView style={dynamicStyles.teamList}>
-          {myTeamMembers.map((member) => (
+          {(myTeamMembers || []).map((member) => (
             <View key={member.id} style={dynamicStyles.teamMemberCard}>
               <View style={dynamicStyles.memberInfo}>
                 <View style={dynamicStyles.memberPhotoContainer}>
