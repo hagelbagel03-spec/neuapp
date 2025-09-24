@@ -37,10 +37,15 @@ const { width, height } = Dimensions.get('window');
 const API_URL = "";
 
 // 📱 MOBILE RESPONSIVE - Adaptive für alle Handy-Größen
-const { width: screenWidth, height: screenHeight } = Dimensions.get('window');
+const screenWidth = width;
+const screenHeight = height;
 const isSmallDevice = screenWidth < 380; // Redmi A5 und ähnliche
 const isMediumDevice = screenWidth >= 380 && screenWidth < 420;
 const isLargeDevice = screenWidth >= 420;
+
+// For backwards compatibility with existing code
+const isSmallScreen = isSmallDevice;
+const isMediumScreen = isMediumDevice;
 
 // Theme Context für Dark/Light Mode
 const ThemeContext = createContext();
