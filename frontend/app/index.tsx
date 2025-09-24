@@ -246,9 +246,9 @@ const ModernButton = ({
   );
 };
   const getColors = (isDarkMode) => ({
-    // 🚀 ULTRA-FUTURISTIC CYBER COLORS - SO MODERN ES IST BEÄNGSTIGEND
-    primary: '#00FFFF', // NEON CYAN - BEÄNGSTIGEND HELL
-    primaryLight: '#33FFFF', 
+    // 🚀 ULTRA-FUTURISTIC CYBER COLORS - DUNKLES GRÜN THEME
+    primary: '#006400', // DUNKLES GRÜN - BEÄNGSTIGEND
+    primaryLight: '#228B22', // FOREST GREEN
     secondary: '#FF00FF', // NEON MAGENTA - CYBER PINK
     accent: '#00FF41', // MATRIX GREEN - BEÄNGSTIGEND GRÜN
     success: '#00FF41', // MATRIX SUCCESS
@@ -260,9 +260,9 @@ const ModernButton = ({
     text: '#FFFFFF', // PURE WHITE TEXT - HELLER KONTRAST
     textSecondary: '#CCCCCC', // LIGHT GRAY
     textMuted: '#888888', // MUTED GRAY
-    border: '#00FFFF', // NEON CYAN BORDERS - LEUCHTEND
-    overlay: 'rgba(0, 255, 255, 0.2)', // CYAN OVERLAY - GLOW EFFEKT
-    shadow: '#00FFFF', // NEON SHADOWS - BEÄNGSTIGEND
+    border: '#006400', // DUNKLES GRÜN BORDERS - NATÜRLICH
+    overlay: 'rgba(0, 100, 0, 0.2)', // DUNKLES GRÜN OVERLAY
+    shadow: '#006400', // DUNKLES GRÜN SHADOWS
     elevated: '#222222', // ELEVATED SURFACE
   });
 
