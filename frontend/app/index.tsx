@@ -931,6 +931,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showSettingsModal, setShowSettingsModal] = useState(false); // 🚀 NEUES SETTINGS-MODAL
+  const [showAdminModal, setShowAdminModal] = useState(false); // 🚀 ADMIN-MODAL
   const [showIncidentModal, setShowIncidentModal] = useState(false);
   const [showMapModal, setShowMapModal] = useState(false);
   const [selectedIncident, setSelectedIncident] = useState(null);
