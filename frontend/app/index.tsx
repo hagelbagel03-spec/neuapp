@@ -250,6 +250,7 @@ const ModernButton = ({
     </Animated.View>
   );
 };
+  const getColors = (isDarkMode) => ({
     // Using ModernTheme colors
     primary: ModernTheme.primaryStart,
     primaryLight: ModernTheme.primaryEnd, 
