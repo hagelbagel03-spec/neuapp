@@ -10861,6 +10861,21 @@ const MainApp = ({ appConfig, setAppConfig }) => {
             ✔️ Erledigt ({personStats.completed_persons || 0})
           </Text>
         </TouchableOpacity>
+        
+        {/* ➕ ADD-BUTTON NEBEN ERLEDIGT */}
+        <TouchableOpacity
+          style={[dynamicStyles.categoryTab, { 
+            backgroundColor: colors.primary + '20', 
+            borderColor: colors.primary,
+            borderWidth: 2,
+            minWidth: 60,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }]}
+          onPress={createNewPerson}
+        >
+          <Ionicons name="add" size={24} color={colors.primary} />
+        </TouchableOpacity>
       </View>
 
       {/* Search Field */}
