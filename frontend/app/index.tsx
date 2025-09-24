@@ -78,22 +78,22 @@ const ThemeProvider = ({ children, appConfig }) => {
   };
 
   const getColors = (isDarkMode) => ({
-    // 🎨 DYNAMISCHE FARBEN aus Admin-Konfiguration
-    primary: appConfig?.primary_color || '#1E40AF',
-    primaryLight: appConfig?.primary_color || '#3B82F6', 
-    secondary: appConfig?.success_color || '#059669',
-    accent: appConfig?.warning_color || '#F59E0B',
-    success: appConfig?.success_color || '#10B981',
-    warning: appConfig?.warning_color || '#F59E0B',
-    error: appConfig?.error_color || '#EF4444',
-    background: isDarkMode ? '#0F172A' : '#F8FAFC',
-    surface: isDarkMode ? '#1E293B' : '#FFFFFF',
-    card: isDarkMode ? '#334155' : '#FFFFFF',
-    text: isDarkMode ? '#F8FAFC' : '#1E293B',
-    textSecondary: isDarkMode ? '#CBD5E1' : '#475569',
-    textMuted: isDarkMode ? '#94A3B8' : '#64748B',
-    border: isDarkMode ? '#475569' : '#E2E8F0',
-    overlay: 'rgba(0, 0, 0, 0.5)',
+    // 🎨 CYBER-FUTURISTIC FARBEN - Ultra Modern Design
+    primary: '#00FFFF', // CYBER: Neon Cyan
+    primaryLight: '#00FFFF', 
+    secondary: '#FF00FF', // CYBER: Neon Magenta
+    accent: '#00FF41', // CYBER: Matrix Green
+    success: '#00FF41',
+    warning: '#FF4500',
+    error: '#FF3333',
+    background: '#000000', // CYBER: Pure Black
+    surface: '#111111', // CYBER: Dark Card
+    card: '#1A1A1A', // CYBER: Surface
+    text: '#FFFFFF', // CYBER: White Text
+    textSecondary: '#CCCCCC',
+    textMuted: '#666666',
+    border: '#00FFFF', // CYBER: Neon Border
+    overlay: 'rgba(0, 255, 255, 0.2)',
   });
 
   const theme = {
