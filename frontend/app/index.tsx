@@ -34,7 +34,7 @@ import ShiftManagementComponent from './components/ShiftManagementComponent';
 const { width, height } = Dimensions.get('window');
 
 // API Configuration - MOBILE RESPONSIVE SYSTEM
-const API_URL = "";
+const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://localhost:8001";
 
 // 📱 MOBILE RESPONSIVE - Adaptive für alle Handy-Größen
 const screenWidth = width;
@@ -11918,20 +11918,39 @@ const MainApp = ({ appConfig, setAppConfig }) => {
             
             <View style={dynamicStyles.formGroup}>
               <Text style={dynamicStyles.formLabel}>🔊 Benachrichtigungston</Text>
-              <View style={dynamicStyles.pickerContainer}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {['default', 'siren', 'beep', 'chime'].map(sound => (
                   <TouchableOpacity
                     key={sound}
-                    style={[
-                      dynamicStyles.pickerOption,
-                      profileData.notification_sound === sound && dynamicStyles.pickerOptionActive
-                    ]}
-                    onPress={() => setProfileData({...profileData, notification_sound: sound})}
+                    style={{
+                      backgroundColor: profileData.notification_sound === sound ? colors.primary + '30' : colors.card,
+                      borderWidth: 2,
+                      borderColor: profileData.notification_sound === sound ? colors.primary : colors.border,
+                      borderRadius: 12,
+                      paddingVertical: 12,
+                      paddingHorizontal: 16,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      minWidth: 80,
+                      shadowColor: profileData.notification_sound === sound ? colors.primary : 'transparent',
+                      shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                      elevation: profileData.notification_sound === sound ? 8 : 0,
+                    }}
+                    onPress={() => {
+                      setProfileData({...profileData, notification_sound: sound});
+                      // Vibration feedback
+                      if (Platform.OS !== 'web') {
+                        Vibration.vibrate(50);
+                      }
+                    }}
                   >
-                    <Text style={[
-                      dynamicStyles.pickerOptionText,
-                      profileData.notification_sound === sound && dynamicStyles.pickerOptionTextActive
-                    ]}>
+                    <Text style={{
+                      color: profileData.notification_sound === sound ? colors.primary : colors.text,
+                      fontSize: 14,
+                      fontWeight: '600',
+                    }}>
                       {sound === 'default' ? '🔔 Standard' : 
                        sound === 'siren' ? '🚨 Sirene' :
                        sound === 'beep' ? '📱 Piep' : '🎵 Glocke'}
@@ -11943,23 +11962,55 @@ const MainApp = ({ appConfig, setAppConfig }) => {
 
             <View style={dynamicStyles.formGroup}>
               <Text style={dynamicStyles.formLabel}>📳 Vibrationsmuster</Text>
-              <View style={dynamicStyles.pickerContainer}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
                 {['standard', 'intense', 'pulse', 'custom'].map(pattern => (
                   <TouchableOpacity
                     key={pattern}
-                    style={[
-                      dynamicStyles.pickerOption,
-                      profileData.vibration_pattern === pattern && dynamicStyles.pickerOptionActive
-                    ]}
-                    onPress={() => setProfileData({...profileData, vibration_pattern: pattern})}
+                    style={{
+                      backgroundColor: profileData.vibration_pattern === pattern ? colors.secondary + '30' : colors.card,
+                      borderWidth: 2,
+                      borderColor: profileData.vibration_pattern === pattern ? colors.secondary : colors.border,
+                      borderRadius: 12,
+                      paddingVertical: 12,
+                      paddingHorizontal: 16,
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      minWidth: 80,
+                      shadowColor: profileData.vibration_pattern === pattern ? colors.secondary : 'transparent',
+                      shadowOffset: { width: 0, height: 0 },
+                      shadowOpacity: 0.3,
+                      shadowRadius: 8,
+                      elevation: profileData.vibration_pattern === pattern ? 8 : 0,
+                    }}
+                    onPress={() => {
+                      setProfileData({...profileData, vibration_pattern: pattern});
+                      // Test vibration pattern
+                      if (Platform.OS !== 'web') {
+                        switch(pattern) {
+                          case 'standard':
+                            Vibration.vibrate(100);
+                            break;
+                          case 'intense':
+                            Vibration.vibrate([200, 100, 200]);
+                            break;
+                          case 'pulse':
+                            Vibration.vibrate([50, 50, 50, 50, 50]);
+                            break;
+                          case 'custom':
+                            Vibration.vibrate([100, 200, 300, 200, 100]);
+                            break;
+                        }
+                      }
+                    }}
                   >
-                    <Text style={[
-                      dynamicStyles.pickerOptionText,
-                      profileData.vibration_pattern === pattern && dynamicStyles.pickerOptionTextActive
-                    ]}>
+                    <Text style={{
+                      color: profileData.vibration_pattern === pattern ? colors.secondary : colors.text,
+                      fontSize: 14,
+                      fontWeight: '600',
+                    }}>
                       {pattern === 'standard' ? '📳 Standard' : 
                        pattern === 'intense' ? '💥 Intensiv' :
-                       pattern === 'pulse' ? '🌊 Puls' : '⚙️ Benutzerdefiniert'}
+                       pattern === 'pulse' ? '🌊 Puls' : '⚙️ Custom'}
                     </Text>
                   </TouchableOpacity>
                 ))}
@@ -11969,23 +12020,75 @@ const MainApp = ({ appConfig, setAppConfig }) => {
             <View style={dynamicStyles.formGroup}>
               <Text style={dynamicStyles.formLabel}>🔋 Akku-schonender Modus</Text>
               <TouchableOpacity
-                style={[
-                  dynamicStyles.toggleButton,
-                  profileData.battery_saver_mode && dynamicStyles.toggleButtonActive
-                ]}
-                onPress={() => setProfileData({...profileData, battery_saver_mode: !profileData.battery_saver_mode})}
+                style={{
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'space-between',
+                  backgroundColor: colors.card,
+                  borderWidth: 2,
+                  borderColor: profileData.battery_saver_mode ? colors.accent : colors.border,
+                  borderRadius: 12,
+                  padding: 16,
+                  shadowColor: profileData.battery_saver_mode ? colors.accent : 'transparent',
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 0.3,
+                  shadowRadius: 8,
+                  elevation: profileData.battery_saver_mode ? 8 : 0,
+                }}
+                onPress={() => {
+                  const newMode = !profileData.battery_saver_mode;
+                  setProfileData({...profileData, battery_saver_mode: newMode});
+                  // Vibration feedback
+                  if (Platform.OS !== 'web') {
+                    Vibration.vibrate(newMode ? [100, 50, 100] : 50);
+                  }
+                  // Show feedback
+                  Alert.alert(
+                    newMode ? '🔋 Akku-Modus aktiviert' : '🔋 Akku-Modus deaktiviert',
+                    newMode ? 'Reduziert Hintergrund-Aktivitäten' : 'Normale Performance wiederhergestellt'
+                  );
+                }}
               >
-                <Ionicons 
-                  name={profileData.battery_saver_mode ? "battery-half" : "battery-full"} 
-                  size={20} 
-                  color={profileData.battery_saver_mode ? colors.warning : colors.success} 
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <Ionicons 
+                    name={profileData.battery_saver_mode ? "battery-half" : "battery-full"} 
+                    size={24} 
+                    color={profileData.battery_saver_mode ? colors.accent : colors.text}
+                    style={{ marginRight: 12 }}
+                  />
+                  <View>
+                    <Text style={{
+                      fontSize: 16,
+                      fontWeight: '600',
+                      color: colors.text,
+                      marginBottom: 2,
+                    }}>
+                      Akku-schonender Modus
+                    </Text>
+                    <Text style={{
+                      fontSize: 12,
+                      color: colors.textMuted,
+                    }}>
+                      {profileData.battery_saver_mode ? 'Aktiv - Reduzierte Performance' : 'Deaktiviert - Normale Performance'}
+                    </Text>
+                  </View>
+                </View>
+                
+                <Switch
+                  value={profileData.battery_saver_mode || false}
+                  onValueChange={(value) => {
+                    setProfileData({...profileData, battery_saver_mode: value});
+                    if (Platform.OS !== 'web') {
+                      Vibration.vibrate(value ? [100, 50, 100] : 50);
+                    }
+                  }}
+                  trackColor={{ 
+                    false: colors.textMuted, 
+                    true: colors.accent 
+                  }}
+                  thumbColor={profileData.battery_saver_mode ? colors.accent : '#f4f3f4'}
+                  ios_backgroundColor={colors.textMuted}
                 />
-                <Text style={[
-                  dynamicStyles.toggleButtonText,
-                  profileData.battery_saver_mode && dynamicStyles.toggleButtonTextActive
-                ]}>
-                  {profileData.battery_saver_mode ? '🔋 Aktiviert' : '⚡ Deaktiviert'}
-                </Text>
               </TouchableOpacity>
             </View>
 
@@ -12011,10 +12114,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
                 ))}
               </View>
             </View>
-
-            {/* Schnellzugriff entfernt wie gewünscht */}
-
-            <View style={{ height: 40 }} />
+            
           </ScrollView>
         </SafeAreaView>
       </Modal>
