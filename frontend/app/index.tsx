@@ -495,56 +495,70 @@ const LoginScreen = ({ appConfig }) => {
     },
   });
     subtitle: {
-      fontSize: 18,
-      color: 'rgba(255, 255, 255, 0.9)',
+      fontSize: 16,
+      color: CyberTheme.textGray, // CYBER: Gray subtitle
       textAlign: 'center',
-      fontWeight: '500',
+      fontWeight: '600',
+      letterSpacing: 2,
+      textTransform: 'uppercase',
     },
     form: {
-      marginBottom: 48,
+      marginBottom: 64,
     },
-    inputGroup: {
+    inputContainer: {
       marginBottom: 28,
     },
     inputLabel: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: 'rgba(255, 255, 255, 0.95)',
+      fontSize: 14,
+      fontWeight: '700',
+      color: CyberTheme.neonCyan, // CYBER: Neon Labels
       marginBottom: 12,
+      textTransform: 'uppercase',
+      letterSpacing: 1.5,
     },
     input: {
-      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+      backgroundColor: 'rgba(255, 255, 255, 0.03)', // CYBER: Glass Effect
       borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 0.25)',
-      borderRadius: 16,
-      paddingHorizontal: 24,
+      borderColor: CyberTheme.neonCyan, // CYBER: Neon Border
+      borderRadius: 12,
+      paddingHorizontal: 20,
       paddingVertical: 18,
       fontSize: 16,
-      color: '#FFFFFF',
-      fontWeight: '500',
+      color: CyberTheme.textWhite, // CYBER: White Text
+      fontWeight: '600',
+      shadowColor: CyberTheme.neonCyan,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.4,
+      shadowRadius: 8,
+      elevation: 8,
     },
     loginButton: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#FFFFFF',
-      paddingVertical: 20,
+      backgroundColor: 'rgba(0, 255, 255, 0.1)', // CYBER: Neon Glow Button
+      borderWidth: 2,
+      borderColor: CyberTheme.neonCyan,
+      borderRadius: 12,
+      paddingVertical: 18,
       paddingHorizontal: 32,
-      borderRadius: 16,
       marginTop: 24,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.25,
-      shadowRadius: 12,
-      elevation: 12,
+      shadowColor: CyberTheme.neonCyan,
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.5,
+      shadowRadius: 15,
+      elevation: 15,
     },
     loginButtonDisabled: {
-      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+      backgroundColor: 'rgba(0, 255, 255, 0.05)',
+      borderColor: 'rgba(0, 255, 255, 0.3)',
     },
     loginButtonText: {
-      color: colors.primary,
-      fontSize: 18,
+      color: CyberTheme.neonCyan, // CYBER: Neon Button Text
+      fontSize: 16,
       fontWeight: '700',
+      textTransform: 'uppercase',
+      letterSpacing: 1.5,
       marginLeft: 12,
     },
     registerLink: {
