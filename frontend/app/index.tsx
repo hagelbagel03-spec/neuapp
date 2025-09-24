@@ -673,7 +673,7 @@ const LoginScreen = ({ appConfig }) => {
                 </Text>
               </View>
             </View>
-          </GlassCard>
+          </View>
 
           {/* Footer */}
           <View style={{ alignItems: 'center', marginTop: isSmallDevice ? 24 : 32 }}>
