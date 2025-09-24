@@ -525,12 +525,12 @@ const LoginScreen = ({ appConfig }) => {
 
         <View style={dynamicStyles.form}>
           <View style={dynamicStyles.inputGroup}>
-            <Text style={dynamicStyles.inputLabel}>E-Mail Adresse</Text>
+            <Text style={dynamicStyles.inputLabel}>OPERATOR-ID</Text>
             <TextInput
               style={dynamicStyles.input}
               value={email}
               onChangeText={setEmail}
-              placeholder="benutzer@stadtwache.de"
+              placeholder="benutzer@stadtwache.sys"
               placeholderTextColor="rgba(255, 255, 255, 0.6)"
               keyboardType="email-address"
               autoCapitalize="none"
