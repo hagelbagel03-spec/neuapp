@@ -345,7 +345,7 @@ const LoginScreen = ({ appConfig }) => {
   const dynamicStyles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: colors.primary,
+      backgroundColor: '#000000', // CYBER: Pure Black Background
     },
     content: {
       flex: 1,
@@ -360,28 +360,39 @@ const LoginScreen = ({ appConfig }) => {
       marginBottom: 32,
     },
     logoCircle: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
-      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+      width: 140,
+      height: 140,
+      borderRadius: 70,
+      backgroundColor: 'rgba(0, 255, 255, 0.08)', // CYBER: Neon Cyan Glow
       justifyContent: 'center',
       alignItems: 'center',
-      borderWidth: 3,
-      borderColor: 'rgba(255, 255, 255, 0.3)',
+      borderWidth: 2,
+      borderColor: '#00FFFF', // CYBER: Neon Cyan Border
+      shadowColor: '#00FFFF',
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.8,
+      shadowRadius: 25,
+      elevation: 25,
     },
     title: {
-      fontSize: 42,
-      fontWeight: '800',
-      color: '#FFFFFF',
+      fontSize: 52,
+      fontWeight: '900',
+      color: '#00FFFF', // CYBER: Neon Cyan Title
       marginBottom: 12,
       textAlign: 'center',
-      letterSpacing: -1,
+      letterSpacing: 3,
+      textTransform: 'uppercase',
+      textShadowColor: '#00FFFF',
+      textShadowOffset: { width: 0, height: 0 },
+      textShadowRadius: 15,
     },
     subtitle: {
-      fontSize: 18,
-      color: 'rgba(255, 255, 255, 0.9)',
+      fontSize: 16,
+      color: '#CCCCCC', // CYBER: Gray Subtitle
       textAlign: 'center',
-      fontWeight: '500',
+      fontWeight: '600',
+      letterSpacing: 2,
+      textTransform: 'uppercase',
     },
     form: {
       marginBottom: 48,
@@ -390,45 +401,57 @@ const LoginScreen = ({ appConfig }) => {
       marginBottom: 28,
     },
     inputLabel: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: 'rgba(255, 255, 255, 0.95)',
+      fontSize: 14,
+      fontWeight: '700',
+      color: '#00FFFF', // CYBER: Neon Cyan Labels
       marginBottom: 12,
+      textTransform: 'uppercase',
+      letterSpacing: 1.5,
     },
     input: {
-      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+      backgroundColor: 'rgba(255, 255, 255, 0.03)', // CYBER: Glass Effect
       borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 0.25)',
-      borderRadius: 16,
-      paddingHorizontal: 24,
+      borderColor: '#00FFFF', // CYBER: Neon Cyan Border
+      borderRadius: 12,
+      paddingHorizontal: 20,
       paddingVertical: 18,
       fontSize: 16,
-      color: '#FFFFFF',
-      fontWeight: '500',
+      color: '#FFFFFF', // CYBER: White Text
+      fontWeight: '600',
+      shadowColor: '#00FFFF',
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.4,
+      shadowRadius: 8,
+      elevation: 8,
     },
     loginButton: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#FFFFFF',
-      paddingVertical: 20,
+      backgroundColor: 'rgba(0, 255, 255, 0.1)', // CYBER: Neon Glow Button
+      borderWidth: 2,
+      borderColor: '#00FFFF', // CYBER: Neon Cyan Border
+      borderRadius: 12,
+      paddingVertical: 18,
       paddingHorizontal: 32,
-      borderRadius: 16,
       marginTop: 24,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.25,
-      shadowRadius: 12,
-      elevation: 12,
+      shadowColor: '#00FFFF',
+      shadowOffset: { width: 0, height: 0 },
+      shadowOpacity: 0.5,
+      shadowRadius: 15,
+      elevation: 15,
     },
     loginButtonDisabled: {
-      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+      backgroundColor: 'rgba(0, 255, 255, 0.05)',
+      borderColor: 'rgba(0, 255, 255, 0.3)',
     },
     loginButtonText: {
-      color: colors.primary,
-      fontSize: 18,
+      color: '#00FFFF', // CYBER: Neon Cyan Button Text
+      fontSize: 16,
       fontWeight: '700',
       marginLeft: 12,
+      textTransform: 'uppercase',
+      letterSpacing: 1.5,
     },
     registerLink: {
       alignItems: 'center',
