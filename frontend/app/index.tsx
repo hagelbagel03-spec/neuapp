@@ -17536,8 +17536,8 @@ Beispielinhalt:
                 elevation: 15,
               }}
               onPress={() => {
-                // NICHT schließen - direkt im Settings-Modal bleiben und Schichten-Screen anzeigen
-                setActiveTab('schichten');
+                setShowSettingsModal(false);
+                setShowShiftModal(true); // RICHTIG VERLINKT: Öffnet das Schichten-Modal
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
