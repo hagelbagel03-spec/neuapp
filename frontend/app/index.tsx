@@ -119,22 +119,9 @@ const ModernTheme = {
 
 // 🎨 NEUE GLASSMORPHISM KOMPONENTE
 const GlassCard = ({ children, style, gradient = 'primary' }) => {
-  const getGradient = () => {
-    switch (gradient) {
-      case 'primary':
-        return [ModernTheme.primaryStart, ModernTheme.primaryEnd];
-      case 'secondary':
-        return [ModernTheme.secondaryStart, ModernTheme.secondaryEnd];
-      case 'accent':
-        return [ModernTheme.accentStart, ModernTheme.accentEnd];
-      default:
-        return [ModernTheme.primaryStart, ModernTheme.primaryEnd];
-    }
-  };
-
   return (
     <View style={[{
-      backgroundColor: ModernTheme.glass,
+      backgroundColor: 'rgba(255, 255, 255, 0.25)', // Fixed glass effect
       borderRadius: 24,
       borderWidth: 1,
       borderColor: 'rgba(255, 255, 255, 0.2)',
