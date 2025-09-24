@@ -32,7 +32,7 @@ import ShiftManagementComponent from './components/ShiftManagementComponent';
 const { width, height } = Dimensions.get('window');
 
 // API Configuration - CYBER SYSTEM ACCESS
-const API_URL = "/api";
+const API_URL = "";
 
 // 🚀 ULTRA-MODERN RESPONSIVE - CYBER INTERFACE
 const isSmallScreen = width < 400;
