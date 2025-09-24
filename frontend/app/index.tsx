@@ -556,7 +556,19 @@ const LoginScreen = ({ appConfig }) => {
           </View>
 
           {/* Login Form */}
-          <GlassCard style={{ marginBottom: isSmallDevice ? 24 : 32 }}>
+          <View style={{ 
+            marginBottom: isSmallDevice ? 24 : 32,
+            backgroundColor: 'rgba(255, 255, 255, 0.25)',
+            borderRadius: 24,
+            borderWidth: 1,
+            borderColor: 'rgba(255, 255, 255, 0.2)',
+            padding: isSmallDevice ? 16 : 24,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.1,
+            shadowRadius: 24,
+            elevation: 12,
+          }}>
             <View style={{ marginBottom: 20 }}>
               <Text style={{
                 fontSize: 14,
