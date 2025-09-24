@@ -168,23 +168,24 @@ const ModernButton = ({
     const baseHeight = size === 'small' ? 40 : size === 'medium' ? 48 : 56;
     const basePadding = size === 'small' ? 12 : size === 'medium' ? 16 : 20;
     
+    // Fixed gradient colors
     let gradient, textColor;
     switch (variant) {
       case 'primary':
-        gradient = [ModernTheme.primaryStart, ModernTheme.primaryEnd];
-        textColor = ModernTheme.textLight;
+        gradient = ['#667eea', '#764ba2'];
+        textColor = '#ffffff';
         break;
       case 'secondary':
-        gradient = [ModernTheme.secondaryStart, ModernTheme.secondaryEnd];
-        textColor = ModernTheme.textLight;
+        gradient = ['#f093fb', '#f5576c'];
+        textColor = '#ffffff';
         break;
       case 'accent':
-        gradient = [ModernTheme.accentStart, ModernTheme.accentEnd];
-        textColor = ModernTheme.textLight;
+        gradient = ['#4facfe', '#00f2fe'];
+        textColor = '#ffffff';
         break;
       default:
-        gradient = [ModernTheme.primaryStart, ModernTheme.primaryEnd];
-        textColor = ModernTheme.textLight;
+        gradient = ['#667eea', '#764ba2'];
+        textColor = '#ffffff';
     }
 
     return {
@@ -205,7 +206,7 @@ const ModernButton = ({
           height: buttonStyle.height,
           paddingHorizontal: buttonStyle.paddingHorizontal,
           borderRadius: buttonStyle.borderRadius,
-          backgroundColor: disabled ? ModernTheme.glassDark : buttonStyle.gradient[0],
+          backgroundColor: disabled ? 'rgba(0, 0, 0, 0.1)' : buttonStyle.gradient[0],
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
