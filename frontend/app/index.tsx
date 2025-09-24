@@ -17477,7 +17477,7 @@ Beispielinhalt:
               }}
               onPress={() => {
                 setShowSettingsModal(false);
-                handleSOSAlert();
+                setShowSOSModal(true); // RICHTIG VERLINKT: Öffnet das bestehende SOS-Modal
               }}
             >
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
