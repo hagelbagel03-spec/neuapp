@@ -9446,12 +9446,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
           )}
         </View>
       </View>
-                ... und {recentIncidents.length - 1} weitere Vorfall{recentIncidents.length - 1 !== 1 ? 'e' : ''}
-              </Text>
-            )}
-          </>
-        )}
-      </View>
 
       {/* Bürgerdatenbank Category */}
       <TouchableOpacity 
