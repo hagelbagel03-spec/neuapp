@@ -9011,143 +9011,158 @@ const MainApp = ({ appConfig, setAppConfig }) => {
     >
       {/* Alter Header entfernt - nutzen jetzt den modernen Header oben */}
 
-      {/* Professional Stats Dashboard */}
-      <View style={dynamicStyles.statsContainer}>
-        <TouchableOpacity 
-          style={[dynamicStyles.statCard, { borderLeftColor: colors.error }]}
-          onPress={openAllIncidentsModal}
-          activeOpacity={0.7}
-        >
-          <View style={dynamicStyles.statContent}>
-            <View style={dynamicStyles.statHeader}>
-              <View style={[dynamicStyles.statIconContainer, { backgroundColor: colors.error + '15' }]}>
-                <Ionicons name="alert-circle" size={24} color={colors.error} />
-              </View>
-              <View style={dynamicStyles.statTrend}>
-                <Ionicons name="trending-up" size={16} color={colors.textMuted} />
-              </View>
-            </View>
-            <Text style={dynamicStyles.statNumber}>{recentIncidents.length}</Text>
-            <Text style={dynamicStyles.statLabel}>Aktuelle Vorfälle</Text>
-            <Text style={dynamicStyles.statSubtext}>+{recentIncidents.filter(i => new Date(i.created_at) > new Date(Date.now() - 24*60*60*1000)).length} heute</Text>
-          </View>
-        </TouchableOpacity>
+      {/* 🚀 ULTRA-FUTURISTIC DASHBOARD - SO MODERN ES IST BEÄNGSTIGEND */}
+      <View style={dynamicStyles.cyberDashboardContainer}>
         
-        <TouchableOpacity 
-          style={[dynamicStyles.statCard, { borderLeftColor: colors.primary }]}
-          onPress={() => setActiveTab('team')}
-          activeOpacity={0.7}
-        >
-          <View style={dynamicStyles.statContent}>
-            <View style={dynamicStyles.statHeader}>
-              <View style={[dynamicStyles.statIconContainer, { backgroundColor: colors.primary + '15' }]}>
-                <Ionicons name="people" size={24} color={colors.primary} />
+        {/* Futuristic Header */}
+        <View style={dynamicStyles.cyberHeaderContainer}>
+          <Text style={dynamicStyles.cyberHeaderTitle}>STADTWACHE</Text>
+          <Text style={dynamicStyles.cyberHeaderSubtitle}>ZENTRALE • ECHTZEIT ÜBERWACHUNG</Text>
+          <View style={dynamicStyles.cyberStatusBar}>
+            <Text style={dynamicStyles.cyberStatusText}>🟢 SYSTEM OPERATIV</Text>
+          </View>
+        </View>
+
+        {/* Ultra-Modern Stats Grid */}
+        <View style={dynamicStyles.cyberStatsGrid}>
+          {/* Vorfälle Card - Ultra Futuristic */}
+          <TouchableOpacity 
+            style={[dynamicStyles.cyberStatCard, dynamicStyles.cyberCardDanger]}
+            onPress={openAllIncidentsModal}
+            activeOpacity={0.8}
+          >
+            <View style={dynamicStyles.cyberCardGlow} />
+            <View style={dynamicStyles.cyberCardContent}>
+              <View style={dynamicStyles.cyberIconContainer}>
+                <Ionicons name="warning" size={28} color="#FF3333" />
               </View>
-              <View style={dynamicStyles.statTrend}>
-                <Ionicons name="checkmark-circle" size={16} color={colors.success} />
+              <Text style={dynamicStyles.cyberStatNumber}>{recentIncidents.length}</Text>
+              <Text style={dynamicStyles.cyberStatLabel}>VORFÄLLE</Text>
+              <View style={dynamicStyles.cyberTrendLine}>
+                <View style={[dynamicStyles.cyberTrendDot, { backgroundColor: '#FF3333' }]} />
+                <Text style={dynamicStyles.cyberTrendText}>
+                  +{recentIncidents.filter(i => new Date(i.created_at) > new Date(Date.now() - 24*60*60*1000)).length} HEUTE
+                </Text>
               </View>
             </View>
-            <Text style={dynamicStyles.statNumber}>{Object.values(usersByStatus).flat().length}</Text>
-            <Text style={dynamicStyles.statLabel}>Team Mitglieder</Text>
-            <Text style={dynamicStyles.statSubtext}>{Object.values(usersByStatus).flat().filter(u => u.status === 'Im Dienst').length} im Dienst</Text>
-          </View>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={[dynamicStyles.statCard, { borderLeftColor: colors.success }]}
-          onPress={() => setActiveTab('berichte')}
-          activeOpacity={0.7}
-        >
-          <View style={dynamicStyles.statContent}>
-            <View style={dynamicStyles.statHeader}>
-              <View style={[dynamicStyles.statIconContainer, { backgroundColor: colors.success + '15' }]}>
-                <Ionicons name="document-text" size={24} color={colors.success} />
+          </TouchableOpacity>
+          
+          {/* Team Card - Ultra Futuristic */}
+          <TouchableOpacity 
+            style={[dynamicStyles.cyberStatCard, dynamicStyles.cyberCardPrimary]}
+            onPress={() => setActiveTab('team')}
+            activeOpacity={0.8}
+          >
+            <View style={dynamicStyles.cyberCardGlow} />
+            <View style={dynamicStyles.cyberCardContent}>
+              <View style={dynamicStyles.cyberIconContainer}>
+                <Ionicons name="people" size={28} color="#00FFFF" />
               </View>
-              <View style={dynamicStyles.statTrend}>
-                <Ionicons name="time" size={16} color={colors.textMuted} />
+              <Text style={dynamicStyles.cyberStatNumber}>{Object.values(usersByStatus).flat().length}</Text>
+              <Text style={dynamicStyles.cyberStatLabel}>EINHEITEN</Text>
+              <View style={dynamicStyles.cyberTrendLine}>
+                <View style={[dynamicStyles.cyberTrendDot, { backgroundColor: '#00FF41' }]} />
+                <Text style={dynamicStyles.cyberTrendText}>
+                  {Object.values(usersByStatus).flat().filter(u => u.status === 'Im Dienst').length} AKTIV
+                </Text>
               </View>
             </View>
-            <Text style={dynamicStyles.statNumber}>{reports.length}</Text>
-            <Text style={dynamicStyles.statLabel}>Berichte Heute</Text>
-            <Text style={dynamicStyles.statSubtext}>{reports.filter(r => r.status === 'submitted').length} eingereicht</Text>
+          </TouchableOpacity>
+          
+          {/* Berichte Card - Ultra Futuristic */}
+          <TouchableOpacity 
+            style={[dynamicStyles.cyberStatCard, dynamicStyles.cyberCardSuccess]}
+            onPress={() => setActiveTab('berichte')}
+            activeOpacity={0.8}
+          >
+            <View style={dynamicStyles.cyberCardGlow} />
+            <View style={dynamicStyles.cyberCardContent}>
+              <View style={dynamicStyles.cyberIconContainer}>
+                <Ionicons name="document-text" size={28} color="#00FF41" />
+              </View>
+              <Text style={dynamicStyles.cyberStatNumber}>{reports.length}</Text>
+              <Text style={dynamicStyles.cyberStatLabel}>BERICHTE</Text>
+              <View style={dynamicStyles.cyberTrendLine}>
+                <View style={[dynamicStyles.cyberTrendDot, { backgroundColor: '#FFD700' }]} />
+                <Text style={dynamicStyles.cyberTrendText}>
+                  {reports.filter(r => r.status === 'submitted').length} NEU
+                </Text>
+              </View>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Ultra-Modern Incident Display */}
+        <View style={dynamicStyles.cyberIncidentContainer}>
+          <View style={dynamicStyles.cyberSectionHeader}>
+            <Ionicons name="flash" size={24} color="#00FFFF" />
+            <Text style={dynamicStyles.cyberSectionTitle}>AKTUELLE BEDROHUNGEN</Text>
+            <TouchableOpacity 
+              onPress={openAllIncidentsModal}
+              style={dynamicStyles.cyberViewAllButton}
+            >
+              <Text style={dynamicStyles.cyberViewAllText}>ALLE ANZEIGEN</Text>
+              <Ionicons name="chevron-forward" size={16} color="#00FFFF" />
+            </TouchableOpacity>
           </View>
-        </TouchableOpacity>
+          
+          {recentIncidents.length === 0 ? (
+            <View style={dynamicStyles.cyberEmptyState}>
+              <View style={dynamicStyles.cyberEmptyIcon}>
+                <Ionicons name="shield-checkmark" size={48} color="#00FF41" />
+              </View>
+              <Text style={dynamicStyles.cyberEmptyTitle}>ALLE SYSTEME SICHER</Text>
+              <Text style={dynamicStyles.cyberEmptySubtext}>Keine aktiven Bedrohungen erkannt</Text>
+            </View>
+          ) : (
+            <>
+              {(recentIncidents || []).slice(0, 1).map((incident, index) => (
+                <TouchableOpacity 
+                  key={incident.id || index} 
+                  style={dynamicStyles.cyberIncidentCard}
+                  onPress={() => {
+                    setSelectedIncident(incident);
+                    setShowIncidentDetailModal(true);
+                  }}
+                  activeOpacity={0.8}
+                >
+                  <View style={[dynamicStyles.cyberIncidentGlow, { backgroundColor: getPriorityColor(incident.priority) + '20' }]} />
+                  <View style={dynamicStyles.cyberIncidentContent}>
+                    <View style={dynamicStyles.cyberIncidentHeader}>
+                      <View style={[dynamicStyles.cyberIncidentIcon, { backgroundColor: getPriorityColor(incident.priority) + '30' }]}>
+                        <Ionicons name="warning" size={20} color={getPriorityColor(incident.priority)} />
+                      </View>
+                      <View style={dynamicStyles.cyberIncidentInfo}>
+                        <Text style={dynamicStyles.cyberIncidentTitle}>{incident.title}</Text>
+                        <Text style={dynamicStyles.cyberIncidentTime}>
+                          ⚡ {incident.created_at ? 
+                            new Date(incident.created_at).toLocaleString('de-DE') : 
+                            'ZEIT UNBEKANNT'
+                          }
+                        </Text>
+                      </View>
+                      <View style={[dynamicStyles.cyberPriorityBadge, { borderColor: getPriorityColor(incident.priority) }]}>
+                        <Text style={[dynamicStyles.cyberPriorityText, { color: getPriorityColor(incident.priority) }]}>
+                          {incident.priority?.toUpperCase() || 'HOCH'}
+                        </Text>
+                      </View>
+                    </View>
+                    <Text style={dynamicStyles.cyberIncidentLocation}>
+                      📍 {incident.address || incident.location || 'KOORDINATEN VERSCHLÜSSELT'}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+              
+              {recentIncidents.length > 1 && (
+                <Text style={dynamicStyles.cyberMoreIncidents}>
+                  +{recentIncidents.length - 1} WEITERE VORFÄLLE • TIPPEN FÜR DETAILS
+                </Text>
+              )}
+            </>
+          )}
+        </View>
       </View>
-
-      {/* Admin Quick Actions - NUR FÜR ADMINS */}
-      {/* Aktuelle Vorfälle */}
-      <View style={dynamicStyles.card}>
-        <TouchableOpacity 
-          style={dynamicStyles.cardHeader}
-          onPress={openAllIncidentsModal}
-          activeOpacity={0.7}
-        >
-          <Ionicons name="time" size={24} color={colors.primary} />
-          <Text style={dynamicStyles.cardTitle}>Aktuelle Vorfälle</Text>
-          <View style={dynamicStyles.cardHeaderRight}>
-            {recentIncidents.length > 0 && (
-              <View style={[dynamicStyles.statusCount, { backgroundColor: colors.primary }]}>
-                <Text style={dynamicStyles.statusCountText}>{recentIncidents.length}</Text>
-              </View>
-            )}
-            <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
-          </View>
-        </TouchableOpacity>
-        
-        {recentIncidents.length === 0 ? (
-          <View style={dynamicStyles.emptyState}>
-            <Ionicons name="shield-checkmark" size={64} color={colors.primary} style={dynamicStyles.emptyIcon} />
-            <Text style={dynamicStyles.emptyText}>Keine aktuellen Vorfälle</Text>
-            <Text style={dynamicStyles.emptySubtext}>
-              Derzeit sind keine Vorfälle gemeldet 🛡️
-            </Text>
-          </View>
-        ) : (
-          <>
-            <Text style={[dynamicStyles.emptySubtext, { marginBottom: 12, textAlign: 'center' }]}>
-              🚨 Neuester Vorfall
-            </Text>
-            
-            {/* Show only the most recent incident */}
-            {(recentIncidents || []).slice(0, 1).map((incident, index) => (
-              <TouchableOpacity 
-                key={incident.id || index} 
-                style={[dynamicStyles.incidentCard, 
-                  { borderLeftColor: getPriorityColor(incident.priority) }
-                ]}
-                onPress={() => {
-                  console.log('🔍 Incident clicked:', incident);
-                  console.log('🔍 Setting selectedIncident and opening 🚨 Vorfall Details modal');
-                  setSelectedIncident(incident);
-                  setShowIncidentDetailModal(true);
-                  console.log('🔍 🚨 Vorfall Details modal should now be visible');
-                }}
-              >
-                <View style={[dynamicStyles.incidentIcon, 
-                  { backgroundColor: getPriorityColor(incident.priority) + '20' }
-                ]}>
-                  <Ionicons name="warning" size={24} color={getPriorityColor(incident.priority)} />
-                </View>
-                <View style={dynamicStyles.incidentContent}>
-                  <Text style={dynamicStyles.incidentTitle}>
-                    {incident.title}
-                  </Text>
-                  <Text style={dynamicStyles.incidentTime}>
-                    🕒 {incident.created_at ? 
-                      new Date(incident.created_at).toLocaleString('de-DE') : 
-                      'Unbekannte Zeit'
-                    }
-                  </Text>
-                  <Text style={[dynamicStyles.incidentTime, { color: colors.textMuted }]}>
-                    📍 {incident.address || incident.location || 'Unbekannter Ort'}
-                  </Text>
-                </View>
-                {/* Karten-Button komplett entfernt */}
-              </TouchableOpacity>
-            ))}
-
-            {recentIncidents.length > 1 && (
-              <Text style={[dynamicStyles.emptySubtext, { textAlign: 'center', marginTop: 8 }]}>
                 ... und {recentIncidents.length - 1} weitere Vorfall{recentIncidents.length - 1 !== 1 ? 'e' : ''}
               </Text>
             )}
