@@ -31,8 +31,8 @@ import ShiftManagementComponent from './components/ShiftManagementComponent';
 
 const { width, height } = Dimensions.get('window');
 
-// API Configuration - Use environment variable
-const API_URL = process.env.EXPO_PUBLIC_BACKEND_URL || "http://212.227.57.238:8001";
+// API Configuration - FIXED for external IP
+const API_URL = "http://212.227.57.238:8001";
 
 // MOBILE RESPONSIVE - NUR DIE WICHTIGSTEN FIXES
 const isSmallScreen = width < 400;
@@ -49,7 +49,7 @@ const useTheme = () => {
   return context;
 };
 
-const ThemeProvider = ({ children, appConfig }) => {
+const ThemeProvider = ({ children }) => {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
@@ -77,29 +77,46 @@ const ThemeProvider = ({ children, appConfig }) => {
     }
   };
 
-  const getColors = (isDarkMode) => ({
-    // 🎨 DYNAMISCHE FARBEN aus Admin-Konfiguration
-    primary: appConfig?.primary_color || '#1E40AF',
-    primaryLight: appConfig?.primary_color || '#3B82F6', 
-    secondary: appConfig?.success_color || '#059669',
-    accent: appConfig?.warning_color || '#F59E0B',
-    success: appConfig?.success_color || '#10B981',
-    warning: appConfig?.warning_color || '#F59E0B',
-    error: appConfig?.error_color || '#EF4444',
-    background: isDarkMode ? '#0F172A' : '#F8FAFC',
-    surface: isDarkMode ? '#1E293B' : '#FFFFFF',
-    card: isDarkMode ? '#334155' : '#FFFFFF',
-    text: isDarkMode ? '#F8FAFC' : '#1E293B',
-    textSecondary: isDarkMode ? '#CBD5E1' : '#475569',
-    textMuted: isDarkMode ? '#94A3B8' : '#64748B',
-    border: isDarkMode ? '#475569' : '#E2E8F0',
-    overlay: 'rgba(0, 0, 0, 0.5)',
-  });
-
   const theme = {
     isDarkMode,
     toggleTheme,
-    colors: getColors(isDarkMode)
+    colors: isDarkMode ? {
+      // Dark Theme
+      primary: '#3B82F6',          // Professional Blue
+      secondary: '#60A5FA',        // Lighter Blue
+      accent: '#22D3EE',           // Cyan accent
+      success: '#10B981',          // Professional Green
+      warning: '#F59E0B',          // Professional Orange
+      error: '#EF4444',            // Professional Red
+      background: '#0F172A',       // Dark Navy
+      surface: '#1E293B',          // Dark Surface
+      card: '#334155',             // Card Background
+      elevated: '#475569',         // Elevated surfaces
+      text: '#F8FAFC',             // Light text
+      textSecondary: '#CBD5E1',    // Medium text
+      textMuted: '#94A3B8',        // Muted text
+      border: '#475569',           // Dark border
+      shadow: 'rgba(0, 0, 0, 0.4)',
+      overlay: 'rgba(0, 0, 0, 0.6)',
+    } : {
+      // Light Theme
+      primary: '#1E40AF',          // Professional Blue
+      secondary: '#3B82F6',        // Lighter Blue
+      accent: '#06B6D4',           // Cyan accent
+      success: '#059669',          // Professional Green
+      warning: '#D97706',          // Professional Orange
+      error: '#DC2626',            // Professional Red
+      background: '#F8FAFC',       // Soft White
+      surface: '#FFFFFF',          // Pure White
+      card: '#FFFFFF',             // Card Background
+      elevated: '#F1F5F9',         // Elevated surfaces
+      text: '#0F172A',             // Dark text
+      textSecondary: '#334155',    // Medium text
+      textMuted: '#64748B',        // Light text
+      border: '#E2E8F0',           // Light border
+      shadow: 'rgba(15, 23, 42, 0.08)',
+      overlay: 'rgba(15, 23, 42, 0.4)',
+    }
   };
 
   return (
@@ -145,11 +162,10 @@ const AuthProvider = ({ children }) => {
           try {
             const savedToken = await AsyncStorage.getItem('stadtwache_token');
             const savedUser = await AsyncStorage.getItem('stadtwache_user');
-            const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || "http://212.227.57.238:8001";
             
             if (savedToken && savedUser) {
               // Teste Token erneut
-              const response = await axios.get(`${API_BASE}/api/auth/me`, {
+              const response = await axios.get(`${API_URL}/api/auth/me`, {
                 headers: { Authorization: `Bearer ${savedToken}` }
               });
               
@@ -179,10 +195,6 @@ const AuthProvider = ({ children }) => {
 
   const checkAuthState = async () => {
     try {
-      // KRITISCH: Warte bis API_URL gesetzt ist
-      const API_BASE = process.env.EXPO_PUBLIC_BACKEND_URL || "http://212.227.57.238:8001";
-      console.log('🌐 Using API URL for auth check:', API_BASE);
-      
       // Versuche gespeicherten Token zu laden
       const savedToken = await AsyncStorage.getItem('stadtwache_token');
       const savedUser = await AsyncStorage.getItem('stadtwache_user');
@@ -192,7 +204,7 @@ const AuthProvider = ({ children }) => {
         
         // Validiere Token mit Backend
         try {
-          const response = await axios.get(`${API_BASE}/api/auth/me`, {
+          const response = await axios.get(`${API_URL}/api/auth/me`, {
             headers: { Authorization: `Bearer ${savedToken}` }
           });
           
@@ -323,19 +335,12 @@ const LoginScreen = ({ appConfig }) => {
 
     setLoading(true);
     console.log('🚀 LOGIN CALL:', { cleanEmail, cleanPassword });
-    
-    try {
-      const result = await login(cleanEmail, cleanPassword);
-      setLoading(false);
+    const result = await login(cleanEmail, cleanPassword);
+    setLoading(false);
 
-      if (!result.success) {
-        console.log('❌ LOGIN FAILED:', result.error);
-        Alert.alert('Verbindungsfehler', result.error);
-      }
-    } catch (error) {
-      setLoading(false);
-      console.log('💥 LOGIN CRASH PREVENTED:', error);
-      Alert.alert('Verbindungsfehler', 'Login fehlgeschlagen. Bitte prüfen Sie Ihre Internetverbindung.');
+    if (!result.success) {
+      console.log('❌ LOGIN FAILED:', result.error);
+      Alert.alert('Verbindungsfehler', result.error);
     }
   };
 
@@ -348,80 +353,78 @@ const LoginScreen = ({ appConfig }) => {
     },
     content: {
       flex: 1,
-      padding: 32,
+      padding: 20,
       justifyContent: 'center',
     },
     header: {
       alignItems: 'center',
-      marginBottom: 64,
+      marginBottom: 50,
     },
     logoContainer: {
-      marginBottom: 32,
+      marginBottom: 24,
     },
     logoCircle: {
-      width: 120,
-      height: 120,
-      borderRadius: 60,
+      width: 100,
+      height: 100,
+      borderRadius: 50,
       backgroundColor: 'rgba(255, 255, 255, 0.15)',
       justifyContent: 'center',
       alignItems: 'center',
-      borderWidth: 3,
+      borderWidth: 2,
       borderColor: 'rgba(255, 255, 255, 0.3)',
     },
     title: {
-      fontSize: 42,
-      fontWeight: '800',
+      fontSize: 36,
+      fontWeight: 'bold',
       color: '#FFFFFF',
-      marginBottom: 12,
+      marginBottom: 8,
       textAlign: 'center',
-      letterSpacing: -1,
     },
     subtitle: {
       fontSize: 18,
-      color: 'rgba(255, 255, 255, 0.9)',
+      color: 'rgba(255, 255, 255, 0.8)',
       textAlign: 'center',
-      fontWeight: '500',
     },
     form: {
-      marginBottom: 48,
+      marginBottom: 40,
     },
     inputGroup: {
-      marginBottom: 28,
+      marginBottom: 24,
     },
     inputLabel: {
       fontSize: 16,
       fontWeight: '600',
-      color: 'rgba(255, 255, 255, 0.95)',
-      marginBottom: 12,
+      color: 'rgba(255, 255, 255, 0.9)',
+      marginBottom: 8,
     },
     input: {
-      backgroundColor: 'rgba(255, 255, 255, 0.12)',
+      backgroundColor: 'rgba(255, 255, 255, 0.1)',
       borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 0.25)',
-      borderRadius: 16,
-      paddingHorizontal: 24,
-      paddingVertical: 18,
+      borderColor: 'rgba(255, 255, 255, 0.2)',
+      borderRadius: 12,
+      paddingHorizontal: 20,
+      paddingVertical: 16,
       fontSize: 16,
       color: '#FFFFFF',
-      fontWeight: '500',
+      backdropFilter: 'blur(10px)',
     },
     loginButton: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       backgroundColor: '#FFFFFF',
-      paddingVertical: 20,
+      paddingVertical: 18,
       paddingHorizontal: 32,
-      borderRadius: 16,
-      marginTop: 24,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.25,
-      shadowRadius: 12,
-      elevation: 12,
+      borderRadius: 12,
+      marginTop: 16,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: 4 },
+      shadowOpacity: 0.3,
+      shadowRadius: 8,
+      elevation: 8,
     },
     loginButtonDisabled: {
-      backgroundColor: 'rgba(255, 255, 255, 0.7)',
+      backgroundColor: 'rgba(255, 255, 255, 0.6)',
     },
     loginButtonText: {
       color: colors.primary,
@@ -465,13 +468,12 @@ const LoginScreen = ({ appConfig }) => {
     footerText: {
       fontSize: 18,
       fontWeight: '600',
-      color: 'rgba(255, 255, 255, 0.95)',
-      marginBottom: 8,
+      color: 'rgba(255, 255, 255, 0.9)',
+      marginBottom: 4,
     },
-    statusText: {
-      fontSize: 16,
-      color: 'rgba(255, 255, 255, 0.8)',
-      fontWeight: '500',
+    footerSubtext: {
+      fontSize: 14,
+      color: 'rgba(255, 255, 255, 0.6)',
     },
   });
 
@@ -485,7 +487,7 @@ const LoginScreen = ({ appConfig }) => {
         <View style={dynamicStyles.header}>
           <View style={dynamicStyles.logoContainer}>
             <View style={dynamicStyles.logoCircle}>
-              <Ionicons name="shield-checkmark" size={56} color="#FFFFFF" />
+              <Ionicons name="shield-checkmark" size={64} color="#FFFFFF" />
             </View>
           </View>
           <Text style={dynamicStyles.title}>{appConfig.app_name}</Text>
@@ -519,20 +521,20 @@ const LoginScreen = ({ appConfig }) => {
             />
           </View>
 
-          <TouchableOpacity 
+          <TouchableOpacity
             style={[dynamicStyles.loginButton, loading && dynamicStyles.loginButtonDisabled]}
-            onPress={() => {
-              console.log('🔐 Login-Button geklickt');
-              handleLogin();
-            }}
-            disabled={!email.trim() || !password.trim() || loading}
+            onPress={handleLogin}
+            disabled={loading}
+            activeOpacity={0.8}
           >
             {loading ? (
               <ActivityIndicator color={colors.primary} size="small" />
             ) : (
-              <Ionicons name="log-in" size={24} color={colors.primary} />
+              <>
+                <Ionicons name="log-in" size={24} color={colors.primary} />
+                <Text style={dynamicStyles.loginButtonText}>Anmelden</Text>
+              </>
             )}
-            <Text style={dynamicStyles.loginButtonText}>Anmelden</Text>
           </TouchableOpacity>
 
 
@@ -540,7 +542,9 @@ const LoginScreen = ({ appConfig }) => {
 
         <View style={dynamicStyles.footer}>
           <Text style={dynamicStyles.footerText}>Stadtwache Schwelm</Text>
-          <Text style={dynamicStyles.statusText}>🟢 Sichere Verbindung</Text>
+          <Text style={dynamicStyles.footerText}>
+           🟢 Sichere Verbindung 
+          </Text>
         </View>
 
 
@@ -700,30 +704,9 @@ const IncidentMapModal = ({ visible, onClose, incident }) => {
 
 // Modern Main App
 const MainApp = ({ appConfig, setAppConfig }) => {
-  console.log('🚀 MainApp rendering started...');
-  
   const { user, updateUser, logout, token } = useAuth();
   const { colors, isDarkMode, toggleTheme } = useTheme();
   const [activeTab, setActiveTab] = useState('home');
-
-  // Add error boundary logging
-  useEffect(() => {
-    console.log('✅ MainApp mounted successfully');
-    console.log('👤 User state:', user ? user.username : 'No user');
-    console.log('🔑 Token exists:', !!token);
-  }, []);
-
-  // Simplified initial render to test
-  if (!user) {
-    console.log('❌ MainApp: No user, should not happen after login');
-    return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: colors.background }}>
-        <Text style={{ color: colors.text }}>Benutzer wird geladen...</Text>
-      </View>
-    );
-  }
-
-  console.log('✅ MainApp: Rendering main interface for user:', user.username);
   const [stats, setStats] = useState({ incidents: 0, officers: 0, messages: 0 });
   
   // Team Chat State
@@ -737,9 +720,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
   const [showDistrictDetailModal, setShowDistrictDetailModal] = useState(false); // ✅ NEU: Detail-Modal State
   const [showTeamDetailModal, setShowTeamDetailModal] = useState(false); // ✅ NEU: Team-Detail-Modal State
   const [showTeamAssignmentModal, setShowTeamAssignmentModal] = useState(false); // ✅ NEU: Team-Assignment-Modal State
-  // ✅ NEU: Multi-Select für Bezirks-Zuordnung (bis zu 3 Benutzer)
-  const [selectedUsers, setSelectedUsers] = useState([]);
-  const [selectedUser, setSelectedUser] = useState(null); // ✅ FIX: Für andere Funktionen die nur einen User brauchen
+  const [selectedUser, setSelectedUser] = useState(null);
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedTeam, setSelectedTeam] = useState(null); // ✅ NEU: Team-Auswahl State
   const [selectedRole, setSelectedRole] = useState(null); // ✅ NEU: Rollen-Auswahl State
@@ -755,32 +736,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
   const [showAdminSettingsModal, setShowAdminSettingsModal] = useState(false);
   
   // Neue Admin Modals
-  // ✅ NEU: Sick Leave Management State
-  const [showSickLeaveManagementModal, setShowSickLeaveManagementModal] = useState(false);
-  
-  // Handle sick leave approval/rejection
-  const handleSickLeaveApproval = async (sickLeaveId, action) => {
-    try {
-      const response = await fetch(`${API_URL}/api/admin/sick-leave/${sickLeaveId}/approve`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ action })
-      });
-
-      if (response.ok) {
-        Alert.alert('✅ Erfolg', `Krankmeldung wurde ${action === 'approve' ? 'genehmigt' : 'abgelehnt'}!`);
-        loadPendingSickLeave(); // Neu laden
-      } else {
-        Alert.alert('❌ Fehler', 'Aktion konnte nicht ausgeführt werden.');
-      }
-    } catch (error) {
-      Alert.alert('❌ Netzwerkfehler', 'Verbindung zum Server fehlgeschlagen.');
-    }
-  };
-
   const [showVacationManagementModal, setShowVacationManagementModal] = useState(false);
   const [showAttendanceModal, setShowAttendanceModal] = useState(false);
   const [showTeamStatusModal, setShowTeamStatusModal] = useState(false);
@@ -791,8 +746,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
   
   // Neue Admin Daten
   const [pendingVacations, setPendingVacations] = useState([]);
-  const [myVacations, setMyVacations] = useState([]); // ✅ FIX: Separate state for personal vacations
-  const [pendingSickLeave, setPendingSickLeave] = useState([]); // ✅ FIX: Missing sick leave state
   const [attendanceList, setAttendanceList] = useState([]);
   const [teamStatusList, setTeamStatusList] = useState([]);
   
@@ -819,12 +772,9 @@ const MainApp = ({ appConfig, setAppConfig }) => {
   });
   const [availableUsers, setAvailableUsers] = useState([]);
   
-  // ✅ NEU: Teams vom Backend laden mit Member-Count
-  const [availableTeams, setAvailableTeams] = useState([]);
-  
   // Benutzer-Auswahl für Team
   const [showUserSelectionModal, setShowUserSelectionModal] = useState(false);
-  // selectedUsers bereits oben deklariert (Zeile 757) - keine doppelte Deklaration
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const [showSOSModal, setShowSOSModal] = useState(false);
 
   // SOS Alarm Function - Send real notification with GPS to all team members
@@ -1127,18 +1077,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
     reason: '',
     status: 'pending'
   });
-  
-  // ✅ NEU: Sick Leave (Krankmeldung) System
-  const [showSickLeaveModal, setShowSickLeaveModal] = useState(false);
-  const [sickLeaveFormData, setSickLeaveFormData] = useState({
-    user_id: '',
-    start_date: '',
-    end_date: '',
-    reason: '',
-    medical_certificate: false
-  });
-  // myVacations bereits oben deklariert (Zeile 810) - keine doppelte Deklaration nötig
-  // pendingVacations bereits oben deklariert (Zeile 783) - keine doppelte Deklaration
   
   useEffect(() => {
     if (selectedChannel && selectedChannel !== 'private') {
@@ -1551,31 +1489,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
     } catch (error) {
       console.error('❌ Error loading all users:', error);
       setAvailableUsers([]);
-    }
-  };
-
-  // Load teams from backend with member counts
-  const loadTeams = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/admin/teams`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const teams = await response.json();
-        console.log('👥 Teams loaded from backend:', teams);
-        setAvailableTeams(teams || []);
-      } else {
-        console.error('❌ Fehler beim Laden der Teams');
-        // Fallback zu statischen Teams
-        setAvailableTeams([
-          { id: 'alpha', name: 'Team Alpha', description: 'Streifenpolizei - Haupteinsatz', status: '0 Mitglieder' },
-          { id: 'bravo', name: 'Team Bravo', description: 'Verkehrspolizei', status: '0 Mitglieder' },
-          { id: 'charlie', name: 'Team Charlie', description: 'Ermittlungen', status: '0 Mitglieder' }
-        ]);
-      }
-    } catch (error) {
-      console.error('❌ Network error loading teams:', error);
-      setAvailableTeams([]);
     }
   };
 
@@ -2237,53 +2150,9 @@ const MainApp = ({ appConfig, setAppConfig }) => {
 
   // Admin Settings Functions
   // Neue Admin-Funktionen
-  // ✅ NEU: Load sick leave for admin
-  const loadPendingSickLeave = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/admin/sick-leave`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log('🏥 Admin loaded sick leave:', data);
-        
-        // Nur PENDING Krankmeldungen anzeigen (bearbeitete ausblenden)
-        const pendingOnly = data.filter(sickLeave => sickLeave.status === 'pending');
-        console.log('🏥 Showing pending sick leave only:', pendingOnly.length, 'of', data.length);
-        setPendingSickLeave(pendingOnly || []);
-      } else {
-        console.error('❌ Fehler beim Laden der Krankmeldungen');
-        setPendingSickLeave([]);
-      }
-    } catch (error) {
-      console.error('❌ Network error loading sick leave:', error);
-      setPendingSickLeave([]);
-    }
-  };
-
-  // Load my personal sick leave
-  const loadMySickLeave = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/sick-leave`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log('🏥 Loaded my sick leave:', data);
-        setPendingSickLeave(data || []); // Für persönliche Ansicht alle anzeigen
-      } else {
-        console.error('❌ Fehler beim Laden meiner Krankmeldungen');
-        setPendingSickLeave([]);
-      }
-    } catch (error) {
-      console.error('❌ Network error loading my sick leave:', error);
-      setPendingSickLeave([]);
-    }
-  };
-
   const loadPendingVacations = async () => {
     try {
-      // ✅ FIX: Nur PENDING Urlaubsanträge für Admin laden (keine bearbeiteten)
+      // FIX: Für Admins alle Urlaubsanträge laden, dann nur PENDING filtern
       const response = await fetch(`${API_URL}/api/admin/vacations`, {
         headers: { 'Authorization': `Bearer ${token}` }
       });
@@ -2291,9 +2160,9 @@ const MainApp = ({ appConfig, setAppConfig }) => {
         const data = await response.json();
         console.log('📅 Loaded all vacations:', data);
         
-        // ✅ FIX: Nur PENDING Urlaubsanträge anzeigen (bearbeitete ausblenden)
+        // ✅ FIX: Nur PENDING Urlaubsanträge anzeigen
         const pendingOnly = data.filter(vacation => vacation.status === 'pending');
-        console.log('📅 Showing pending vacations only:', pendingOnly.length, 'of', data.length);
+        console.log('📅 Filtered pending vacations:', pendingOnly.length, 'of', data.length);
         setPendingVacations(pendingOnly || []);
       } else {
         console.error('❌ Fehler beim Laden der Urlaubsanträge');
@@ -2302,27 +2171,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
     } catch (error) {
       console.error('❌ Network error loading vacations:', error);
       setPendingVacations([]);
-    }
-  };
-
-  // ✅ FIX: Load my personal vacations (separate from admin)
-  const loadMyVacations = async () => {
-    try {
-      const response = await fetch(`${API_URL}/api/vacations`, {
-        headers: { 'Authorization': `Bearer ${token}` }
-      });
-      if (response.ok) {
-        const data = await response.json();
-        console.log('📅 Loaded my personal vacations:', data);
-        // ✅ FIX: Use separate state for personal vacations
-        setMyVacations(data || []); // Use different state than pendingVacations
-      } else {
-        console.error('❌ Fehler beim Laden meiner Urlaubsanträge');
-        setMyVacations([]);
-      }
-    } catch (error) {
-      console.error('❌ Network error loading my vacations:', error);
-      setMyVacations([]);
     }
   };
 
@@ -2402,7 +2250,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
 
   const updateTeamStatus = async (teamId, newStatus) => {
     try {
-      const response = await fetch(`${API_URL}/api/admin/teams/${teamId}/status`, {
+      const response = await fetch(`${API_URL}/admin/teams/${teamId}/status`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -2779,30 +2627,16 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       const incidentData = {
         title: incidentFormData.title.trim(),
         description: incidentFormData.description.trim(),
-        status: 'open',
         priority: incidentFormData.priority,
-        location: incidentFormData.coordinates ? {
-          lat: incidentFormData.coordinates.lat,
-          lng: incidentFormData.coordinates.lng,
-          accuracy: incidentFormData.coordinates.accuracy,
-          isRealGPS: true
-        } : {
-          // NUR wenn kein GPS - dann NULL senden, NICHT Standard-Koordinaten!
-          lat: null,
-          lng: null,
-          isRealGPS: false,
-          error: 'GPS nicht verfügbar - manuelle Adresse erforderlich'
+        location: {
+          lat: 51.2878,  // Default: Schwelm coordinates
+          lng: 7.3372
         },
         address: incidentFormData.location.trim(),
         images: incidentFormData.photo ? [incidentFormData.photo] : []
       };
 
-      console.log('📤 Submitting incident with GPS:', {
-        title: incidentData.title,
-        coordinates: incidentData.location,
-        hasRealGPS: !!incidentFormData.coordinates,
-        formCoordinates: incidentFormData.coordinates
-      });
+      console.log('📤 Submitting incident:', incidentData);
       
       const response = await axios.post(`${API_URL}/api/incidents`, incidentData, config);
       
@@ -3611,91 +3445,82 @@ const MainApp = ({ appConfig, setAppConfig }) => {
     setPendingTimeouts([timeout]);
   };
 
-  // REPARIERTE GPS-Funktion mit Web + Mobile Support
+  // Get current location for incident reporting using Expo Location - FIXED
   const getCurrentLocation = async () => {
     console.log('📍 GPS Button geklickt - starte Standortermittlung...');
-    
     try {
-      // 🔧 FIX: Web-Browser GPS als Fallback
-      if (Platform.OS === 'web') {
-        console.log('🌐 Web-Browser erkannt - verwende HTML5 Geolocation');
-        
-        return new Promise((resolve, reject) => {
-          if (!navigator.geolocation) {
-            Alert.alert(
-              '❌ GPS nicht verfügbar',
-              'Ihr Browser unterstützt keine GPS-Lokalisierung. Bitte Adresse manuell eingeben.'
-            );
-            reject(new Error('Geolocation not supported'));
-            return;
-          }
-          
-          navigator.geolocation.getCurrentPosition(
-            (position) => {
-              const locationData = {
-                lat: position.coords.latitude,
-                lng: position.coords.longitude,
-                accuracy: position.coords.accuracy
-              };
-              console.log('✅ Web-GPS erfolgreich:', locationData);
-              resolve(locationData);
-            },
-            (error) => {
-              console.error('❌ Web-GPS Fehler:', error);
-              Alert.alert(
-                '❌ GPS-Fehler',
-                'GPS-Standort im Browser konnte nicht ermittelt werden. Bitte aktivieren Sie die Standort-Berechtigung.'
-              );
-              reject(error);
-            },
-            {
-              enableHighAccuracy: true,
-              timeout: 15000,
-              maximumAge: 60000
-            }
-          );
-        });
-      }
+      console.log('📍 Bitte um Standort-Berechtigung...');
       
-      // 📱 Mobile GPS mit expo-location
-      console.log('📱 Mobile Gerät erkannt - verwende expo-location');
-      
-      // Request location permission
-      const permissionResult = await Location.requestForegroundPermissionsAsync();
-      
-      if (permissionResult.status !== 'granted') {
-        console.log('❌ Standort-Berechtigung verweigert');
+      // Request location permission with error handling
+      let permissionResult;
+      try {
+        permissionResult = await Location.requestForegroundPermissionsAsync();
+      } catch (permError) {
+        console.error('❌ Permission request failed:', permError);
         Alert.alert(
-          '📍 Berechtigung erforderlich', 
-          'Bitte erlauben Sie der App den Zugriff auf Ihren Standort, um die GPS-Funktion zu nutzen.'
+          '📍 GPS-Fehler', 
+          'Standort-Berechtigung konnte nicht angefragt werden. Bitte Adresse manuell eingeben.',
+          [{ text: 'OK' }]
         );
         return null;
       }
 
-      console.log('✅ Mobile GPS-Berechtigung erteilt, ermittle Position...');
-      
-      // Get current position
-      const location = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.High,
-        timeout: 15000,
-      });
+      if (permissionResult.status !== 'granted') {
+        console.log('❌ Standort-Berechtigung verweigert');
+        Alert.alert(
+          '📍 Berechtigung erforderlich', 
+          'Bitte erlauben Sie der App den Zugriff auf Ihren Standort, um die GPS-Funktion zu nutzen.',
+          [{ text: 'OK' }]
+        );
+        return null;
+      }
 
-      console.log('✅ Mobile GPS erfolgreich ermittelt:', location);
+      console.log('✅ Standort-Berechtigung erteilt, ermittle Position...');
       
-      return {
+      // Get current position with timeout and error handling
+      let location;
+      try {
+        location = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Balanced, // Changed from High to Balanced
+          timeout: 10000, // Reduced timeout to 10 seconds
+        });
+      } catch (locationError) {
+        console.error('❌ Location fetch failed:', locationError);
+        Alert.alert(
+          '📍 GPS-Fehler', 
+          'Standort konnte nicht ermittelt werden. Bitte versuchen Sie es erneut oder geben Sie die Adresse manuell ein.',
+          [{ text: 'OK' }]
+        );
+        return null;
+      }
+
+      console.log('✅ Standort erfolgreich ermittelt:', location);
+      
+      const locationData = {
         lat: location.coords.latitude,
         lng: location.coords.longitude,
         accuracy: location.coords.accuracy
       };
       
+      // Update location field safely
+      try {
+        setLocation(`📍 GPS: ${locationData.lat.toFixed(6)}, ${locationData.lng.toFixed(6)}`);
+        setCurrentLocation(locationData);
+        console.log('✅ Location field updated successfully');
+      } catch (updateError) {
+        console.error('❌ Location update failed:', updateError);
+      }
+      
+      return locationData;
+      
     } catch (error) {
-      console.error('❌ GPS-Fehler (alle Versuche):', error);
+      console.error('❌ GPS-Fehler (outer catch):', error);
       
       Alert.alert(
-        '❌ GPS-Fehler',
-        'Standort konnte nicht ermittelt werden. Mögliche Ursachen:\n\n• GPS ist deaktiviert\n• Berechtigung verweigert\n• Kein GPS-Signal\n\nBitte Adresse manuell eingeben.'
+        '📍 GPS-Fehler', 
+        'Ein unerwarteter Fehler ist aufgetreten. Bitte Adresse manuell eingeben.',
+        [{ text: 'OK' }]
       );
-      
       return null;
     }
   };
@@ -3704,46 +3529,28 @@ const MainApp = ({ appConfig, setAppConfig }) => {
   const useCurrentLocationForIncident = async () => {
     console.log('📍 GPS-Button wurde geklickt - starte Standortabfrage...');
     
-    // Zeige Loading-Feedback
-    Alert.alert('📍 GPS', 'Ermittele aktuelle Position...');
-    
     try {
       const location = await getCurrentLocation();
       if (location) {
-        const locationString = `📍 ECHTE GPS-Daten: ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}`;
+        const locationString = `📍 GPS: ${location.lat.toFixed(6)}, ${location.lng.toFixed(6)}`;
+        console.log('✅ Standort erfolgreich gesetzt:', locationString);
         
-        // ✅ KRITISCH: Setze echte GPS-Koordinaten
         setIncidentFormData(prev => ({
           ...prev,
           location: locationString,
-          // ✅ ECHTE GPS-Koordinaten für Submit
-          coordinates: {
-            lat: location.lat,
-            lng: location.lng,
-            accuracy: location.accuracy,
-            isRealGPS: true
-          }
+          coordinates: location
         }));
         
-        console.log('✅ ECHTE GPS-Daten für Vorfall gesetzt:', locationString);
-        console.log('🗺️ Echte Koordinaten für Karte gespeichert:', location);
-        
         Alert.alert(
-          '✅ Echte GPS-Daten erfasst!', 
-          `Ihre aktuelle Position wurde präzise ermittelt:\n\n📍 Lat: ${location.lat.toFixed(6)}\n📍 Lng: ${location.lng.toFixed(6)}\n🎯 Genauigkeit: ${location.accuracy?.toFixed(0)}m\n\n✅ Diese echten Koordinaten werden gesendet!`
-        );
-      } else {
-        // Kein GPS verfügbar
-        Alert.alert(
-          '⚠️ GPS nicht verfügbar',
-          'Echte GPS-Koordinaten konnten nicht ermittelt werden.\n\n❗ Es werden Standard-Koordinaten für Schwelm verwendet.\n\nFür genaue Ortung bitte GPS aktivieren und erneut versuchen.'
+          '✅ Standort erfasst', 
+          `Ihr aktueller Standort wurde erfasst:\n\nLatitude: ${location.lat.toFixed(6)}\nLongitude: ${location.lng.toFixed(6)}\nGenauigkeit: ${location.accuracy ? location.accuracy.toFixed(0) + 'm' : 'Unbekannt'}`
         );
       }
     } catch (error) {
-      console.error('❌ Fehler bei GPS-Standortermittlung:', error);
+      console.error('❌ Fehler beim Verwenden des Standorts:', error);
       Alert.alert(
-        '❌ GPS-Fehler',
-        'GPS-Standort konnte nicht ermittelt werden.\n\n❗ Es werden Standard-Koordinaten verwendet.\n\nBitte GPS aktivieren oder Adresse manuell eingeben.'
+        '❌ GPS-Fehler', 
+        'Standort konnte nicht erfasst werden. Bitte überprüfen Sie Ihre Browser-Berechtigungen für Standortdienste oder geben Sie die Adresse manuell ein.'
       );
     }
   };
@@ -3807,73 +3614,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       fontWeight: '600',
     },
     
-    // Modern Top Header Styles
-    modernTopHeader: {
-      backgroundColor: colors.primary,
-      paddingHorizontal: 20,
-      paddingTop: 12,
-      paddingBottom: 16,
-      borderBottomLeftRadius: 20,
-      borderBottomRightRadius: 20,
-      elevation: 8,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-    },
-    modernHeaderContent: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    modernUserSection: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      flex: 1,
-    },
-    modernUserAvatar: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 12,
-      borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 0.3)',
-    },
-    modernUserInfo: {
-      flex: 1,
-    },
-    modernUserName: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: '#FFFFFF',
-      marginBottom: 2,
-    },
-    modernUserRole: {
-      fontSize: 13,
-      color: 'rgba(255, 255, 255, 0.85)',
-      fontWeight: '500',
-    },
-    modernHeaderActions: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-    },
-    modernHeaderButton: {
-      width: isSmallScreen ? 36 : 40,
-      height: isSmallScreen ? 36 : 40,
-      borderRadius: isSmallScreen ? 18 : 20,
-      justifyContent: 'center',
-      alignItems: 'center',
-      elevation: 4,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-    },
-    
     // User Selection Styles
     userSelectionContainer: {
       maxHeight: 400,
@@ -3925,73 +3665,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: 12,
-    },
-    
-    // Modern Top Header Styles
-    modernTopHeader: {
-      backgroundColor: colors.primary,
-      paddingHorizontal: 20,
-      paddingTop: 12,
-      paddingBottom: 16,
-      borderBottomLeftRadius: 20,
-      borderBottomRightRadius: 20,
-      elevation: 8,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
-    },
-    modernHeaderContent: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
-    modernUserSection: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      flex: 1,
-    },
-    modernUserAvatar: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      backgroundColor: 'rgba(255, 255, 255, 0.2)',
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 12,
-      borderWidth: 2,
-      borderColor: 'rgba(255, 255, 255, 0.3)',
-    },
-    modernUserInfo: {
-      flex: 1,
-    },
-    modernUserName: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: '#FFFFFF',
-      marginBottom: 2,
-    },
-    modernUserRole: {
-      fontSize: 13,
-      color: 'rgba(255, 255, 255, 0.85)',
-      fontWeight: '500',
-    },
-    modernHeaderActions: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 8,
-    },
-    modernHeaderButton: {
-      width: isSmallScreen ? 36 : 40,
-      height: isSmallScreen ? 36 : 40,
-      borderRadius: isSmallScreen ? 18 : 20,
-      justifyContent: 'center',
-      alignItems: 'center',
-      elevation: 4,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
     },
     userSelectionAvatarImage: {
       width: 40,
@@ -4349,21 +4022,15 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
-      paddingVertical: 16,
-      paddingHorizontal: 20,
-      borderRadius: 16,
-      gap: 8,
-      elevation: 4,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.25,
-      shadowRadius: 8,
+      paddingVertical: 12,
+      paddingHorizontal: 16,
+      borderRadius: 8,
+      gap: 6,
     },
     actionButtonText: {
       color: '#FFFFFF',
-      fontSize: 16,
-      fontWeight: '700',
-      letterSpacing: 0.5,
+      fontSize: 14,
+      fontWeight: '600',
     },
 
     // Status Grid
@@ -5393,50 +5060,38 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       opacity: 0.8,
     },
 
-    // Modern Professional Tab Bar
+    // Tab Bar
     tabBar: {
       flexDirection: 'row',
       backgroundColor: colors.surface,
-      paddingVertical: 16,
-      paddingHorizontal: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 8,
       borderTopWidth: 1,
       borderTopColor: colors.border,
-      elevation: 12,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: -6 },
-      shadowOpacity: 0.2,
-      shadowRadius: 16,
-      paddingBottom: 24,
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
+      elevation: 8,
+      shadowColor: colors.shadow,
+      shadowOffset: { width: 0, height: -2 },
+      shadowOpacity: 0.1,
+      shadowRadius: 8,
     },
     tabItem: {
       flex: 1,
       alignItems: 'center',
-      paddingVertical: 18,
-      paddingHorizontal: 12,
-      borderRadius: 28,
-      marginHorizontal: 2,
+      paddingVertical: 12,
+      paddingHorizontal: 8,
+      borderRadius: 16,
     },
     tabItemActive: {
       backgroundColor: colors.primary,
-      shadowColor: colors.primary,
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.4,
-      shadowRadius: 12,
-      elevation: 8,
     },
     tabLabel: {
       fontSize: 12,
-      fontWeight: '700',
+      fontWeight: '600',
       color: colors.textMuted,
-      marginTop: 8,
-      textAlign: 'center',
-      letterSpacing: 0.3,
+      marginTop: 4,
     },
     tabLabelActive: {
       color: '#FFFFFF',
-      fontWeight: '800',
     },
 
     // Screen Headers
@@ -5460,19 +5115,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 12,
-    },
-    headerActionButton: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      backgroundColor: colors.primary,
-      justifyContent: 'center',
-      alignItems: 'center',
-      shadowColor: colors.primary,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.3,
-      shadowRadius: 4,
-      elevation: 4,
     },
     addButton: {
       padding: 12,
@@ -6084,196 +5726,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       fontWeight: '700',
       marginLeft: 12,
     },
-
-    // 🎨 NEUE WARME CARD-STYLES
-    warmCard: {
-      backgroundColor: colors.card,
-      borderRadius: 20,
-      padding: 20,
-      marginVertical: 10,
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 8 },
-      shadowOpacity: 0.2,
-      shadowRadius: 20,
-      elevation: 8,
-      borderLeftWidth: 4,
-      borderLeftColor: colors.primary,
-      position: 'relative',
-      overflow: 'hidden',
-    },
-    warmCardHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 16,
-      paddingBottom: 12,
-      borderBottomWidth: 1,
-      borderBottomColor: colors.border,
-    },
-    warmCardTitle: {
-      fontSize: 20,
-      fontWeight: '600',
-      color: colors.text,
-      letterSpacing: -0.3,
-      flex: 1,
-    },
-    warmCardSubtitle: {
-      fontSize: 14,
-      color: colors.textSecondary,
-      marginTop: 4,
-      letterSpacing: 0.2,
-      fontStyle: 'italic',
-    },
-    warmCardContent: {
-      gap: 12,
-    },
-    warmCardActions: {
-      flexDirection: 'row',
-      justifyContent: 'flex-end',
-      marginTop: 20,
-      gap: 12,
-      paddingTop: 16,
-      borderTopWidth: 1,
-      borderTopColor: colors.border,
-    },
-
-    // Gradient Card für Premium Features
-    gradientCard: {
-      borderRadius: 24,
-      padding: 24,
-      marginVertical: 12,
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 12 },
-      shadowOpacity: 0.3,
-      shadowRadius: 24,
-      elevation: 12,
-      position: 'relative',
-      overflow: 'hidden',
-    },
-    gradientCardOverlay: {
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      backgroundColor: colors.primary,
-      opacity: 0.1,
-    },
-
-    // Glass Card für moderne Effekte
-    glassCard: {
-      backgroundColor: colors.glassBlur,
-      borderRadius: 28,
-      padding: 24,
-      marginVertical: 12,
-      borderWidth: 1,
-      borderColor: colors.border,
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 10 },
-      shadowOpacity: 0.15,
-      shadowRadius: 25,
-      elevation: 10,
-    },
-
-    // 🎨 NEUE WARME TYPOGRAFIE
-    warmHeading1: {
-      fontSize: 36,
-      fontWeight: '800',
-      color: colors.text,
-      letterSpacing: -1.2,
-      lineHeight: 42,
-      textShadowColor: colors.shadow,
-      textShadowOffset: { width: 2, height: 2 },
-      textShadowRadius: 4,
-    },
-    warmHeading2: {
-      fontSize: 28,
-      fontWeight: '700',
-      color: colors.text,
-      letterSpacing: -0.8,
-      lineHeight: 34,
-    },
-    warmHeading3: {
-      fontSize: 22,
-      fontWeight: '600',
-      color: colors.text,
-      letterSpacing: -0.4,
-      lineHeight: 28,
-    },
-    warmBodyLarge: {
-      fontSize: 18,
-      fontWeight: '400',
-      color: colors.text,
-      letterSpacing: 0.3,
-      lineHeight: 28,
-    },
-    warmBody: {
-      fontSize: 16,
-      fontWeight: '400',
-      color: colors.text,
-      letterSpacing: 0.2,
-      lineHeight: 24,
-    },
-    warmBodySmall: {
-      fontSize: 14,
-      fontWeight: '400',
-      color: colors.textSecondary,
-      letterSpacing: 0.2,
-      lineHeight: 20,
-    },
-    warmCaption: {
-      fontSize: 12,
-      fontWeight: '500',
-      color: colors.textMuted,
-      letterSpacing: 1,
-      lineHeight: 16,
-      textTransform: 'uppercase',
-    },
-    warmLabel: {
-      fontSize: 14,
-      fontWeight: '600',
-      color: colors.primary,
-      letterSpacing: 0.5,
-      marginBottom: 8,
-    },
-
-    // Spezielle Text-Effekte
-    warmTextGradient: {
-      fontSize: 24,
-      fontWeight: '700',
-      letterSpacing: -0.5,
-      // Gradient wird per LinearGradient Component implementiert
-    },
-    warmTextHighlight: {
-      backgroundColor: colors.primaryLight,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 8,
-      fontSize: 16,
-      fontWeight: '600',
-      color: colors.primaryDark,
-    },
-
-    // Input Styles im warmen Design
-    warmInput: {
-      backgroundColor: colors.surface,
-      borderWidth: 2,
-      borderColor: colors.border,
-      borderRadius: 16,
-      paddingHorizontal: 16,
-      paddingVertical: 14,
-      fontSize: 16,
-      color: colors.text,
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      elevation: 3,
-    },
-    warmInputFocused: {
-      borderColor: colors.primary,
-      shadowColor: colors.primary,
-      shadowOpacity: 0.2,
-    },
     submitNote: {
       fontSize: 15,
       color: colors.textMuted,
@@ -6714,32 +6166,17 @@ const MainApp = ({ appConfig, setAppConfig }) => {
     modernHeaderContainer: {
       flexDirection: 'row',
       alignItems: 'center',
-      marginBottom: 20,
-      paddingHorizontal: 20,
-      paddingVertical: 16,
-      backgroundColor: colors.surface,
-      borderRadius: 16,
-      marginHorizontal: 16,
-      marginTop: 16,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      elevation: 4,
-      borderWidth: 1,
-      borderColor: colors.border,
+      marginBottom: 16,
     },
     
     headerIconContainer: {
-      width: 56,
-      height: 56,
-      borderRadius: 28,
+      width: 48,
+      height: 48,
+      borderRadius: 24,
       backgroundColor: colors.primary + '15',
       justifyContent: 'center',
       alignItems: 'center',
       marginRight: 16,
-      borderWidth: 2,
-      borderColor: colors.primary + '20',
     },
     
     headerTextContainer: {
@@ -6747,18 +6184,16 @@ const MainApp = ({ appConfig, setAppConfig }) => {
     },
     
     modernTitle: {
-      fontSize: 26,
-      fontWeight: '800',
+      fontSize: 24,
+      fontWeight: '700',
       color: colors.text,
-      marginBottom: 6,
-      letterSpacing: -0.5,
+      marginBottom: 4,
     },
     
     modernSubtitle: {
-      fontSize: 15,
+      fontSize: 14,
       color: colors.textMuted,
-      lineHeight: 22,
-      fontWeight: '500',
+      lineHeight: 20,
     },
 
     // Modern Chat Design Styles
@@ -8130,245 +7565,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       shadowRadius: 4,
       elevation: 4,
     },
-    
-    // Modern Screen Styles
-    modernScreen: {
-      flex: 1,
-      backgroundColor: colors.background,
-    },
-    modernScreenHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: colors.surface,
-      marginHorizontal: 16,
-      marginTop: 16,
-      marginBottom: 8,
-      padding: 20,
-      borderRadius: 20,
-      elevation: 4,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    modernScreenHeaderIcon: {
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      backgroundColor: colors.background,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 16,
-      borderWidth: 2,
-      borderColor: colors.border,
-    },
-    modernScreenHeaderText: {
-      flex: 1,
-    },
-    modernScreenTitle: {
-      fontSize: 24,
-      fontWeight: '800',
-      color: colors.text,
-      marginBottom: 4,
-      letterSpacing: -0.5,
-    },
-    modernScreenSubtitle: {
-      fontSize: 15,
-      color: colors.textMuted,
-      fontWeight: '500',
-      lineHeight: 22,
-    },
-    modernScreenAction: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
-      justifyContent: 'center',
-      alignItems: 'center',
-      elevation: 4,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-    },
-    modernContent: {
-      flex: 1,
-    },
-    modernContentContainer: {
-      padding: 16,
-    },
-    
-    // Modern Form Styles
-    modernFormCard: {
-      backgroundColor: colors.surface,
-      borderRadius: 20,
-      padding: 24,
-      marginBottom: 20,
-      elevation: 4,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.1,
-      shadowRadius: 8,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    modernFormHeader: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: 24,
-    },
-    modernFormIcon: {
-      width: 56,
-      height: 56,
-      borderRadius: 28,
-      backgroundColor: colors.background,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginRight: 16,
-      borderWidth: 2,
-      borderColor: colors.border,
-    },
-    modernFormTitle: {
-      fontSize: 20,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 4,
-    },
-    modernFormSubtitle: {
-      fontSize: 14,
-      color: colors.textMuted,
-      fontWeight: '500',
-    },
-    modernInputGroup: {
-      marginBottom: 24,
-    },
-    modernInputLabel: {
-      fontSize: 16,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 12,
-    },
-    modernInputContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      backgroundColor: colors.background,
-      borderWidth: 2,
-      borderColor: colors.border,
-      borderRadius: 16,
-      paddingHorizontal: 16,
-      paddingVertical: 4,
-    },
-    modernInputIcon: {
-      marginRight: 12,
-    },
-    modernInput: {
-      flex: 1,
-      fontSize: 16,
-      color: colors.text,
-      paddingVertical: 16,
-      fontWeight: '500',
-    },
-    modernTextAreaContainer: {
-      alignItems: 'flex-start',
-      paddingVertical: 12,
-    },
-    modernTextArea: {
-      height: 100,
-      textAlignVertical: 'top',
-    },
-    modernInputHint: {
-      fontSize: 13,
-      color: colors.textMuted,
-      marginTop: 8,
-      fontWeight: '500',
-    },
-    modernLocationContainer: {
-      flexDirection: 'row',
-      alignItems: 'center',
-    },
-    
-    // Farb-Management Styles
-    formSubLabel: {
-      fontSize: 14,
-      color: colors.textMuted,
-      marginBottom: 16,
-      fontStyle: 'italic',
-    },
-    colorSection: {
-      marginBottom: 20,
-    },
-    colorLabel: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: colors.text,
-      marginBottom: 8,
-    },
-    colorGrid: {
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: 8,
-      marginBottom: 12,
-    },
-    colorButton: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      justifyContent: 'center',
-      alignItems: 'center',
-      borderWidth: 2,
-      elevation: 3,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.2,
-      shadowRadius: 4,
-    },
-    colorApplyButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colors.primary,
-      paddingVertical: 16,
-      paddingHorizontal: 20,
-      borderRadius: 12,
-      marginTop: 20,
-      elevation: 4,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-    },
-    colorApplyButtonText: {
-      color: '#FFFFFF',
-      fontSize: 16,
-      fontWeight: '700',
-      marginLeft: 8,
-    },
-    modernSubmitButton: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colors.primary,
-      paddingVertical: 20,
-      borderRadius: 16,
-      marginBottom: 16,
-      elevation: 4,
-      shadowColor: '#000000',
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.25,
-      shadowRadius: 4,
-    },
-    modernSubmitButtonText: {
-      fontSize: 18,
-      fontWeight: '700',
-      color: '#FFFFFF',
-    },
-    modernSubmitNote: {
-      fontSize: 14,
-      color: colors.textMuted,
-      textAlign: 'center',
-      fontWeight: '500',
-    },
     modernButtonIcon: {
       width: isSmallScreen ? 44 : 48,
       height: isSmallScreen ? 44 : 48,
@@ -8414,7 +7610,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       elevation: 25,
     },
     premiumModalHeader: {
-      backgroundColor: colors.primary,
+      backgroundColor: '#3B82F6',
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
       paddingVertical: 20,
@@ -8829,7 +8025,83 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
       showsVerticalScrollIndicator={false}
     >
-      {/* Alter Header entfernt - nutzen jetzt den modernen Header oben */}
+      {/* Modern Header */}
+      <View style={dynamicStyles.homeHeader}>
+        <View style={dynamicStyles.headerContent}>
+          <View style={dynamicStyles.headerLeft}>
+            <Text style={dynamicStyles.welcomeText}>{appConfig.app_name}</Text>
+            <Text style={dynamicStyles.userName}>{appConfig.app_subtitle}</Text>
+            <View style={dynamicStyles.statusBadge}>
+              <View style={[dynamicStyles.statusDot, { backgroundColor: getStatusColor(userStatus) }]} />
+              <Text style={dynamicStyles.userRole}>
+                {user?.role === 'admin' ? 'Administrator' : 'Wächter'} • {userStatus}
+              </Text>
+            </View>
+          </View>
+          <View style={dynamicStyles.headerButtons}>
+            {/* Admin Settings Button - Only visible for admins */}
+            {user?.role === 'admin' && (
+              <TouchableOpacity 
+                style={[dynamicStyles.headerButton, { 
+                  backgroundColor: colors.primary,
+                  marginRight: 8,
+                  shadowColor: colors.shadow,
+                  shadowOffset: { width: 0, height: 2 },
+                  shadowOpacity: 0.25,
+                  shadowRadius: 4,
+                  elevation: 4,
+                }]} 
+                onPress={() => setShowAdminDashboardModal(true)}
+                accessible={true}
+                accessibilityLabel="Admin-Dashboard öffnen"
+              >
+                <Ionicons 
+                  name="settings" 
+                  size={22} 
+                  color="#FFFFFF" 
+                />
+              </TouchableOpacity>
+            )}
+            
+            {/* Theme Toggle Button */}
+            <TouchableOpacity 
+              style={[dynamicStyles.headerButton, dynamicStyles.themeToggleButton]} 
+              onPress={toggleTheme}
+              accessible={true}
+              accessibilityLabel={isDarkMode ? "Hell-Modus aktivieren" : "Dunkel-Modus aktivieren"}
+            >
+              <Ionicons 
+                name={isDarkMode ? "sunny" : "moon"} 
+                size={20} 
+                color={colors.accent} 
+              />
+            </TouchableOpacity>
+            
+            {/* SOS Button */}
+            <TouchableOpacity 
+              style={[dynamicStyles.headerButton, dynamicStyles.sosHeaderButton]} 
+              onPress={() => setShowSOSModal(true)}
+              accessible={true}
+              accessibilityLabel="SOS Notruf"
+            >
+              <Ionicons name="warning" size={20} color="#FFFFFF" />
+              <Text style={dynamicStyles.sosButtonText}>SOS</Text>
+            </TouchableOpacity>
+            
+            <TouchableOpacity style={dynamicStyles.headerButton} onPress={logout}>
+              <Ionicons name="log-out-outline" size={20} color="#FFFFFF" />
+            </TouchableOpacity>
+            <TouchableOpacity 
+              style={dynamicStyles.headerButton} 
+              onPress={() => setShowProfileModal(true)}
+              accessible={true}
+              accessibilityLabel="Profil bearbeiten"
+            >
+              <Ionicons name="person-circle" size={24} color="#FFFFFF" />
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
 
       {/* Professional Stats Dashboard */}
       <View style={dynamicStyles.statsContainer}>
@@ -9203,113 +8475,73 @@ const MainApp = ({ appConfig, setAppConfig }) => {
   };
 
   const renderAdminScreen = () => (
-    <View style={dynamicStyles.modernScreen}>
-      {/* MODERNER ADMIN HEADER */}
-      <View style={dynamicStyles.modernScreenHeader}>
-        <View style={dynamicStyles.modernScreenHeaderIcon}>
-          <Ionicons name="shield-checkmark" size={32} color={colors.primary} />
+    <View style={dynamicStyles.content}>
+      {/* Modern Admin Header */}
+      <View style={dynamicStyles.header}>
+        <View style={dynamicStyles.headerLeft}>
+          <Text style={dynamicStyles.welcomeText}>⚙️ Admin-Dashboard</Text>
+          <Text style={dynamicStyles.usernameText}>System-Verwaltung</Text>
         </View>
-        <View style={dynamicStyles.modernScreenHeaderText}>
-          <Text style={dynamicStyles.modernScreenTitle}>Admin-Dashboard</Text>
-          <Text style={dynamicStyles.modernScreenSubtitle}>
-            Systemverwaltung und Konfiguration
-          </Text>
-        </View>
-        <TouchableOpacity 
-          style={[dynamicStyles.modernScreenAction, { backgroundColor: colors.success }]}
-          onPress={() => {
-            Alert.alert('ℹ️ Hilfe', 'Admin-Dashboard für Systemverwaltung, Benutzerverwaltung und App-Konfiguration.');
-          }}
-        >
-          <Ionicons name="help-circle" size={24} color="#FFFFFF" />
-        </TouchableOpacity>
       </View>
 
-      <ScrollView 
-        style={dynamicStyles.modernContent}
-        contentContainerStyle={dynamicStyles.modernContentContainer}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* MODERNE ADMIN CARDS */}
-        <TouchableOpacity 
-          style={dynamicStyles.modernFormCard}
-          onPress={() => setShowAdminSettingsModal(true)}
-          activeOpacity={0.8}
-        >
-          <View style={dynamicStyles.modernFormHeader}>
-            <View style={[dynamicStyles.modernFormIcon, { backgroundColor: colors.primary + '15' }]}>
-              <Ionicons name="settings" size={28} color={colors.primary} />
+      <ScrollView style={dynamicStyles.content} showsVerticalScrollIndicator={false}>
+        {/* Modern Admin Cards */}
+        <View style={dynamicStyles.statsContainer}>
+          <TouchableOpacity 
+            style={[dynamicStyles.statCard, { borderLeftColor: colors.primary }]}
+            onPress={() => setShowAdminSettingsModal(true)}
+            activeOpacity={0.7}
+          >
+            <View style={dynamicStyles.statContent}>
+              <View style={dynamicStyles.statHeader}>
+                <View style={[dynamicStyles.statIconContainer, { backgroundColor: colors.primary + '15' }]}>
+                  <Ionicons name="settings" size={24} color={colors.primary} />
+                </View>
+              </View>
+              <Text style={dynamicStyles.statNumber}>⚙️</Text>
+              <Text style={dynamicStyles.statLabel}>App-Konfiguration</Text>
+              <Text style={dynamicStyles.statSubtext}>Name, Icon, Branding</Text>
             </View>
-            <View>
-              <Text style={dynamicStyles.modernFormTitle}>App-Konfiguration</Text>
-              <Text style={dynamicStyles.modernFormSubtitle}>Name, Branding und Einstellungen verwalten</Text>
+          </TouchableOpacity>
+          
+          <TouchableOpacity 
+            style={[dynamicStyles.statCard, { borderLeftColor: colors.success }]}
+            onPress={() => setShowAddUserModal(true)}
+            activeOpacity={0.7}
+          >
+            <View style={dynamicStyles.statContent}>
+              <View style={dynamicStyles.statHeader}>
+                <View style={[dynamicStyles.statIconContainer, { backgroundColor: colors.success + '15' }]}>
+                  <Ionicons name="person-add" size={24} color={colors.success} />
+                </View>
+              </View>
+              <Text style={dynamicStyles.statNumber}>👤</Text>
+              <Text style={dynamicStyles.statLabel}>Benutzer hinzufügen</Text>
+              <Text style={dynamicStyles.statSubtext}>Neue Team-Mitglieder</Text>
             </View>
-          </View>
-          <View style={dynamicStyles.modernInputGroup}>
-            <Text style={dynamicStyles.modernInputLabel}>Verfügbare Einstellungen:</Text>
-            <Text style={dynamicStyles.modernInputHint}>
-              • App-Name und Untertitel{'\n'}
-              • Organisationsname{'\n'}
-              • Farb-Schema{'\n'}
-              • Logo und Branding
-            </Text>
-          </View>
-        </TouchableOpacity>
-        
-        <TouchableOpacity 
-          style={dynamicStyles.modernFormCard}
-          onPress={() => setShowAddUserModal(true)}
-          activeOpacity={0.8}
-        >
-          <View style={dynamicStyles.modernFormHeader}>
-            <View style={[dynamicStyles.modernFormIcon, { backgroundColor: colors.success + '15' }]}>
-              <Ionicons name="people" size={28} color={colors.success} />
-            </View>
-            <View>
-              <Text style={dynamicStyles.modernFormTitle}>Benutzerverwaltung</Text>
-              <Text style={dynamicStyles.modernFormSubtitle}>Team-Mitglieder hinzufügen und verwalten</Text>
-            </View>
-          </View>
-          <View style={dynamicStyles.modernInputGroup}>
-            <Text style={dynamicStyles.modernInputLabel}>Benutzer-Funktionen:</Text>
-            <Text style={dynamicStyles.modernInputHint}>
-              • Neue Polizeibeamte hinzufügen{'\n'}
-              • Rollen und Berechtigungen verwalten{'\n'}
-              • Account-Status überwachen{'\n'}
-              • Team-Zuordnungen verwalten
-            </Text>
-          </View>
-        </TouchableOpacity>
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity 
-          style={dynamicStyles.modernFormCard}
-          onPress={() => {
-            Alert.alert('📊 System-Status', 'Datenbankstatus: ✅ Verbunden\nBenutzer online: ' + Object.keys(usersByStatus).length + '\nServer: ✅ Läuft stabil');
-          }}
-          activeOpacity={0.8}
-        >
-          <View style={dynamicStyles.modernFormHeader}>
-            <View style={[dynamicStyles.modernFormIcon, { backgroundColor: colors.accent + '15' }]}>
-              <Ionicons name="stats-chart" size={28} color={colors.accent} />
+        {/* Admin Actions */}
+        <View style={dynamicStyles.card}>
+          <Text style={dynamicStyles.cardTitle}>🛠️ Admin-Aktionen</Text>
+          
+          <TouchableOpacity 
+            style={[dynamicStyles.modernAdminButton, { backgroundColor: '#10B981' }]}
+            onPress={() => setShowAddUserModal(true)}
+          >
+            <View style={dynamicStyles.modernButtonIcon}>
+              <Ionicons name="person-add" size={24} color="#FFFFFF" />
             </View>
-            <View>
-              <Text style={dynamicStyles.modernFormTitle}>System-Überwachung</Text>
-              <Text style={dynamicStyles.modernFormSubtitle}>Server-Status und Performance</Text>
+            <View style={dynamicStyles.modernButtonContent}>
+              <Text style={dynamicStyles.modernButtonTitle}>👤 Benutzer hinzufügen</Text>
+              <Text style={dynamicStyles.modernButtonSubtitle}>Neue Mitarbeiter registrieren</Text>
             </View>
-          </View>
-          <View style={dynamicStyles.modernInputGroup}>
-            <Text style={dynamicStyles.modernInputLabel}>System-Info:</Text>
-            <Text style={dynamicStyles.modernInputHint}>
-              • Server-Performance{'\n'}
-              • Datenbank-Status{'\n'}
-              • Aktive Verbindungen{'\n'}
-              • Speicherverbrauch
-            </Text>
-          </View>
-        </TouchableOpacity>
+            <Ionicons name="chevron-forward" size={20} color="#FFFFFF" />
+          </TouchableOpacity>
 
           <TouchableOpacity 
-            style={[dynamicStyles.modernAdminButton, { backgroundColor: colors.primary }]}
+            style={[dynamicStyles.modernAdminButton, { backgroundColor: '#3B82F6' }]}
             onPress={() => {
               setShowVacationManagementModal(true);
               loadPendingVacations();
@@ -9394,6 +8626,41 @@ const MainApp = ({ appConfig, setAppConfig }) => {
             </View>
             <Ionicons name="chevron-forward" size={20} color="#FFFFFF" />
           </TouchableOpacity>
+
+          <TouchableOpacity 
+            style={[dynamicStyles.adminActionButton, { backgroundColor: colors.warning }]}
+            onPress={() => {
+              Alert.alert(
+                '🔄 System-Neustart',
+                'System neu starten? Dies kann einige Sekunden dauern.',
+                [
+                  { text: 'Abbrechen', style: 'cancel' },
+                  { text: 'Neustart', onPress: () => window.location.reload() }
+                ]
+              );
+            }}
+          >
+            <Ionicons name="refresh" size={20} color="#FFFFFF" />
+            <Text style={dynamicStyles.adminActionButtonText}>System neu starten</Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* System Information */}
+        <View style={dynamicStyles.card}>
+          <Text style={dynamicStyles.cardTitle}>ℹ️ System-Information</Text>
+          <View style={dynamicStyles.configItem}>
+            <Text style={dynamicStyles.configLabel}>Aktueller Benutzer:</Text>
+            <Text style={dynamicStyles.configValue}>{user?.username} ({user?.role})</Text>
+          </View>
+          <View style={dynamicStyles.configItem}>
+            <Text style={dynamicStyles.configLabel}>Version:</Text>
+            <Text style={dynamicStyles.configValue}>v1.0.0</Text>
+          </View>
+          <View style={dynamicStyles.configItem}>
+            <Text style={dynamicStyles.configLabel}>Backend:</Text>
+            <Text style={dynamicStyles.configValue}>Online ✅</Text>
+          </View>
+        </View>
 
         <View style={{ height: 100 }} />
       </ScrollView>
@@ -9951,11 +9218,8 @@ const MainApp = ({ appConfig, setAppConfig }) => {
                   <Text style={[dynamicStyles.statusBadgeText, { 
                     color: (profileData.assigned_district || user?.assigned_district) ? colors.success : colors.warning 
                   }]}>
-                    {/* ✅ FIX: Nur anzeigen wenn tatsächlich zugewiesen */}
-                    {(profileData.assigned_district || user?.assigned_district || user?.district) ? 
-                      (profileData.assigned_district || user?.assigned_district || user?.district) : 
-                      null
-                    }
+                    {/* ✅ FIX: Robuste Anzeige mit mehreren Fallbacks */}
+                    {profileData.assigned_district || user?.assigned_district || user?.district || 'Nicht zugewiesen'}
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
@@ -9968,11 +9232,8 @@ const MainApp = ({ appConfig, setAppConfig }) => {
                   color: (profileData.assigned_district || user?.assigned_district) ? colors.primary : colors.warning, 
                   fontSize: 14 
                 }]}>
-                  {/* ✅ Nur anzeigen wenn zugewiesen */}
-                  {(profileData.assigned_district || user?.assigned_district || user?.district) ? 
-                    (profileData.assigned_district || user?.assigned_district || user?.district) : 
-                    null
-                  }
+                  {/* ✅ EXTRA FALLBACKS hinzugefügt */}
+                  {profileData.assigned_district || user?.assigned_district || user?.district || 'Nicht zugewiesen'}
                 </Text>
                 <Text style={dynamicStyles.summaryLabel}>Bezirk</Text>
               </View>
@@ -10049,10 +9310,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
                   <Text style={[dynamicStyles.statusBadgeText, { 
                     color: (profileData.patrol_team || user?.patrol_team) ? colors.success : colors.warning 
                   }]}>
-                    {(profileData.patrol_team || user?.patrol_team || user?.team) ? 
-                      (profileData.patrol_team || user?.patrol_team || user?.team) : 
-                      null
-                    }
+                    {profileData.patrol_team || user?.patrol_team || user?.team || 'Nicht zugewiesen'}
                   </Text>
                 </View>
                 <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
@@ -10065,10 +9323,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
                   color: (profileData.patrol_team || user?.patrol_team) ? colors.primary : colors.warning, 
                   fontSize: 14 
                 }]}>
-                  {(profileData.patrol_team || user?.patrol_team || user?.team) ? 
-                    (profileData.patrol_team || user?.patrol_team || user?.team) : 
-                    null
-                  }
+                  {profileData.patrol_team || user?.patrol_team || user?.team || 'Nicht zugewiesen'}
                 </Text>
                 <Text style={dynamicStyles.summaryLabel}>Team</Text>
               </View>
@@ -10115,11 +9370,6 @@ const MainApp = ({ appConfig, setAppConfig }) => {
             </View>
           </TouchableOpacity>
         </View>
-
-        {/* ✅ NEU: MEINE URLAUBSANTRÄGE - Status und Verwaltung */}
-      
-        {/* ✅ NEU: MEINE KRANKMELDUNGEN - Status und Verwaltung */}
-        
 
         {/* Original ShiftManagementComponent */}
         <View style={{ flex: 1 }}>
@@ -10587,116 +9837,61 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       case 'home': return renderHomeScreen();
       case 'messages': return renderChatScreen();
       case 'report': return (
-        <View style={dynamicStyles.modernScreen}>
-          {/* MODERNER SCREEN HEADER */}
-          <View style={dynamicStyles.modernScreenHeader}>
-            <View style={dynamicStyles.modernScreenHeaderIcon}>
-              <Ionicons name="alert-circle" size={32} color={colors.error} />
-            </View>
-            <View style={dynamicStyles.modernScreenHeaderText}>
-              <Text style={dynamicStyles.modernScreenTitle}>Vorfall Melden</Text>
-              <Text style={dynamicStyles.modernScreenSubtitle}>
-                Neuen Sicherheitsvorfall schnell erfassen
-              </Text>
-            </View>
-            <TouchableOpacity 
-              style={[dynamicStyles.modernScreenAction, { backgroundColor: colors.primary }]}
-              onPress={() => {
-                Alert.alert('ℹ️ Hilfe', 'Füllen Sie alle Felder aus und senden Sie den Vorfall ab. Ihr GPS-Standort wird automatisch erfasst.');
-              }}
-            >
-              <Ionicons name="help-circle" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
+        <View style={dynamicStyles.content}>
+          <View style={dynamicStyles.header}>
+            <Text style={dynamicStyles.title}>📝 Vorfall melden</Text>
+            <Text style={dynamicStyles.subtitle}>Neuen Sicherheitsvorfall erfassen</Text>
           </View>
 
           <ScrollView 
-            style={dynamicStyles.modernContent}
-            contentContainerStyle={dynamicStyles.modernContentContainer}
+            style={dynamicStyles.content}
             keyboardShouldPersistTaps="handled"
             showsVerticalScrollIndicator={false}
           >
-            {/* MODERNE FORM CARDS */}
-            <View style={dynamicStyles.modernFormCard}>
-              <View style={dynamicStyles.modernFormHeader}>
-                <View style={dynamicStyles.modernFormIcon}>
-                  <Ionicons name="alert-circle" size={28} color={colors.error} />
-                </View>
-                <View>
-                  <Text style={dynamicStyles.modernFormTitle}>Vorfall Details</Text>
-                  <Text style={dynamicStyles.modernFormSubtitle}>Grundinformationen erfassen</Text>
-                </View>
-              </View>
-              
-              <View style={dynamicStyles.modernInputGroup}>
-                <Text style={dynamicStyles.modernInputLabel}>
-                  Vorfall-Titel *
+            <View style={dynamicStyles.formContainer}>
+              <View style={dynamicStyles.formGroup}>
+                <Text style={dynamicStyles.formLabel}>
+                  🚨 Vorfall-Titel *
                 </Text>
-                <View style={dynamicStyles.modernInputContainer}>
-                  <Ionicons name="document-text" size={20} color={colors.primary} style={dynamicStyles.modernInputIcon} />
-                  <TextInput
-                    style={dynamicStyles.modernInput}
-                    value={incidentFormData.title}
-                    onChangeText={(text) => setIncidentFormData(prev => ({ ...prev, title: text }))}
-                    placeholder="Kurze Beschreibung des Vorfalls"
-                    placeholderTextColor={colors.textMuted}
-                    maxLength={100}
-                  />
-                </View>
-                <Text style={dynamicStyles.modernInputHint}>
-                  {incidentFormData.title.length}/100 Zeichen
-                </Text>
+                <TextInput
+                  style={dynamicStyles.formInput}
+                  value={incidentFormData.title}
+                  onChangeText={(text) => setIncidentFormData(prev => ({ ...prev, title: text }))}
+                  placeholder="Kurze Beschreibung des Vorfalls"
+                  placeholderTextColor={colors.textMuted}
+                  maxLength={100}
+                />
               </View>
 
-              <View style={dynamicStyles.modernInputGroup}>
-                <Text style={dynamicStyles.modernInputLabel}>
-                  Beschreibung *
+              <View style={dynamicStyles.formGroup}>
+                <Text style={dynamicStyles.formLabel}>
+                  📝 Beschreibung *
                 </Text>
-                <View style={[dynamicStyles.modernInputContainer, dynamicStyles.modernTextAreaContainer]}>
-                  <Ionicons name="chatbubble-ellipses" size={20} color={colors.primary} style={dynamicStyles.modernInputIcon} />
-                  <TextInput
-                    style={[dynamicStyles.modernInput, dynamicStyles.modernTextArea]}
-                    value={incidentFormData.description}
-                    onChangeText={(text) => setIncidentFormData(prev => ({ ...prev, description: text }))}
-                    placeholder="Detaillierte Beschreibung des Vorfalls..."
-                    placeholderTextColor={colors.textMuted}
-                    multiline
-                    numberOfLines={4}
-                    maxLength={500}
-                  />
-                </View>
-                <Text style={dynamicStyles.modernInputHint}>
-                  {incidentFormData.description.length}/500 Zeichen
-                </Text>
+                <TextInput
+                  style={[dynamicStyles.formInput, dynamicStyles.textArea]}
+                  value={incidentFormData.description}
+                  onChangeText={(text) => setIncidentFormData(prev => ({ ...prev, description: text }))}
+                  placeholder="Detaillierte Beschreibung des Vorfalls"
+                  placeholderTextColor={colors.textMuted}
+                  multiline
+                  numberOfLines={4}
+                  maxLength={500}
+                />
               </View>
-            </View>
 
-            <View style={dynamicStyles.modernFormCard}>
-              <View style={dynamicStyles.modernFormHeader}>
-                <View style={dynamicStyles.modernFormIcon}>
-                  <Ionicons name="location" size={28} color={colors.accent} />
-                </View>
-                <View>
-                  <Text style={dynamicStyles.modernFormTitle}>Standort & Priorität</Text>
-                  <Text style={dynamicStyles.modernFormSubtitle}>Ort und Dringlichkeit festlegen</Text>
-                </View>
-              </View>
-              
-              <View style={dynamicStyles.modernInputGroup}>
-                <Text style={dynamicStyles.modernInputLabel}>
-                  Standort *
+              <View style={dynamicStyles.formGroup}>
+                <Text style={dynamicStyles.formLabel}>
+                  📍 Standort *
                 </Text>
-                <View style={dynamicStyles.modernLocationContainer}>
-                  <View style={[dynamicStyles.modernInputContainer, { flex: 1, marginRight: 12 }]}>
-                    <Ionicons name="location" size={20} color={colors.primary} style={dynamicStyles.modernInputIcon} />
-                    <TextInput
-                      style={dynamicStyles.modernInput}
-                      value={incidentFormData.location}
-                      onChangeText={(text) => setIncidentFormData(prev => ({ ...prev, location: text }))}
-                      placeholder="Adresse oder Ort des Vorfalls"
-                      placeholderTextColor={colors.textMuted}
-                      maxLength={200}
-                    />
-                  </View>
+                <View style={dynamicStyles.locationInputContainer}>
+                  <TextInput
+                    style={[dynamicStyles.formInput, { flex: 1, marginRight: 8 }]}
+                    value={incidentFormData.location}
+                    onChangeText={(text) => setIncidentFormData(prev => ({ ...prev, location: text }))}
+                    placeholder="Adresse oder Ort des Vorfalls"
+                    placeholderTextColor={colors.textMuted}
+                    maxLength={200}
+                  />
                   <TouchableOpacity 
                     style={dynamicStyles.gpsButton}
                     onPress={useCurrentLocationForIncident}
@@ -10807,14 +10002,14 @@ const MainApp = ({ appConfig, setAppConfig }) => {
                   </>
                 )}
               </TouchableOpacity>
-              
+
               <Text style={dynamicStyles.submitNote}>
                 💡 Alle mit * markierten Felder sind Pflichtfelder.
               </Text>
             </View>
-            </ScrollView>
-          </View>
-        );
+          </ScrollView>
+        </View>
+      );
       case 'berichte': return renderBerichteScreen();
       case 'team': return renderTeamScreen();
       case 'myteam': return renderMyTeamScreen();
@@ -10824,270 +10019,12 @@ const MainApp = ({ appConfig, setAppConfig }) => {
     }
   };
 
-  // ✅ NEU: Personal Vacation Modal für "Meine Urlaubsanträge"
-  const VacationFormModal = () => (
-    <Modal
-      visible={showVacationModal}
-      transparent={true}
-      animationType="slide"
-      onRequestClose={() => setShowVacationModal(false)}
-    >
-      <KeyboardAvoidingView 
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      >
-        <View style={dynamicStyles.shiftModalOverlay}>
-          <View style={[dynamicStyles.shiftModalContainer, { maxHeight: '80%' }]}>
-            {/* Header */}
-            <View style={dynamicStyles.shiftModernModalHeader}>
-              <View style={[dynamicStyles.shiftModernModalIconContainer, { backgroundColor: colors.primary + '20' }]}>
-                <Ionicons name="calendar" size={28} color={colors.primary} />
-              </View>
-              <View style={dynamicStyles.shiftModernModalTitleContainer}>
-                <Text style={dynamicStyles.shiftModernModalTitle}>📅 Meine Urlaubsanträge</Text>
-                <Text style={dynamicStyles.shiftModernModalSubtitle}>Status und Verwaltung</Text>
-              </View>
-              <TouchableOpacity
-                style={dynamicStyles.shiftModernModalCloseButton}
-                onPress={() => setShowVacationModal(false)}
-              >
-                <Ionicons name="close" size={24} color={colors.textMuted} />
-              </TouchableOpacity>
-            </View>
-
-            <ScrollView 
-              style={dynamicStyles.shiftModernModalContent}
-              showsVerticalScrollIndicator={false}
-            >
-              {/* Urlaubsantrag Form */}
-              <View style={dynamicStyles.shiftModernFormSection}>
-                <Text style={dynamicStyles.shiftModernSectionLabel}>📝 Neuen Urlaubsantrag stellen</Text>
-                
-                <View style={dynamicStyles.shiftFormGroup}>
-                  <Text style={dynamicStyles.shiftModernInputLabel}>Von (Datum) *</Text>
-                  <View style={dynamicStyles.shiftModernInputContainer}>
-                    <Ionicons name="calendar-outline" size={20} color={colors.primary} />
-                    <TextInput
-                      style={dynamicStyles.shiftModernInput}
-                      placeholder="DD.MM.YYYY"
-                      placeholderTextColor={colors.textMuted}
-                      value={vacationFormData.start_date}
-                      onChangeText={(text) => setVacationFormData(prev => ({ ...prev, start_date: text }))}
-                    />
-                  </View>
-                </View>
-
-                <View style={dynamicStyles.shiftFormGroup}>
-                  <Text style={dynamicStyles.shiftModernInputLabel}>Bis (Datum) *</Text>
-                  <View style={dynamicStyles.shiftModernInputContainer}>
-                    <Ionicons name="calendar-outline" size={20} color={colors.primary} />
-                    <TextInput
-                      style={dynamicStyles.shiftModernInput}
-                      placeholder="DD.MM.YYYY"
-                      placeholderTextColor={colors.textMuted}
-                      value={vacationFormData.end_date}
-                      onChangeText={(text) => setVacationFormData(prev => ({ ...prev, end_date: text }))}
-                    />
-                  </View>
-                </View>
-
-                <View style={dynamicStyles.shiftFormGroup}>
-                  <Text style={dynamicStyles.shiftModernInputLabel}>Grund/Anlass *</Text>
-                  <View style={dynamicStyles.shiftModernInputContainer}>
-                    <Ionicons name="document-text-outline" size={20} color={colors.primary} />
-                    <TextInput
-                      style={dynamicStyles.shiftModernInput}
-                      placeholder="Erholungsurlaub, Familienereignis..."
-                      placeholderTextColor={colors.textMuted}
-                      value={vacationFormData.reason}
-                      onChangeText={(text) => setVacationFormData(prev => ({ ...prev, reason: text }))}
-                      multiline
-                    />
-                  </View>
-                </View>
-
-                <TouchableOpacity
-                  style={[dynamicStyles.shiftModernActionButton, { backgroundColor: colors.primary }]}
-                  onPress={async () => {
-                    try {
-                      const response = await fetch(`${API_URL}/api/vacations`, {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${token}`
-                        },
-                        body: JSON.stringify(vacationFormData)
-                      });
-                      
-                      if (response.ok) {
-                        Alert.alert('✅ Erfolg', 'Urlaubsantrag wurde eingereicht!');
-                        setVacationFormData({ 
-                          user_id: '', 
-                          start_date: new Date().toISOString().split('T')[0], // ✅ Aktuelles Datum setzen
-                          end_date: new Date().toISOString().split('T')[0], // ✅ Aktuelles Datum setzen
-                          reason: '' 
-                        });
-                        // ✅ FIX: Meine Urlaubsanträge neu laden nach Erstellung
-                        loadMyVacations();
-                      } else {
-                        Alert.alert('❌ Fehler', 'Urlaubsantrag konnte nicht eingereicht werden.');
-                      }
-                    } catch (error) {
-                      Alert.alert('❌ Fehler', 'Network error beim Einreichen.');
-                    }
-                  }}
-                >
-                  <Ionicons name="send" size={16} color="#FFFFFF" />
-                  <Text style={[dynamicStyles.shiftModernActionButtonText, { color: '#FFFFFF', marginLeft: 6 }]}>
-                    Antrag einreichen
-                  </Text>
-                </TouchableOpacity>
-              </View>
-
-              {/* Meine bestehenden Anträge - FIX: Use myVacations statt pendingVacations */}
-              <View style={dynamicStyles.shiftModernFormSection}>
-                <Text style={dynamicStyles.shiftModernSectionLabel}>📋 Meine Anträge</Text>
-                
-                {myVacations.length === 0 ? (
-                  <View style={dynamicStyles.emptyStateContainer}>
-                    <Ionicons name="calendar-outline" size={48} color={colors.textMuted} />
-                    <Text style={dynamicStyles.emptyStateText}>
-                      Keine Urlaubsanträge vorhanden
-                    </Text>
-                  </View>
-                ) : (
-                  myVacations.slice(0, 3).map(vacation => (
-                    <View key={vacation.id} style={dynamicStyles.shiftModernVacationCard}>
-                      <View>
-                        <View style={dynamicStyles.shiftModernInputContainer}>
-                          <Ionicons name="calendar-outline" size={20} color={colors.primary} />
-                          <Text style={dynamicStyles.shiftModernInput}>
-                            {vacation.start_date} bis {vacation.end_date}
-                          </Text>
-                        </View>
-                        <Text style={dynamicStyles.shiftInputHint}>
-                          📝 Grund: {vacation.reason}
-                        </Text>
-                        <Text style={[dynamicStyles.shiftInputHint, { 
-                          color: vacation.status === 'approved' ? colors.success : 
-                                vacation.status === 'rejected' ? colors.error : colors.warning 
-                        }]}>
-                          Status: {vacation.status === 'approved' ? '✅ Genehmigt' : 
-                                   vacation.status === 'rejected' ? '❌ Abgelehnt' : '⏳ Ausstehend'}
-                        </Text>
-                        {vacation.approved_at && (
-                          <Text style={[dynamicStyles.shiftInputHint, { color: colors.textMuted, marginTop: 4 }]}>
-                            📅 Bearbeitet: {new Date(vacation.approved_at).toLocaleDateString('de-DE', { 
-                              year: 'numeric', 
-                              month: '2-digit', 
-                              day: '2-digit',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </Text>
-                        )}
-                      </View>
-                    </View>
-                  ))
-                )}
-              </View>
-            </ScrollView>
-          </View>
-        </View>
-      </KeyboardAvoidingView>
-    </Modal>
-  );
-
   return (
     <SafeAreaView style={dynamicStyles.container}>
       <StatusBar 
-        barStyle="light-content" 
-        backgroundColor={colors.primary} 
+        barStyle={isDarkMode ? "light-content" : "dark-content"} 
+        backgroundColor={colors.background} 
       />
-      
-      {/* MODERNER TOP HEADER */}
-      <View style={dynamicStyles.modernTopHeader}>
-        <View style={dynamicStyles.modernHeaderContent}>
-          <View style={dynamicStyles.modernUserSection}>
-            <View style={dynamicStyles.modernUserAvatar}>
-              <Ionicons name="shield-checkmark" size={28} color="#FFFFFF" />
-            </View>
-            <View style={dynamicStyles.modernUserInfo}>
-              <Text style={dynamicStyles.modernUserName}>
-                {user?.username || 'Benutzer'}
-              </Text>
-              <Text style={dynamicStyles.modernUserRole}>
-                {user?.role === 'admin' ? 'Administrator' : 
-                 user?.role === 'police' ? 'Polizeibeamter' : 
-                 user?.role === 'community' ? 'Community' : 'Benutzer'} • 
-                {activeTab === 'home' ? ' Dashboard' : 
-                 activeTab === 'report' ? ' Meldungen' : 
-                 activeTab === 'berichte' ? ' Berichte' : 
-                 activeTab === 'schichten' ? ' Schichten' : 
-                 activeTab === 'team' ? ' Team' : 
-                 activeTab === 'database' ? ' Datenbank' : ' Profil'}
-              </Text>
-            </View>
-          </View>
-          
-          <View style={dynamicStyles.modernHeaderActions}>
-            {/* SOS Button */}
-            <TouchableOpacity 
-              style={[dynamicStyles.modernHeaderButton, { backgroundColor: colors.error }]}
-              onPress={() => setShowSOSModal(true)}
-            >
-              <Ionicons name="warning" size={24} color="#FFFFFF" />
-            </TouchableOpacity>
-            
-            {/* Theme Toggle */}
-            <TouchableOpacity 
-              style={[dynamicStyles.modernHeaderButton, { backgroundColor: isDarkMode ? colors.accent : colors.surface }]}
-              onPress={toggleTheme}
-            >
-              <Ionicons name={isDarkMode ? 'sunny' : 'moon'} size={22} color={isDarkMode ? '#FFFFFF' : colors.text} />
-            </TouchableOpacity>
-            
-            {/* Admin Settings - Nur für Admins */}
-            {user?.role === 'admin' && (
-              <TouchableOpacity 
-                style={[dynamicStyles.modernHeaderButton, { backgroundColor: colors.accent }]}
-                onPress={() => setShowAdminDashboardModal(true)}
-              >
-                <Ionicons name="settings" size={22} color="#FFFFFF" />
-              </TouchableOpacity>
-            )}
-            
-            {/* Profil */}
-            <TouchableOpacity 
-              style={[dynamicStyles.modernHeaderButton, { backgroundColor: colors.secondary }]}
-              onPress={() => setShowProfileModal(true)}
-            >
-              <Ionicons name="person" size={22} color="#FFFFFF" />
-            </TouchableOpacity>
-            
-            {/* Logout */}
-            <TouchableOpacity 
-              style={[dynamicStyles.modernHeaderButton, { backgroundColor: colors.error }]}
-              onPress={() => {
-                Alert.alert(
-                  'Abmelden',
-                  'Möchten Sie sich wirklich abmelden?',
-                  [
-                    { text: 'Abbrechen', style: 'cancel' },
-                    { 
-                      text: 'Abmelden', 
-                      style: 'destructive',
-                      onPress: logout
-                    }
-                  ]
-                );
-              }}
-            >
-              <Ionicons name="log-out" size={22} color="#FFFFFF" />
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
       
       {renderContent()}
 
@@ -11457,7 +10394,56 @@ const MainApp = ({ appConfig, setAppConfig }) => {
               </View>
             </View>
 
-            {/* Schnellzugriff entfernt wie gewünscht */}
+            {/* Quick Navigation Links */}
+            <View style={dynamicStyles.formGroup}>
+              <Text style={dynamicStyles.formLabel}>🚀 Schnellzugriff</Text>
+              <View style={dynamicStyles.quickLinksContainer}>
+                <TouchableOpacity 
+                  style={dynamicStyles.quickLinkButton}
+                  onPress={() => {
+                    setShowProfileModal(false);
+                    setActiveTab('team');
+                  }}
+                >
+                  <Ionicons name="people" size={20} color={colors.primary} />
+                  <Text style={dynamicStyles.quickLinkText}>👥 Team Übersicht</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={dynamicStyles.quickLinkButton}
+                  onPress={() => {
+                    setShowProfileModal(false);
+                    setActiveTab('database');
+                  }}
+                >
+                  <Ionicons name="folder" size={20} color={colors.primary} />
+                  <Text style={dynamicStyles.quickLinkText}>📂 Personendatenbank</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={dynamicStyles.quickLinkButton}
+                  onPress={() => {
+                    setShowProfileModal(false);
+                    setActiveTab('berichte');
+                  }}
+                >
+                  <Ionicons name="document-text" size={20} color={colors.primary} />
+                  <Text style={dynamicStyles.quickLinkText}>📊 Berichte & Archiv</Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                  style={dynamicStyles.quickLinkButton}
+                  onPress={() => {
+                    setShowProfileModal(false);
+                    setActiveTab('report');
+                  }}
+                >
+                  <Ionicons name="add-circle" size={20} color={colors.primary} />
+                  <Text style={dynamicStyles.quickLinkText}>📝 Vorfall melden</Text>
+                </TouchableOpacity>
+
+              </View>
+            </View>
 
             <View style={{ height: 40 }} />
           </ScrollView>
@@ -11801,146 +10787,6 @@ Beispielinhalt:
                     <Text style={dynamicStyles.configText}>📝 {appConfig.app_subtitle}</Text>
                     <Text style={dynamicStyles.configText}>🏢 {appConfig.organization_name}</Text>
                   </View>
-                </View>
-
-                {/* FARB-MANAGEMENT-SYSTEM */}
-                <View style={dynamicStyles.formGroup}>
-                  <Text style={dynamicStyles.formLabel}>🎨 Farb-Management</Text>
-                  <Text style={dynamicStyles.formSubLabel}>Button-Farben für alle Benutzer konfigurieren</Text>
-                  
-                  {/* Primary Color */}
-                  <View style={dynamicStyles.colorSection}>
-                    <Text style={dynamicStyles.colorLabel}>🔵 Hauptfarbe (Primary)</Text>
-                    <View style={dynamicStyles.colorGrid}>
-                      {[
-                        { name: 'Polizei-Blau', value: '#1E40AF' },
-                        { name: 'Königsblau', value: '#3B82F6' },
-                        { name: 'Navy', value: '#1E293B' },
-                        { name: 'Slate', value: '#475569' }
-                      ].map((color) => (
-                        <TouchableOpacity
-                          key={color.value}
-                          style={[
-                            dynamicStyles.colorButton,
-                            { 
-                              backgroundColor: color.value,
-                              borderWidth: appConfig.primary_color === color.value ? 3 : 1,
-                              borderColor: '#FFFFFF'
-                            }
-                          ]}
-                          onPress={() => setAppConfig(prev => ({ ...prev, primary_color: color.value }))}
-                        >
-                          {appConfig.primary_color === color.value && (
-                            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                          )}
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  </View>
-
-                  {/* Success Color */}
-                  <View style={dynamicStyles.colorSection}>
-                    <Text style={dynamicStyles.colorLabel}>🟢 Erfolg-Farbe (Success)</Text>
-                    <View style={dynamicStyles.colorGrid}>
-                      {[
-                        { name: 'Smaragd', value: '#10B981' },
-                        { name: 'Grün', value: '#059669' },
-                        { name: 'Waldgrün', value: '#047857' },
-                        { name: 'Teal', value: '#0D9488' }
-                      ].map((color) => (
-                        <TouchableOpacity
-                          key={color.value}
-                          style={[
-                            dynamicStyles.colorButton,
-                            { 
-                              backgroundColor: color.value,
-                              borderWidth: appConfig.success_color === color.value ? 3 : 1,
-                              borderColor: '#FFFFFF'
-                            }
-                          ]}
-                          onPress={() => setAppConfig(prev => ({ ...prev, success_color: color.value }))}
-                        >
-                          {appConfig.success_color === color.value && (
-                            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                          )}
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  </View>
-
-                  {/* Warning Color */}
-                  <View style={dynamicStyles.colorSection}>
-                    <Text style={dynamicStyles.colorLabel}>🟠 Warnung-Farbe (Warning)</Text>
-                    <View style={dynamicStyles.colorGrid}>
-                      {[
-                        { name: 'Amber', value: '#F59E0B' },
-                        { name: 'Orange', value: '#EA580C' },
-                        { name: 'Gelb', value: '#EAB308' },
-                        { name: 'Gold', value: '#D97706' }
-                      ].map((color) => (
-                        <TouchableOpacity
-                          key={color.value}
-                          style={[
-                            dynamicStyles.colorButton,
-                            { 
-                              backgroundColor: color.value,
-                              borderWidth: appConfig.warning_color === color.value ? 3 : 1,
-                              borderColor: '#FFFFFF'
-                            }
-                          ]}
-                          onPress={() => setAppConfig(prev => ({ ...prev, warning_color: color.value }))}
-                        >
-                          {appConfig.warning_color === color.value && (
-                            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                          )}
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  </View>
-
-                  {/* Error Color */}
-                  <View style={dynamicStyles.colorSection}>
-                    <Text style={dynamicStyles.colorLabel}>🔴 Fehler-Farbe (Error)</Text>
-                    <View style={dynamicStyles.colorGrid}>
-                      {[
-                        { name: 'Rot', value: '#EF4444' },
-                        { name: 'Kardinal', value: '#DC2626' },
-                        { name: 'Kirschrot', value: '#B91C1C' },
-                        { name: 'Rose', value: '#F43F5E' }
-                      ].map((color) => (
-                        <TouchableOpacity
-                          key={color.value}
-                          style={[
-                            dynamicStyles.colorButton,
-                            { 
-                              backgroundColor: color.value,
-                              borderWidth: appConfig.error_color === color.value ? 3 : 1,
-                              borderColor: '#FFFFFF'
-                            }
-                          ]}
-                          onPress={() => setAppConfig(prev => ({ ...prev, error_color: color.value }))}
-                        >
-                          {appConfig.error_color === color.value && (
-                            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                          )}
-                        </TouchableOpacity>
-                      ))}
-                    </View>
-                  </View>
-
-                  <TouchableOpacity 
-                    style={[dynamicStyles.colorApplyButton, { backgroundColor: appConfig.primary_color || colors.primary }]}
-                    onPress={() => {
-                      Alert.alert(
-                        '🎨 Farben anwenden',
-                        'Die neuen Farben werden für alle Benutzer übernommen!',
-                        [{ text: 'OK', onPress: () => window.location.reload() }]
-                      );
-                    }}
-                  >
-                    <Ionicons name="color-palette" size={20} color="#FFFFFF" />
-                    <Text style={dynamicStyles.colorApplyButtonText}>Farben anwenden</Text>
-                  </TouchableOpacity>
                 </View>
 
                 {/* App Icon Upload */}
@@ -13786,27 +12632,6 @@ Beispielinhalt:
               <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
             </TouchableOpacity>
 
-            {/* ✅ NEU: Krankmeldungs-Verwaltung */}
-            <TouchableOpacity 
-              style={dynamicStyles.profileActionCard}
-              activeOpacity={0.8}
-              disabled={modalTransitionLock}
-              onPress={() => {
-                // Bleibe im Admin Dashboard, öffne nur das neue Modal
-                loadPendingSickLeave();
-                setShowSickLeaveManagementModal(true);
-              }}
-            >
-              <View style={[dynamicStyles.profileActionIcon, { backgroundColor: colors.error + '20' }]}>
-                <Ionicons name="medical" size={24} color={colors.error} />
-              </View>
-              <View style={dynamicStyles.profileActionContent}>
-                <Text style={dynamicStyles.profileActionTitle}>Krankmeldungen</Text>
-                <Text style={dynamicStyles.profileActionSubtitle}>Genehmigen • Ablehnen • Verwalten</Text>
-              </View>
-              <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
-            </TouchableOpacity>
-
             {/* ✅ NEU: Team zuordnen Button */}
             <TouchableOpacity
               style={dynamicStyles.profileActionCard}
@@ -13814,7 +12639,6 @@ Beispielinhalt:
                 console.log('👥 Team zuordnen clicked');
                 // ✅ FIX: Zuerst Benutzer laden, dann Modal öffnen
                 loadAvailableUsers();
-                loadTeams(); // ✅ FIX: Teams auch laden
                 setShowTeamAssignmentModal(true);
               }}
               activeOpacity={0.7}
@@ -14078,11 +12902,11 @@ Beispielinhalt:
                     <View style={dynamicStyles.shiftModernInputContainer}>
                       <Ionicons name="calendar-outline" size={20} color={colors.textMuted} />
                       <Text style={[dynamicStyles.shiftModernInput, { color: colors.textMuted }]}>
-                        Keine Urlaubsanträge vorhanden
+                        Keine ausstehenden Urlaubsanträge
                       </Text>
                     </View>
                   ) : (
-                    pendingVacations.slice(0, 3).map((vacation, index) => (
+                    pendingVacations.map((vacation, index) => (
                       <View key={vacation.id || index}>
                         <View>
                           <Text style={dynamicStyles.shiftModernInputLabel}>{vacation.user_name}</Text>
@@ -14095,41 +12919,27 @@ Beispielinhalt:
                           <Text style={dynamicStyles.shiftInputHint}>
                             📝 Grund: {vacation.reason}
                           </Text>
-                          {vacation.approved_at && (
-                            <Text style={[dynamicStyles.shiftInputHint, { color: colors.textMuted, marginTop: 4 }]}>
-                              📅 Bearbeitet: {new Date(vacation.approved_at).toLocaleDateString('de-DE', { 
-                                year: 'numeric', 
-                                month: '2-digit', 
-                                day: '2-digit',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
-                              {vacation.status === 'approved' ? ' ✅ Genehmigt' : vacation.status === 'rejected' ? ' ❌ Abgelehnt' : ''}
-                            </Text>
-                          )}
                         </View>
                         
-                        {vacation.status === 'pending' && (
-                          <View style={{ flexDirection: 'row', gap: 12, marginTop: 12, marginBottom: 20 }}>
-                            <TouchableOpacity 
-                              style={[dynamicStyles.shiftModernActionButton, { backgroundColor: colors.success, flex: 1, marginHorizontal: 0 }]}
-                              onPress={() => handleVacationApproval(vacation.id, 'approve')}
-                            >
-                              <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                              <Text style={[dynamicStyles.shiftModernActionButtonText, { color: '#FFFFFF', marginLeft: 6 }]}>Genehmigen</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                              style={[dynamicStyles.shiftModernActionButton, { backgroundColor: colors.error, flex: 1, marginHorizontal: 0 }]}
-                              onPress={() => {
-                                setRejectionVacationId(vacation.id);
-                                setShowRejectionModal(true);
-                              }}
-                            >
-                              <Ionicons name="close" size={16} color="#FFFFFF" />
-                              <Text style={[dynamicStyles.shiftModernActionButtonText, { color: '#FFFFFF', marginLeft: 6 }]}>Ablehnen</Text>
-                            </TouchableOpacity>
-                          </View>
-                        )}
+                        <View style={{ flexDirection: 'row', gap: 12, marginTop: 12, marginBottom: 20 }}>
+                          <TouchableOpacity 
+                            style={[dynamicStyles.shiftModernActionButton, { backgroundColor: colors.success, flex: 1, marginHorizontal: 0 }]}
+                            onPress={() => handleVacationApproval(vacation.id, 'approve')}
+                          >
+                            <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+                            <Text style={[dynamicStyles.shiftModernActionButtonText, { color: '#FFFFFF', marginLeft: 6 }]}>Genehmigen</Text>
+                          </TouchableOpacity>
+                          <TouchableOpacity 
+                            style={[dynamicStyles.shiftModernActionButton, { backgroundColor: colors.error, flex: 1, marginHorizontal: 0 }]}
+                            onPress={() => {
+                              setRejectionVacationId(vacation.id);
+                              setShowRejectionModal(true);
+                            }}
+                          >
+                            <Ionicons name="close" size={16} color="#FFFFFF" />
+                            <Text style={[dynamicStyles.shiftModernActionButtonText, { color: '#FFFFFF', marginLeft: 6 }]}>Ablehnen</Text>
+                          </TouchableOpacity>
+                        </View>
                       </View>
                     ))
                   )}
@@ -14742,51 +13552,49 @@ Beispielinhalt:
                 {/* Detail-Karten */}
                 <View style={{ gap: 16 }}>
                   
-                  {/* Bezirks-Info - nur anzeigen wenn Bezirk zugewiesen */}
-                  {(profileData.assigned_district || user?.assigned_district) && (
-                    <View style={{
-                      backgroundColor: colors.card,
-                      borderRadius: 16,
-                      padding: 20,
-                      borderWidth: 1,
-                      borderColor: colors.border
-                    }}>
-                      <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-                        <Ionicons name="location" size={24} color={colors.primary} />
-                        <Text style={{
-                          fontSize: 18,
-                          fontWeight: 'bold',
-                          color: colors.text,
-                          marginLeft: 12
-                        }}>
-                          Bezirks-Information
+                  {/* Bezirks-Info */}
+                  <View style={{
+                    backgroundColor: colors.card,
+                    borderRadius: 16,
+                    padding: 20,
+                    borderWidth: 1,
+                    borderColor: colors.border
+                  }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
+                      <Ionicons name="location" size={24} color={colors.primary} />
+                      <Text style={{
+                        fontSize: 18,
+                        fontWeight: 'bold',
+                        color: colors.text,
+                        marginLeft: 12
+                      }}>
+                        Bezirks-Information
+                      </Text>
+                    </View>
+                    
+                    <View style={{ gap: 12 }}>
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text style={{ color: colors.textMuted, fontWeight: '500' }}>Zugewiesener Bezirk:</Text>
+                        <Text style={{ color: colors.text, fontWeight: '600' }}>
+                          {profileData.assigned_district || user?.assigned_district || 'Nicht zugewiesen'}
                         </Text>
                       </View>
                       
-                      <View style={{ gap: 12 }}>
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                          <Text style={{ color: colors.textMuted, fontWeight: '500' }}>Zugewiesener Bezirk:</Text>
-                          <Text style={{ color: colors.text, fontWeight: '600' }}>
-                            {profileData.assigned_district || user?.assigned_district}
-                          </Text>
-                        </View>
-                        
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                          <Text style={{ color: colors.textMuted, fontWeight: '500' }}>Arbeitsgebiet:</Text>
-                          <Text style={{ color: colors.text, fontWeight: '600' }}>
-                            {user?.district_area || 'Standard-Bereich'}
-                          </Text>
-                        </View>
-                        
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                          <Text style={{ color: colors.textMuted, fontWeight: '500' }}>Zugewiesen seit:</Text>
-                          <Text style={{ color: colors.text, fontWeight: '600' }}>
-                            {user?.district_assigned_date || user?.created_at || new Date().toLocaleDateString('de-DE')}
-                          </Text>
-                        </View>
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text style={{ color: colors.textMuted, fontWeight: '500' }}>Arbeitsgebiet:</Text>
+                        <Text style={{ color: colors.text, fontWeight: '600' }}>
+                          {user?.district_area || 'Standard-Bereich'}
+                        </Text>
+                      </View>
+                      
+                      <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <Text style={{ color: colors.textMuted, fontWeight: '500' }}>Zugewiesen seit:</Text>
+                        <Text style={{ color: colors.text, fontWeight: '600' }}>
+                          {user?.district_assigned_date || user?.created_at || new Date().toLocaleDateString('de-DE')}
+                        </Text>
                       </View>
                     </View>
-                  )}
+                  </View>
 
                   {/* Benutzer-Info */}
                   <View style={{
@@ -14878,153 +13686,6 @@ Beispielinhalt:
 
                 </View>
               </ScrollView>
-
-              {/* ✅ NEU: Team-Status-Verwaltung nur für Teamleiter */}
-              {user?.team_role === 'leader' && (
-                <View style={{
-                  backgroundColor: colors.card,
-                  borderRadius: 16,
-                  padding: 20,
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                  marginTop: 16,
-                  marginBottom: 16
-                }}>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 16 }}>
-                    <Ionicons name="settings" size={24} color={colors.primary} />
-                    <Text style={{
-                      fontSize: 18,
-                      fontWeight: 'bold',
-                      color: colors.text,
-                      marginLeft: 12
-                    }}>
-                      Team-Status verwalten
-                    </Text>
-                  </View>
-                  
-                  <Text style={{
-                    fontSize: 14,
-                    color: colors.textMuted,
-                    marginBottom: 16,
-                    lineHeight: 20
-                  }}>
-                    Als Teamleiter können Sie den Status Ihres Teams ändern:
-                  </Text>
-
-                  <View style={{ flexDirection: 'row', justifyContent: 'space-between', gap: 12 }}>
-                    <TouchableOpacity
-                      style={{
-                        flex: 1,
-                        backgroundColor: colors.success + '20',
-                        borderColor: colors.success,
-                        borderWidth: 1,
-                        paddingVertical: 12,
-                        paddingHorizontal: 16,
-                        borderRadius: 12,
-                        alignItems: 'center'
-                      }}
-                      onPress={() => {
-                        Alert.alert(
-                          '✅ Team-Status ändern',
-                          'Team-Status auf "Einsatzbereit" setzen?',
-                          [
-                            { text: 'Abbrechen', style: 'cancel' },
-                            { 
-                              text: 'Bestätigen', 
-                              onPress: () => updateTeamStatus(user?.patrol_team, 'Einsatzbereit')
-                            }
-                          ]
-                        );
-                      }}
-                      activeOpacity={0.8}
-                    >
-                      <Ionicons name="checkmark-circle" size={20} color={colors.success} />
-                      <Text style={{
-                        color: colors.success,
-                        fontWeight: '600',
-                        fontSize: 14,
-                        marginTop: 4
-                      }}>
-                        Einsatzbereit
-                      </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={{
-                        flex: 1,
-                        backgroundColor: colors.warning + '20',
-                        borderColor: colors.warning,
-                        borderWidth: 1,
-                        paddingVertical: 12,
-                        paddingHorizontal: 16,
-                        borderRadius: 12,
-                        alignItems: 'center'
-                      }}
-                      onPress={() => {
-                        Alert.alert(
-                          '⚠️ Team-Status ändern',
-                          'Team-Status auf "Im Einsatz" setzen?',
-                          [
-                            { text: 'Abbrechen', style: 'cancel' },
-                            { 
-                              text: 'Bestätigen', 
-                              onPress: () => updateTeamStatus(user?.patrol_team, 'Im Einsatz')
-                            }
-                          ]
-                        );
-                      }}
-                      activeOpacity={0.8}
-                    >
-                      <Ionicons name="time" size={20} color={colors.warning} />
-                      <Text style={{
-                        color: colors.warning,
-                        fontWeight: '600',
-                        fontSize: 14,
-                        marginTop: 4
-                      }}>
-                        Im Einsatz
-                      </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                      style={{
-                        flex: 1,
-                        backgroundColor: colors.error + '20',
-                        borderColor: colors.error,
-                        borderWidth: 1,
-                        paddingVertical: 12,
-                        paddingHorizontal: 16,
-                        borderRadius: 12,
-                        alignItems: 'center'
-                      }}
-                      onPress={() => {
-                        Alert.alert(
-                          '🚫 Team-Status ändern',
-                          'Team-Status auf "Nicht verfügbar" setzen?',
-                          [
-                            { text: 'Abbrechen', style: 'cancel' },
-                            { 
-                              text: 'Bestätigen', 
-                              onPress: () => updateTeamStatus(user?.patrol_team, 'Nicht verfügbar')
-                            }
-                          ]
-                        );
-                      }}
-                      activeOpacity={0.8}
-                    >
-                      <Ionicons name="close-circle" size={20} color={colors.error} />
-                      <Text style={{
-                        color: colors.error,
-                        fontWeight: '600',
-                        fontSize: 14,
-                        marginTop: 4
-                      }}>
-                        Nicht verfügbar
-                      </Text>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              )}
 
               {/* Action Button */}
               <TouchableOpacity
@@ -15190,9 +13851,9 @@ Beispielinhalt:
                     </View>
 
                     {/* ✅ FIX: Team-Member aus usersByStatus laden */}
-                    {Object.values(usersByStatus).flat().filter(u => u.patrol_team === (profileData.patrol_team || user?.patrol_team)).length > 0 ? (
+                    {usersByStatus.filter(u => u.patrol_team === (profileData.patrol_team || user?.patrol_team)).length > 0 ? (
                       <View style={{ gap: 12 }}>
-                        {Object.values(usersByStatus).flat()
+                        {usersByStatus
                           .filter(u => u.patrol_team === (profileData.patrol_team || user?.patrol_team))
                           .map((teamMember, index) => (
                             <View key={teamMember.id || index} style={{
@@ -15308,7 +13969,7 @@ Beispielinhalt:
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                       <Text style={{ color: colors.textMuted, fontWeight: '500' }}>Team-Name:</Text>
                       <Text style={{ color: colors.text, fontWeight: '600' }}>
-{(profileData.patrol_team || user?.patrol_team) ? (profileData.patrol_team || user?.patrol_team) : null}
+                        {profileData.patrol_team || user?.patrol_team || 'Nicht zugewiesen'}
                       </Text>
                     </View>
                     
@@ -15322,7 +13983,7 @@ Beispielinhalt:
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                       <Text style={{ color: colors.textMuted, fontWeight: '500' }}>Einsatzgebiet:</Text>
                       <Text style={{ color: colors.text, fontWeight: '600' }}>
-                        {(profileData.assigned_district || user?.assigned_district) || null}
+                        {user?.assigned_district || 'Nicht zugewiesen'}
                       </Text>
                     </View>
                     
@@ -16315,7 +14976,7 @@ Beispielinhalt:
                   </ScrollView>
                 </View>
 
-                {/* ✅ SYNTAX FIX: Einfache Team-Liste ohne komplexe Syntax */}
+                {/* Team-Auswahl */}
                 <Text style={{
                   fontSize: 16,
                   fontWeight: '600',
@@ -16325,86 +14986,65 @@ Beispielinhalt:
                   👥 Team auswählen:
                 </Text>
                 
-                <TouchableOpacity
-                  onPress={() => setSelectedTeam({ id: 'alpha', name: 'Team Alpha', description: 'Hauptteam', status: 'Aktiv' })}
-                  style={{
-                    backgroundColor: selectedTeam?.id === 'alpha' ? colors.primary + '20' : colors.card,
-                    padding: 16,
-                    marginVertical: 4,
-                    borderRadius: 12,
-                    borderWidth: 2,
-                    borderColor: selectedTeam?.id === 'alpha' ? colors.primary : colors.border,
-                    flexDirection: 'row',
-                    alignItems: 'center'
-                  }}
-                >
-                  <Ionicons 
-                    name={selectedTeam?.id === 'alpha' ? "radio-button-on" : "radio-button-off"} 
-                    size={20} 
-                    color={selectedTeam?.id === 'alpha' ? colors.primary : colors.textMuted} 
-                  />
-                  <View style={{ marginLeft: 12, flex: 1 }}>
-                    <Text style={{ color: colors.text, fontWeight: '600', fontSize: 16 }}>Team Alpha</Text>
-                    <Text style={{ color: colors.textMuted, fontSize: 14, marginTop: 2 }}>Hauptteam - Patrouillen</Text>
-                  </View>
-                  <View style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: colors.success + '20' }}>
-                    <Text style={{ fontSize: 12, fontWeight: '600', color: colors.success }}>Aktiv</Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setSelectedTeam({ id: 'bravo', name: 'Team Bravo', description: 'Verkehr', status: 'Aktiv' })}
-                  style={{
-                    backgroundColor: selectedTeam?.id === 'bravo' ? colors.primary + '20' : colors.card,
-                    padding: 16,
-                    marginVertical: 4,
-                    borderRadius: 12,
-                    borderWidth: 2,
-                    borderColor: selectedTeam?.id === 'bravo' ? colors.primary : colors.border,
-                    flexDirection: 'row',
-                    alignItems: 'center'
-                  }}
-                >
-                  <Ionicons 
-                    name={selectedTeam?.id === 'bravo' ? "radio-button-on" : "radio-button-off"} 
-                    size={20} 
-                    color={selectedTeam?.id === 'bravo' ? colors.primary : colors.textMuted} 
-                  />
-                  <View style={{ marginLeft: 12, flex: 1 }}>
-                    <Text style={{ color: colors.text, fontWeight: '600', fontSize: 16 }}>Team Bravo</Text>
-                    <Text style={{ color: colors.textMuted, fontSize: 14, marginTop: 2 }}>Verkehrsüberwachung</Text>
-                  </View>
-                  <View style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: colors.success + '20' }}>
-                    <Text style={{ fontSize: 12, fontWeight: '600', color: colors.success }}>Aktiv</Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPress={() => setSelectedTeam({ id: 'charlie', name: 'Team Charlie', description: 'Ermittlung', status: 'Aktiv' })}
-                  style={{
-                    backgroundColor: selectedTeam?.id === 'charlie' ? colors.primary + '20' : colors.card,
-                    padding: 16,
-                    marginVertical: 4,
-                    borderRadius: 12,
-                    borderWidth: 2,
-                    borderColor: selectedTeam?.id === 'charlie' ? colors.primary : colors.border,
-                    flexDirection: 'row',
-                    alignItems: 'center'
-                  }}
-                >
-                  <Ionicons 
-                    name={selectedTeam?.id === 'charlie' ? "radio-button-on" : "radio-button-off"} 
-                    size={20} 
-                    color={selectedTeam?.id === 'charlie' ? colors.primary : colors.textMuted} 
-                  />
-                  <View style={{ marginLeft: 12, flex: 1 }}>
-                    <Text style={{ color: colors.text, fontWeight: '600', fontSize: 16 }}>Team Charlie</Text>
-                    <Text style={{ color: colors.textMuted, fontSize: 14, marginTop: 2 }}>Ermittlungen & Sonderaufgaben</Text>
-                  </View>
-                  <View style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 8, backgroundColor: colors.success + '20' }}>
-                    <Text style={{ fontSize: 12, fontWeight: '600', color: colors.success }}>Aktiv</Text>
-                  </View>
-                </TouchableOpacity>
+                {[
+                  { id: 'alpha', name: 'Team Alpha', description: 'Streifenpolizei - Haupteinsatz', status: 'Aktiv' },
+                  { id: 'bravo', name: 'Team Bravo', description: 'Verkehrspolizei', status: 'Aktiv' },
+                  { id: 'charlie', name: 'Team Charlie', description: 'Ermittlungen', status: 'Aktiv' },
+                  { id: 'delta', name: 'Team Delta', description: 'Sondereinsatz', status: 'Bereitschaft' },
+                  { id: 'echo', name: 'Team Echo', description: 'Nachtschicht', status: 'Aktiv' },
+                  { id: 'foxtrot', name: 'Team Foxtrot', description: 'Wochenende', status: 'Bereitschaft' }
+                ].map((team) => (
+                  <TouchableOpacity
+                    key={team.id}
+                    onPress={() => setSelectedTeam(team)}
+                    style={{
+                      backgroundColor: selectedTeam?.id === team.id ? colors.primary + '20' : colors.card,
+                      padding: 16,
+                      marginVertical: 4,
+                      borderRadius: 12,
+                      borderWidth: 2,
+                      borderColor: selectedTeam?.id === team.id ? colors.primary : colors.border,
+                      flexDirection: 'row',
+                      alignItems: 'center'
+                    }}
+                  >
+                    <Ionicons 
+                      name={selectedTeam?.id === team.id ? "radio-button-on" : "radio-button-off"} 
+                      size={20} 
+                      color={selectedTeam?.id === team.id ? colors.primary : colors.textMuted} 
+                    />
+                    <View style={{ marginLeft: 12, flex: 1 }}>
+                      <Text style={{
+                        color: colors.text,
+                        fontWeight: '600',
+                        fontSize: 16
+                      }}>
+                        {team.name}
+                      </Text>
+                      <Text style={{
+                        color: colors.textMuted,
+                        fontSize: 14,
+                        marginTop: 2
+                      }}>
+                        {team.description}
+                      </Text>
+                    </View>
+                    <View style={{
+                      paddingHorizontal: 8,
+                      paddingVertical: 4,
+                      borderRadius: 8,
+                      backgroundColor: team.status === 'Aktiv' ? colors.success + '20' : colors.warning + '20'
+                    }}>
+                      <Text style={{
+                        fontSize: 12,
+                        fontWeight: '600',
+                        color: team.status === 'Aktiv' ? colors.success : colors.warning
+                      }}>
+                        {team.status}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ))}
 
                 {/* Rollen-Auswahl */}
                 {selectedTeam && (
@@ -16643,191 +15283,34 @@ Beispielinhalt:
           </View>
         </KeyboardAvoidingView>
       </Modal>
-
-      {/* ✅ Personal Vacation Modal */}
-      <VacationFormModal />
-
-      {/* ✅ NEU: Sick Leave Management Modal für Admin */}
-      <Modal
-        visible={showSickLeaveManagementModal}
-        transparent={true}
-        animationType="slide"
-        onRequestClose={() => setShowSickLeaveManagementModal(false)}
-      >
-        <KeyboardAvoidingView 
-          style={{ flex: 1 }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        >
-          <View style={dynamicStyles.shiftModalOverlay}>
-            <View style={[dynamicStyles.shiftModalContainer, { maxHeight: '80%' }]}>
-              {/* Header */}
-              <View style={dynamicStyles.shiftModernModalHeader}>
-                <View style={[dynamicStyles.shiftModernModalIconContainer, { backgroundColor: colors.error + '20' }]}>
-                  <Ionicons name="medical" size={28} color={colors.error} />
-                </View>
-                <View style={dynamicStyles.shiftModernModalTitleContainer}>
-                  <Text style={dynamicStyles.shiftModernModalTitle}>🏥 Krankmeldungen</Text>
-                  <Text style={dynamicStyles.shiftModernModalSubtitle}>Genehmigen • Ablehnen • Verwalten</Text>
-                </View>
-                <TouchableOpacity
-                  style={dynamicStyles.shiftModernModalCloseButton}
-                  onPress={() => setShowSickLeaveManagementModal(false)}
-                >
-                  <Ionicons name="close" size={24} color={colors.textMuted} />
-                </TouchableOpacity>
-              </View>
-
-              <ScrollView 
-                style={dynamicStyles.shiftModernModalContent}
-                showsVerticalScrollIndicator={false}
-              >
-                <View style={dynamicStyles.shiftModernFormSection}>
-                  <Text style={dynamicStyles.shiftModernSectionLabel}>⏳ Ausstehende Krankmeldungen</Text>
-                  
-                  {pendingSickLeave.length === 0 ? (
-                    <View style={dynamicStyles.emptyStateContainer}>
-                      <Ionicons name="medical-outline" size={48} color={colors.textMuted} />
-                      <Text style={dynamicStyles.emptyStateText}>
-                        Keine ausstehenden Krankmeldungen
-                      </Text>
-                    </View>
-                  ) : (
-                    pendingSickLeave.slice(0, 3).map(sickness => (
-                      <View key={sickness.id} style={[dynamicStyles.shiftModernVacationCard, {
-                        borderLeftColor: colors.error,
-                        borderLeftWidth: 4
-                      }]}>
-                        {/* Rotes X Icon - genau wie im Bild */}
-                        <View style={{
-                          position: 'absolute',
-                          top: 16,
-                          right: 16,
-                          backgroundColor: colors.error,
-                          borderRadius: 12,
-                          width: 24,
-                          height: 24,
-                          justifyContent: 'center',
-                          alignItems: 'center'
-                        }}>
-                          <Ionicons name="close" size={16} color="#FFFFFF" />
-                        </View>
-
-                        <View>
-                          <Text style={dynamicStyles.shiftModernInputLabel}>{sickness.user_name}</Text>
-                          <View style={dynamicStyles.shiftModernInputContainer}>
-                            <Ionicons name="calendar-outline" size={20} color={colors.error} />
-                            <Text style={dynamicStyles.shiftModernInput}>
-                              {sickness.start_date} bis {sickness.end_date}
-                            </Text>
-                          </View>
-                          <Text style={dynamicStyles.shiftInputHint}>
-                            🏥 Grund: {sickness.reason || 'Nicht angegeben'}
-                          </Text>
-                          {sickness.medical_certificate && (
-                            <Text style={[dynamicStyles.shiftInputHint, { color: colors.success }]}>
-                              📄 Ärztliches Attest vorhanden
-                            </Text>
-                          )}
-                        </View>
-                        
-                        {/* Genehmigen/Ablehnen Buttons - nur bei pending */}
-                        {sickness.status === 'pending' && (
-                          <View style={{ flexDirection: 'row', gap: 12, marginTop: 12, marginBottom: 20 }}>
-                            <TouchableOpacity 
-                              style={[dynamicStyles.shiftModernActionButton, { backgroundColor: colors.success, flex: 1, marginHorizontal: 0 }]}
-                              onPress={() => handleSickLeaveApproval(sickness.id, 'approve')}
-                            >
-                              <Ionicons name="checkmark" size={16} color="#FFFFFF" />
-                              <Text style={[dynamicStyles.shiftModernActionButtonText, { color: '#FFFFFF', marginLeft: 6 }]}>Genehmigen</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity 
-                              style={[dynamicStyles.shiftModernActionButton, { backgroundColor: colors.error, flex: 1, marginHorizontal: 0 }]}
-                              onPress={() => handleSickLeaveApproval(sickness.id, 'reject')}
-                            >
-                              <Ionicons name="close" size={16} color="#FFFFFF" />
-                              <Text style={[dynamicStyles.shiftModernActionButtonText, { color: '#FFFFFF', marginLeft: 6 }]}>Ablehnen</Text>
-                            </TouchableOpacity>
-                          </View>
-                        )}
-                      </View>
-                    ))
-                  )}
-                </View>
-              </ScrollView>
-            </View>
-          </View>
-        </KeyboardAvoidingView>
-      </Modal>
-
     </SafeAreaView>
   );
 };
 
 // Main App Component
 export default function App() {
-  const [globalAppConfig, setGlobalAppConfig] = useState({
-    app_name: "Stadtwache",
-    app_subtitle: "Polizei Management System",
-    organization_name: "Sicherheitsbehörde Schwelm",
-    primary_color: "#1E40AF",
-    success_color: "#10B981",
-    warning_color: "#F59E0B",
-    error_color: "#EF4444"
-  });
-
   return (
-    <ThemeProvider appConfig={globalAppConfig}>
+    <ThemeProvider>
       <AuthProvider>
-        <AppContent appConfig={globalAppConfig} setAppConfig={setGlobalAppConfig} />
+        <AppContent />
       </AuthProvider>
     </ThemeProvider>
   );
 }
 
-// Error Boundary Component
-class MainAppErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { hasError: false, error: null };
-  }
-
-  static getDerivedStateFromError(error) {
-    console.log('🚨 MainApp Error Boundary caught error:', error);
-    return { hasError: true, error };
-  }
-
-  componentDidCatch(error, errorInfo) {
-    console.log('🚨 MainApp Error details:', error, errorInfo);
-  }
-
-  render() {
-    if (this.state.hasError) {
-      return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#000000' }}>
-          <Text style={{ color: '#FFFFFF', fontSize: 18, marginBottom: 20 }}>
-            MainApp Rendering Error
-          </Text>
-          <Text style={{ color: '#FF6B6B', fontSize: 14, textAlign: 'center', marginHorizontal: 20 }}>
-            {this.state.error?.toString() || 'Unknown error in MainApp'}
-          </Text>
-          <TouchableOpacity 
-            style={{ backgroundColor: '#007AFF', padding: 15, borderRadius: 8, marginTop: 20 }}
-            onPress={() => this.setState({ hasError: false, error: null })}
-          >
-            <Text style={{ color: '#FFFFFF' }}>Retry</Text>
-          </TouchableOpacity>
-        </View>
-      );
-    }
-
-    return this.props.children;
-  }
-}
-
-// AppContent component - the main rendering logic
-const AppContent = ({ appConfig, setAppConfig }) => {
+const AppContent = () => {
   const { user, loading } = useAuth();
   const { colors } = useTheme();
+  
+  // App Configuration States
+  const [appConfig, setAppConfig] = useState({
+    app_name: 'Stadtwache',
+    app_subtitle: 'Polizei Management System',
+    app_icon: null,
+    organization_name: 'Sicherheitsbehörde Schwelm',
+    primary_color: '#1E40AF',
+    secondary_color: '#3B82F6'
+  });
 
   // Load app configuration
   const loadAppConfig = async () => {
@@ -16868,12 +15351,5 @@ const AppContent = ({ appConfig, setAppConfig }) => {
     );
   }
 
-  return user ? (
-    <MainAppErrorBoundary>
-      <MainApp appConfig={appConfig} setAppConfig={setAppConfig} />
-    </MainAppErrorBoundary>
-  ) : (
-    <LoginScreen appConfig={appConfig} />
-  );
+  return user ? <MainApp appConfig={appConfig} setAppConfig={setAppConfig} /> : <LoginScreen appConfig={appConfig} />;
 };
-
