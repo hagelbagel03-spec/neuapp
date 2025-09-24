@@ -459,27 +459,27 @@ const LoginScreen = ({ appConfig }) => {
       paddingVertical: 12,
     },
     registerLinkText: {
-      color: colors.textSecondary,
+      color: '#CCCCCC', // CYBER: Gray Text
       fontSize: 16,
       textDecorationLine: 'underline',
     },
     demoInfo: {
       marginTop: 24,
       padding: 20,
-      backgroundColor: 'rgba(255, 255, 255, 0.1)',
+      backgroundColor: 'rgba(0, 255, 255, 0.05)', // CYBER: Cyan Glow
       borderRadius: 12,
       borderWidth: 1,
-      borderColor: 'rgba(255, 255, 255, 0.2)',
+      borderColor: 'rgba(0, 255, 255, 0.2)',
     },
     demoText: {
-      color: 'rgba(255, 255, 255, 0.9)',
+      color: '#00FFFF', // CYBER: Neon Cyan
       fontSize: 16,
       fontWeight: '600',
       textAlign: 'center',
       marginBottom: 6,
     },
     demoSubtext: {
-      color: 'rgba(255, 255, 255, 0.7)',
+      color: '#CCCCCC', // CYBER: Gray
       fontSize: 14,
       textAlign: 'center',
     },
@@ -487,15 +487,18 @@ const LoginScreen = ({ appConfig }) => {
       alignItems: 'center',
     },
     footerText: {
-      fontSize: 18,
-      fontWeight: '600',
-      color: 'rgba(255, 255, 255, 0.95)',
+      fontSize: 22,
+      fontWeight: '800',
+      color: '#00FFFF', // CYBER: Neon Cyan Footer
       marginBottom: 8,
+      textTransform: 'uppercase',
+      letterSpacing: 1.5,
     },
     statusText: {
-      fontSize: 16,
-      color: 'rgba(255, 255, 255, 0.8)',
-      fontWeight: '500',
+      fontSize: 14,
+      color: '#00FF41', // CYBER: Matrix Green
+      fontWeight: '700',
+      letterSpacing: 1,
     },
   });
 
