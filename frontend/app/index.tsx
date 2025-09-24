@@ -9059,7 +9059,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
             </Text>
             
             {/* Show only the most recent incident */}
-            {recentIncidents.slice(0, 1).map((incident, index) => (
+            {(recentIncidents || []).slice(0, 1).map((incident, index) => (
               <TouchableOpacity 
                 key={incident.id || index} 
                 style={[dynamicStyles.incidentCard, 
