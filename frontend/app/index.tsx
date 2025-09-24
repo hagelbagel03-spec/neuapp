@@ -108,22 +108,22 @@ const ThemeProvider = ({ children, appConfig }) => {
   };
 
   const getColors = (isDarkMode) => ({
-    // 🎨 DYNAMISCHE FARBEN aus Admin-Konfiguration
-    primary: appConfig?.primary_color || '#1E40AF',
-    primaryLight: appConfig?.primary_color || '#3B82F6', 
-    secondary: appConfig?.success_color || '#059669',
-    accent: appConfig?.warning_color || '#F59E0B',
-    success: appConfig?.success_color || '#10B981',
-    warning: appConfig?.warning_color || '#F59E0B',
-    error: appConfig?.error_color || '#EF4444',
-    background: isDarkMode ? '#0F172A' : '#F8FAFC',
-    surface: isDarkMode ? '#1E293B' : '#FFFFFF',
-    card: isDarkMode ? '#334155' : '#FFFFFF',
-    text: isDarkMode ? '#F8FAFC' : '#1E293B',
-    textSecondary: isDarkMode ? '#CBD5E1' : '#475569',
-    textMuted: isDarkMode ? '#94A3B8' : '#64748B',
-    border: isDarkMode ? '#475569' : '#E2E8F0',
-    overlay: 'rgba(0, 0, 0, 0.5)',
+    // 🎨 CYBER-FUTURISTIC FARBEN - Ultra Modern Design
+    primary: CyberTheme.neonCyan,
+    primaryLight: CyberTheme.neonCyan, 
+    secondary: CyberTheme.neonMagenta,
+    accent: CyberTheme.neonGreen,
+    success: CyberTheme.neonGreen,
+    warning: CyberTheme.neonOrange,
+    error: CyberTheme.danger,
+    background: CyberTheme.blackPure,
+    surface: CyberTheme.blackCard,
+    card: CyberTheme.blackSurface,
+    text: CyberTheme.textWhite,
+    textSecondary: CyberTheme.textGray,
+    textMuted: CyberTheme.textDark,
+    border: CyberTheme.neonCyan,
+    overlay: 'rgba(0, 255, 255, 0.2)',
   });
 
   const theme = {
