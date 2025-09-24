@@ -9464,16 +9464,7 @@ const MainApp = ({ appConfig, setAppConfig }) => {
       {/* 🚀 ULTRA-FUTURISTIC DASHBOARD - SO MODERN ES IST BEÄNGSTIGEND */}
       <View style={dynamicStyles.cyberDashboardContainer}>
         
-        {/* Futuristic Header */}
-        <View style={dynamicStyles.cyberHeaderContainer}>
-          <Text style={dynamicStyles.cyberHeaderTitle}>STADTWACHE</Text>
-          <Text style={dynamicStyles.cyberHeaderSubtitle}>ZENTRALE • ECHTZEIT ÜBERWACHUNG</Text>
-          <View style={dynamicStyles.cyberStatusBar}>
-            <Text style={dynamicStyles.cyberStatusText}>🟢 SYSTEM OPERATIV</Text>
-          </View>
-        </View>
-
-        {/* Ultra-Modern Stats Grid */}
+        {/* Ultra-Modern Stats Grid - DIREKT OHNE HEADER */}
         <View style={dynamicStyles.cyberStatsGrid}>
           {/* Vorfälle Card - Ultra Futuristic */}
           <TouchableOpacity 
