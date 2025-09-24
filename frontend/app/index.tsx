@@ -17412,6 +17412,300 @@ Beispielinhalt:
         </KeyboardAvoidingView>
       </Modal>
 
+      {/* 🚀 ULTRA-MODERNES SETTINGS MODAL - ZAHNRAD FUNKTIONEN */}
+      <Modal
+        visible={showSettingsModal}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setShowSettingsModal(false)}
+      >
+        <SafeAreaView style={[dynamicStyles.container, { backgroundColor: colors.background }]}>
+          
+          {/* Header */}
+          <View style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: 20,
+            borderBottomWidth: 1,
+            borderBottomColor: colors.border,
+          }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Ionicons name="settings" size={28} color={colors.primary} />
+              <Text style={{
+                fontSize: 24,
+                fontWeight: '800',
+                color: colors.text,
+                marginLeft: 12,
+                textTransform: 'uppercase',
+                letterSpacing: 1,
+              }}>
+                Einstellungen
+              </Text>
+            </View>
+            
+            <TouchableOpacity 
+              onPress={() => setShowSettingsModal(false)}
+              style={{
+                backgroundColor: colors.card,
+                padding: 12,
+                borderRadius: 12,
+                borderWidth: 1,
+                borderColor: colors.border,
+              }}
+            >
+              <Ionicons name="close" size={24} color={colors.text} />
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={{ flex: 1, padding: 20 }}>
+            
+            {/* 🚨 NOTFALL-ALARM */}
+            <TouchableOpacity 
+              style={{
+                backgroundColor: 'rgba(255, 51, 51, 0.1)',
+                borderWidth: 2,
+                borderColor: '#FF3333',
+                borderRadius: 16,
+                padding: 20,
+                marginBottom: 20,
+                shadowColor: '#FF3333',
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.5,
+                shadowRadius: 15,
+                elevation: 15,
+              }}
+              onPress={() => {
+                setShowSettingsModal(false);
+                handleSOSAlert();
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{
+                  backgroundColor: 'rgba(255, 51, 51, 0.2)',
+                  padding: 12,
+                  borderRadius: 12,
+                  marginRight: 16,
+                }}>
+                  <Ionicons name="warning" size={32} color="#FF3333" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 18,
+                    fontWeight: '800',
+                    color: '#FFFFFF',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                    marginBottom: 4,
+                  }}>
+                    🚨 NOTFALL-ALARM
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#CCCCCC',
+                    fontWeight: '500',
+                  }}>
+                    SOS-Signal an alle Einheiten senden
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#FF3333" />
+              </View>
+            </TouchableOpacity>
+
+            {/* ⚙️ ADMIN-DASHBOARD */}
+            {user?.role === 'admin' && (
+              <TouchableOpacity 
+                style={{
+                  backgroundColor: 'rgba(0, 100, 0, 0.1)',
+                  borderWidth: 2,
+                  borderColor: '#006400',
+                  borderRadius: 16,
+                  padding: 20,
+                  marginBottom: 20,
+                  shadowColor: '#006400',
+                  shadowOffset: { width: 0, height: 0 },
+                  shadowOpacity: 0.5,
+                  shadowRadius: 15,
+                  elevation: 15,
+                }}
+                onPress={() => {
+                  setShowSettingsModal(false);
+                  setShowAdminModal(true);
+                }}
+              >
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                  <View style={{
+                    backgroundColor: 'rgba(0, 100, 0, 0.2)',
+                    padding: 12,
+                    borderRadius: 12,
+                    marginRight: 16,
+                  }}>
+                    <Ionicons name="construct" size={32} color="#006400" />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={{
+                      fontSize: 18,
+                      fontWeight: '800',
+                      color: '#FFFFFF',
+                      textTransform: 'uppercase',
+                      letterSpacing: 1,
+                      marginBottom: 4,
+                    }}>
+                      ⚙️ ADMIN-DASHBOARD
+                    </Text>
+                    <Text style={{
+                      fontSize: 14,
+                      color: '#CCCCCC',
+                      fontWeight: '500',
+                    }}>
+                      System-Administration und Verwaltung
+                    </Text>
+                  </View>
+                  <Ionicons name="chevron-forward" size={24} color="#006400" />
+                </View>
+              </TouchableOpacity>
+            )}
+
+            {/* 👤 PROFIL BEARBEITEN */}
+            <TouchableOpacity 
+              style={{
+                backgroundColor: 'rgba(255, 0, 255, 0.1)',
+                borderWidth: 2,
+                borderColor: '#FF00FF',
+                borderRadius: 16,
+                padding: 20,
+                marginBottom: 20,
+                shadowColor: '#FF00FF',
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.5,
+                shadowRadius: 15,
+                elevation: 15,
+              }}
+              onPress={() => {
+                setShowSettingsModal(false);
+                setShowProfileModal(true);
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{
+                  backgroundColor: 'rgba(255, 0, 255, 0.2)',
+                  padding: 12,
+                  borderRadius: 12,
+                  marginRight: 16,
+                }}>
+                  <Ionicons name="person" size={32} color="#FF00FF" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 18,
+                    fontWeight: '800',
+                    color: '#FFFFFF',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                    marginBottom: 4,
+                  }}>
+                    👤 PROFIL BEARBEITEN
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#CCCCCC',
+                    fontWeight: '500',
+                  }}>
+                    {user?.username} • {user?.role}
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#FF00FF" />
+              </View>
+            </TouchableOpacity>
+
+            {/* 🚪 LOGOUT */}
+            <TouchableOpacity 
+              style={{
+                backgroundColor: 'rgba(255, 215, 0, 0.1)',
+                borderWidth: 2,
+                borderColor: '#FFD700',
+                borderRadius: 16,
+                padding: 20,
+                marginBottom: 40,
+                shadowColor: '#FFD700',
+                shadowOffset: { width: 0, height: 0 },
+                shadowOpacity: 0.5,
+                shadowRadius: 15,
+                elevation: 15,
+              }}
+              onPress={() => {
+                Alert.alert(
+                  '🚪 Abmelden',
+                  'Möchten Sie sich wirklich abmelden?',
+                  [
+                    { text: 'Abbrechen', style: 'cancel' },
+                    { 
+                      text: 'Abmelden', 
+                      style: 'destructive',
+                      onPress: () => {
+                        setShowSettingsModal(false);
+                        logout();
+                      }
+                    }
+                  ]
+                );
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <View style={{
+                  backgroundColor: 'rgba(255, 215, 0, 0.2)',
+                  padding: 12,
+                  borderRadius: 12,
+                  marginRight: 16,
+                }}>
+                  <Ionicons name="log-out" size={32} color="#FFD700" />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={{
+                    fontSize: 18,
+                    fontWeight: '800',
+                    color: '#FFFFFF',
+                    textTransform: 'uppercase',
+                    letterSpacing: 1,
+                    marginBottom: 4,
+                  }}>
+                    🚪 ABMELDEN
+                  </Text>
+                  <Text style={{
+                    fontSize: 14,
+                    color: '#CCCCCC',
+                    fontWeight: '500',
+                  }}>
+                    Sitzung beenden und zur Anmeldung zurückkehren
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={24} color="#FFD700" />
+              </View>
+            </TouchableOpacity>
+
+            {/* System Info */}
+            <View style={{
+              backgroundColor: colors.card,
+              borderRadius: 12,
+              padding: 16,
+              borderWidth: 1,
+              borderColor: colors.border,
+            }}>
+              <Text style={{
+                fontSize: 14,
+                color: colors.textMuted,
+                textAlign: 'center',
+                fontWeight: '500',
+              }}>
+                🔒 STADTWACHE SYSTEM v3.0{'\n'}
+                Sichere Verbindung • Verschlüsselte Übertragung
+              </Text>
+            </View>
+
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
+
     </SafeAreaView>
   );
 };
